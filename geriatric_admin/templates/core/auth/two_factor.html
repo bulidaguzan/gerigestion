@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Two-Factor Authentication - Geriatric Administration System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .two-factor-container {
+        max-width: 450px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .two-factor-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .two-factor-header .fa {
+        font-size: 48px;
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+    
+    .two-factor-header h2 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .instructions {
+        background: #e3f2fd;
+        border: 1px solid #bbdefb;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 25px;
+        font-size: 14px;
+    }
+    
+    .token-input {
+        text-align: center;
+        font-size: 24px;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .btn-verify {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    
+    .security-notice {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 20px;
+        font-size: 13px;
+        color: #856404;
+    }
+    
+    .loading {
+        display: none;
+    }
+    
+    .loading.show {
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="two-factor-container">
+        <div class="two-factor-header">
+            <i class="fa fa-mobile-alt"></i>
+            <h2>Two-Factor Authentication</h2>
+            <p class="text-muted">Enter the verification code from your authenticator app</p>
+        </div>
+        
+        <div class="instructions">
+            <i class="fa fa-info-circle me-2"></i>
+            Open your authenticator app (Google Authenticator, Authy, etc.) and enter the 6-digit code for your Geriatric Administration System account.
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form id="twoFactorForm" method="post" novalidate>
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="totp_token" class="form-label">Authentication Code</label>
+                <input type="text" 
+                       id="totp_token" 
+                       name="totp_token" 
+                       class="form-control token-input" 
+                       placeholder="000000"
+                       maxlength="6" 
+                       pattern="[0-9]{6}"
+                       autocomplete="off"
+                       required>
+                <div class="invalid-feedback"></div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-verify" id="verifyBtn">
+                <span class="loading spinner-border spinner-border-sm me-2" role="status"></span>
+                <i class="fa fa-check me-2"></i>
+                Verify Code
+            </button>
+        </form>
+        
+        <div class="security-notice">
+            <i class="fa fa-exclamation-triangle me-2"></i>
+            <strong>Security Notice:</strong> If you don't have access to your authenticator app, please contact your system administrator for assistance.
+        </div>
+        
+        <div class="text-center mt-3">
+            <a href="/api/v1/auth/login/" class="btn btn-link">
+                <i class="fa fa-arrow-left me-1"></i>
+                Back to Login
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('twoFactorForm');
+    const tokenInput = document.getElementById('totp_token');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const loading = verifyBtn.querySelector('.loading');
+    
+    // Focus on token input
+    tokenInput.focus();
+    
+    // Only allow numeric input
+    tokenInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        
+        // Auto-submit when 6 digits are entered
+        if (this.value.length === 6) {
+            form.submit();
+        }
+        
+        // Clear validation states
+        this.classList.remove('is-invalid', 'is-valid');
+    });
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const token = tokenInput.value.trim();
+        
+        // Validate token
+        if (token.length !== 6 || !/^\d{6}$/.test(token)) {
+            showError('Please enter a valid 6-digit code');
+            return;
+        }
+        
+        // Show loading state
+        verifyBtn.disabled = true;
+        loading.classList.add('show');
+        
+        // Submit via AJAX
+        const formData = new FormData(form);
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Success - redirect
+                window.location.href = data.redirect_url || '/dashboard/';
+            } else {
+                // Error
+                showError(data.error || 'Verification failed');
+                resetForm();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('An error occurred. Please try again.');
+            resetForm();
+        });
+    });
+    
+    function showError(message) {
+        tokenInput.classList.add('is-invalid');
+        const feedback = tokenInput.nextElementSibling;
+        feedback.textContent = message;
+    }
+    
+    function resetForm() {
+        verifyBtn.disabled = false;
+        loading.classList.remove('show');
+        tokenInput.value = '';
+        tokenInput.focus();
+    }
+    
+    // Auto-refresh page after 5 minutes for security
+    setTimeout(function() {
+        alert('Session expired. Please log in again.');
+        window.location.href = '{% url "core:login" %}';
+    }, 5 * 60 * 1000);
+});
+</script>
+{% endblock %}

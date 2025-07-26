@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Geriatric Administration System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Dashboard</h1>
+                <div class="d-flex align-items-center">
+                    {% if request.current_center %}
+                        <span class="badge bg-primary me-3">{{ request.current_center.name }}</span>
+                    {% endif %}
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-user me-2"></i>{{ user.get_full_name|default:user.username }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fa fa-shield-alt me-2"></i>Security
+                            </a></li>
+                            {% if user.get_accessible_centers.count > 1 %}
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="fa fa-building me-2"></i>Switch Center
+                                </a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="/api/v1/auth/logout/" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fa fa-sign-out-alt me-2"></i>Sign Out
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fa fa-building text-primary me-2"></i>
+                        Facilities
+                    </h5>
+                    <p class="card-text">Manage rooms, beds, and equipment</p>
+                    <a href="#" class="btn btn-primary btn-sm">Manage Facilities</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fa fa-users text-success me-2"></i>
+                        Residents
+                    </h5>
+                    <p class="card-text">Resident profiles and care management</p>
+                    <a href="#" class="btn btn-success btn-sm">Manage Residents</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fa fa-user-md text-info me-2"></i>
+                        Staff
+                    </h5>
+                    <p class="card-text">Staff scheduling and task management</p>
+                    <a href="#" class="btn btn-info btn-sm">Manage Staff</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fa fa-heartbeat text-danger me-2"></i>
+                        Medical
+                    </h5>
+                    <p class="card-text">Medical records and medications</p>
+                    <a href="#" class="btn btn-danger btn-sm">Manage Medical</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fa fa-calendar me-2"></i>
+                        Today's Schedule
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Schedule management will be available in later tasks.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fa fa-bell me-2"></i>
+                        Recent Notifications
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Notification system will be available in later tasks.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fa fa-chart-bar me-2"></i>
+                        System Overview
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <h3 class="text-primary">--</h3>
+                            <p class="text-muted">Total Residents</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h3 class="text-success">--</h3>
+                            <p class="text-muted">Available Beds</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h3 class="text-info">--</h3>
+                            <p class="text-muted">Staff on Duty</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h3 class="text-warning">--</h3>
+                            <p class="text-muted">Pending Tasks</p>
+                        </div>
+                    </div>
+                    <p class="text-muted mt-3">
+                        <i class="fa fa-info-circle me-1"></i>
+                        Detailed analytics and reporting will be available in later tasks.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh dashboard every 5 minutes
+    setInterval(function() {
+        // Only refresh if user is still active
+        if (document.hasFocus()) {
+            location.reload();
+        }
+    }, 5 * 60 * 1000);
+    
+    // Show welcome message for new sessions
+    const loginTimestamp = '{{ request.session.login_timestamp|default:"" }}';
+    if (loginTimestamp) {
+        const loginTime = new Date(loginTimestamp);
+        const now = new Date();
+        const timeDiff = (now - loginTime) / 1000; // seconds
+        
+        // Show welcome message if logged in within last 30 seconds
+        if (timeDiff < 30) {
+            setTimeout(function() {
+                const toast = document.createElement('div');
+                toast.className = 'toast position-fixed top-0 end-0 m-3';
+                toast.innerHTML = `
+                    <div class="toast-header">
+                        <i class="fa fa-check-circle text-success me-2"></i>
+                        <strong class="me-auto">Welcome</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        Successfully signed in to {{ request.current_center.name|default:"the system" }}
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+                
+                // Remove toast element after it's hidden
+                toast.addEventListener('hidden.bs.toast', function() {
+                    document.body.removeChild(toast);
+                });
+            }, 1000);
+        }
+    }
+});
+</script>
+{% endblock %}

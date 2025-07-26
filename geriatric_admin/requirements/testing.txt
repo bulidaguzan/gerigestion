@@ -1,0 +1,38 @@
+# Testing requirements
+
+-r base.txt
+
+# Core testing framework
+pytest>=7.4.0
+pytest-django>=4.5.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+pytest-xdist>=3.3.0  # Parallel test execution
+
+# Test data generation
+factory-boy>=3.3.0
+faker>=19.0.0
+
+# Web testing
+selenium>=4.11.0
+pytest-selenium>=4.1.0
+
+# API testing
+httpx>=0.24.0
+responses>=0.23.0
+
+# Performance testing
+locust>=2.16.0
+
+# Coverage reporting
+coverage>=7.3.0
+
+# Database testing
+pytest-postgresql>=5.0.0
+
+# Mocking and fixtures
+freezegun>=1.2.0
+time-machine>=2.12.0
+
+# Load testing
+django-test-plus>=2.2.0
