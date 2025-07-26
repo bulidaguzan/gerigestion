@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Geriatric Administration System{% endblock %}</title>
+    <title>{% block title %}Sistema de Administración Geriátrica{% endblock %}</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{% url 'dashboard:index' %}">
-                Geriatric Admin System
+                Sistema Geriátrico
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -29,22 +29,22 @@
                 <ul class="navbar-nav me-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'dashboard:index' %}">Dashboard</a>
+                            <a class="nav-link" href="{% url 'dashboard:index' %}">Panel Principal</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'facilities_web:index' %}">Facilities</a>
+                            <a class="nav-link" href="{% url 'facilities_web:index' %}">Instalaciones</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'residents_web:index' %}">Residents</a>
+                            <a class="nav-link" href="{% url 'residents_web:index' %}">Residentes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'staff_web:index' %}">Staff</a>
+                            <a class="nav-link" href="{% url 'staff_web:index' %}">Personal</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'scheduling_web:index' %}">Schedule</a>
+                            <a class="nav-link" href="{% url 'scheduling_web:index' %}">Agenda</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'reporting_web:index' %}">Reports</a>
+                            <a class="nav-link" href="{% url 'reporting_web:index' %}">Reportes</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -56,14 +56,14 @@
                                 {{ user.get_full_name|default:user.username }}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'core:password_change_required' %}">Change Password</a></li>
+                                <li><a class="dropdown-item" href="{% url 'core:password_change_required' %}">Cambiar Contraseña</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'core:logout' %}">Logout</a></li>
+                                <li><a class="dropdown-item" href="{% url 'core:logout' %}">Cerrar Sesión</a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'core:login' %}">Login</a>
+                            <a class="nav-link" href="{% url 'core:login' %}">Iniciar Sesión</a>
                         </li>
                     {% endif %}
                 </ul>

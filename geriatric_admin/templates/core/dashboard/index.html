@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - Geriatric Administration System{% endblock %}
+{% block title %}Panel Principal - Sistema de Administración Geriátrica{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1>Dashboard</h1>
+                <h1>Panel Principal</h1>
                 <div class="d-flex align-items-center">
                     {% if request.current_center %}
                         <span class="badge bg-primary me-3">{{ request.current_center.name }}</span>
@@ -18,11 +18,11 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">
-                                <i class="fa fa-shield-alt me-2"></i>Security
+                                <i class="fa fa-shield-alt me-2"></i>Seguridad
                             </a></li>
                             {% if user.get_accessible_centers.count > 1 %}
                                 <li><a class="dropdown-item" href="#">
-                                    <i class="fa fa-building me-2"></i>Switch Center
+                                    <i class="fa fa-building me-2"></i>Cambiar Centro
                                 </a></li>
                             {% endif %}
                             <li><hr class="dropdown-divider"></li>
@@ -30,7 +30,7 @@
                                 <form method="post" action="/api/v1/auth/logout/" class="d-inline">
                                     {% csrf_token %}
                                     <button type="submit" class="dropdown-item">
-                                        <i class="fa fa-sign-out-alt me-2"></i>Sign Out
+                                        <i class="fa fa-sign-out-alt me-2"></i>Cerrar Sesión
                                     </button>
                                 </form>
                             </li>
@@ -47,10 +47,10 @@
                 <div class="card-body">
                     <h5 class="card-title">
                         <i class="fa fa-building text-primary me-2"></i>
-                        Facilities
+                        Instalaciones
                     </h5>
-                    <p class="card-text">Manage rooms, beds, and equipment</p>
-                    <a href="#" class="btn btn-primary btn-sm">Manage Facilities</a>
+                    <p class="card-text">Gestionar habitaciones, camas y equipamiento</p>
+                    <a href="#" class="btn btn-primary btn-sm">Gestionar Instalaciones</a>
                 </div>
             </div>
         </div>
@@ -60,10 +60,10 @@
                 <div class="card-body">
                     <h5 class="card-title">
                         <i class="fa fa-users text-success me-2"></i>
-                        Residents
+                        Residentes
                     </h5>
-                    <p class="card-text">Resident profiles and care management</p>
-                    <a href="#" class="btn btn-success btn-sm">Manage Residents</a>
+                    <p class="card-text">Perfiles de residentes y gestión de cuidados</p>
+                    <a href="#" class="btn btn-success btn-sm">Gestionar Residentes</a>
                 </div>
             </div>
         </div>
@@ -73,10 +73,10 @@
                 <div class="card-body">
                     <h5 class="card-title">
                         <i class="fa fa-user-md text-info me-2"></i>
-                        Staff
+                        Personal
                     </h5>
-                    <p class="card-text">Staff scheduling and task management</p>
-                    <a href="#" class="btn btn-info btn-sm">Manage Staff</a>
+                    <p class="card-text">Programación del personal y gestión de tareas</p>
+                    <a href="#" class="btn btn-info btn-sm">Gestionar Personal</a>
                 </div>
             </div>
         </div>
@@ -86,10 +86,10 @@
                 <div class="card-body">
                     <h5 class="card-title">
                         <i class="fa fa-heartbeat text-danger me-2"></i>
-                        Medical
+                        Médico
                     </h5>
-                    <p class="card-text">Medical records and medications</p>
-                    <a href="#" class="btn btn-danger btn-sm">Manage Medical</a>
+                    <p class="card-text">Historiales médicos y medicamentos</p>
+                    <a href="#" class="btn btn-danger btn-sm">Gestionar Médico</a>
                 </div>
             </div>
         </div>
@@ -101,11 +101,11 @@
                 <div class="card-header">
                     <h5 class="mb-0">
                         <i class="fa fa-calendar me-2"></i>
-                        Today's Schedule
+                        Agenda de Hoy
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Schedule management will be available in later tasks.</p>
+                    <p class="text-muted">La gestión de agenda estará disponible en tareas posteriores.</p>
                 </div>
             </div>
         </div>
@@ -115,11 +115,11 @@
                 <div class="card-header">
                     <h5 class="mb-0">
                         <i class="fa fa-bell me-2"></i>
-                        Recent Notifications
+                        Notificaciones Recientes
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Notification system will be available in later tasks.</p>
+                    <p class="text-muted">El sistema de notificaciones estará disponible en tareas posteriores.</p>
                 </div>
             </div>
         </div>
@@ -131,31 +131,31 @@
                 <div class="card-header">
                     <h5 class="mb-0">
                         <i class="fa fa-chart-bar me-2"></i>
-                        System Overview
+                        Resumen del Sistema
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <h3 class="text-primary">--</h3>
-                            <p class="text-muted">Total Residents</p>
+                            <p class="text-muted">Total de Residentes</p>
                         </div>
                         <div class="col-md-3 text-center">
                             <h3 class="text-success">--</h3>
-                            <p class="text-muted">Available Beds</p>
+                            <p class="text-muted">Camas Disponibles</p>
                         </div>
                         <div class="col-md-3 text-center">
                             <h3 class="text-info">--</h3>
-                            <p class="text-muted">Staff on Duty</p>
+                            <p class="text-muted">Personal de Guardia</p>
                         </div>
                         <div class="col-md-3 text-center">
                             <h3 class="text-warning">--</h3>
-                            <p class="text-muted">Pending Tasks</p>
+                            <p class="text-muted">Tareas Pendientes</p>
                         </div>
                     </div>
                     <p class="text-muted mt-3">
                         <i class="fa fa-info-circle me-1"></i>
-                        Detailed analytics and reporting will be available in later tasks.
+                        Los análisis detallados y reportes estarán disponibles en tareas posteriores.
                     </p>
                 </div>
             </div>
@@ -190,11 +190,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 toast.innerHTML = `
                     <div class="toast-header">
                         <i class="fa fa-check-circle text-success me-2"></i>
-                        <strong class="me-auto">Welcome</strong>
+                        <strong class="me-auto">Bienvenido</strong>
                         <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
                     </div>
                     <div class="toast-body">
-                        Successfully signed in to {{ request.current_center.name|default:"the system" }}
+                        Sesión iniciada exitosamente en {{ request.current_center.name|default:"el sistema" }}
                     </div>
                 `;
                 document.body.appendChild(toast);

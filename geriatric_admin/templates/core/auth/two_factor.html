@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Two-Factor Authentication - Geriatric Administration System{% endblock %}
+{% block title %}Autenticación de Dos Factores - Sistema de Administración Geriátrica{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -79,13 +79,13 @@
     <div class="two-factor-container">
         <div class="two-factor-header">
             <i class="fa fa-mobile-alt"></i>
-            <h2>Two-Factor Authentication</h2>
-            <p class="text-muted">Enter the verification code from your authenticator app</p>
+            <h2>Autenticación de Dos Factores</h2>
+            <p class="text-muted">Ingresa el código de verificación de tu aplicación autenticadora</p>
         </div>
         
         <div class="instructions">
             <i class="fa fa-info-circle me-2"></i>
-            Open your authenticator app (Google Authenticator, Authy, etc.) and enter the 6-digit code for your Geriatric Administration System account.
+            Abre tu aplicación autenticadora (Google Authenticator, Authy, etc.) e ingresa el código de 6 dígitos para tu cuenta del Sistema de Administración Geriátrica.
         </div>
         
         {% if messages %}
@@ -101,7 +101,7 @@
             {% csrf_token %}
             
             <div class="form-group">
-                <label for="totp_token" class="form-label">Authentication Code</label>
+                <label for="totp_token" class="form-label">Código de Autenticación</label>
                 <input type="text" 
                        id="totp_token" 
                        name="totp_token" 
@@ -117,19 +117,19 @@
             <button type="submit" class="btn btn-primary btn-verify" id="verifyBtn">
                 <span class="loading spinner-border spinner-border-sm me-2" role="status"></span>
                 <i class="fa fa-check me-2"></i>
-                Verify Code
+                Verificar Código
             </button>
         </form>
         
         <div class="security-notice">
             <i class="fa fa-exclamation-triangle me-2"></i>
-            <strong>Security Notice:</strong> If you don't have access to your authenticator app, please contact your system administrator for assistance.
+            <strong>Aviso de Seguridad:</strong> Si no tienes acceso a tu aplicación autenticadora, por favor contacta al administrador del sistema para obtener asistencia.
         </div>
         
         <div class="text-center mt-3">
             <a href="/api/v1/auth/login/" class="btn btn-link">
                 <i class="fa fa-arrow-left me-1"></i>
-                Back to Login
+                Volver al Inicio de Sesión
             </a>
         </div>
     </div>
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Validate token
         if (token.length !== 6 || !/^\d{6}$/.test(token)) {
-            showError('Please enter a valid 6-digit code');
+            showError('Por favor ingresa un código válido de 6 dígitos');
             return;
         }
         
@@ -193,13 +193,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = data.redirect_url || '/dashboard/';
             } else {
                 // Error
-                showError(data.error || 'Verification failed');
+                showError(data.error || 'La verificación falló');
                 resetForm();
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showError('An error occurred. Please try again.');
+            showError('Ocurrió un error. Por favor, inténtalo de nuevo.');
             resetForm();
         });
     });
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Auto-refresh page after 5 minutes for security
     setTimeout(function() {
-        alert('Session expired. Please log in again.');
+        alert('Sesión expirada. Por favor, inicia sesión nuevamente.');
         window.location.href = '{% url "core:login" %}';
     }, 5 * 60 * 1000);
 });

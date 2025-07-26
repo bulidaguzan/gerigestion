@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Signed Out - Geriatric Administration System{% endblock %}
+{% block title %}Sesión Cerrada - Sistema de Administración Geriátrica{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -51,10 +51,10 @@
             <i class="fa fa-check-circle"></i>
         </div>
         
-        <h2>Successfully Signed Out</h2>
+        <h2>Sesión Cerrada Exitosamente</h2>
         
         <div class="logout-message">
-            You have been securely logged out of the Geriatric Administration System.
+            Has sido desconectado de forma segura del Sistema de Administración Geriátrica.
         </div>
         
         {% if messages %}
@@ -68,20 +68,20 @@
         
         <div class="security-info">
             <i class="fa fa-shield-alt me-2"></i>
-            <strong>Security Notice:</strong><br>
-            Your session has been terminated and all security tokens have been invalidated.
-            For your security, please close your browser if you are using a shared computer.
+            <strong>Aviso de Seguridad:</strong><br>
+            Tu sesión ha sido terminada y todos los tokens de seguridad han sido invalidados.
+            Por tu seguridad, por favor cierra tu navegador si estás usando una computadora compartida.
         </div>
         
         <a href="/api/v1/auth/login/" class="btn btn-primary btn-login-again">
             <i class="fa fa-sign-in-alt me-2"></i>
-            Sign In Again
+            Iniciar Sesión Nuevamente
         </a>
         
         <div class="mt-4">
             <small class="text-muted">
                 <i class="fa fa-clock me-1"></i>
-                Session ended at {{ request.session.get_expiry_date|date:"M d, Y H:i" }}
+                Sesión terminada el {{ request.session.get_expiry_date|date:"d/m/Y H:i" }}
             </small>
         </div>
     </div>
