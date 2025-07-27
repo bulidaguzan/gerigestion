@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% if action == 'create' %}{% trans 'Nuevo Reporte' %}{% else %}{% trans 'Editar Reporte' %}{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            {% if action == 'create' %}
+                <i class="fas fa-plus me-2"></i>{% trans 'Nuevo Reporte' %}
+            {% else %}
+                <i class="fas fa-edit me-2"></i>{% trans 'Editar Reporte' %}
+            {% endif %}
+        </h1>
+        <a href="{% url 'reporting_web:report_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>{% trans 'Volver a la Lista' %}
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-secondary">
+                        {% if action == 'create' %}
+                            <i class="fas fa-file-alt me-2"></i>{% trans 'Crear Nuevo Reporte' %}
+                        {% else %}
+                            <i class="fas fa-edit me-2"></i>{% trans 'Editar Reporte' %}
+                        {% endif %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Título -->
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">
+                                    {{ form.title.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.title.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">
+                                    {{ form.description.label }}
+                                </label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.description.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Tipo de Reporte -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.report_type.id_for_label }}" class="form-label">
+                                    {{ form.report_type.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.report_type }}
+                                {% if form.report_type.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.report_type.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Formato -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.format.id_for_label }}" class="form-label">
+                                    {{ form.format.label }}
+                                </label>
+                                {{ form.format }}
+                                {% if form.format.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.format.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Fecha Desde -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.date_from.id_for_label }}" class="form-label">
+                                    {{ form.date_from.label }}
+                                </label>
+                                {{ form.date_from }}
+                                {% if form.date_from.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.date_from.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Fecha Hasta -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.date_to.id_for_label }}" class="form-label">
+                                    {{ form.date_to.label }}
+                                </label>
+                                {{ form.date_to }}
+                                {% if form.date_to.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.date_to.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Errores generales del formulario -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'reporting_web:report_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>{% trans 'Cancelar' %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                {% if action == 'create' %}
+                                    <i class="fas fa-save me-2"></i>{% trans 'Crear Reporte' %}
+                                {% else %}
+                                    <i class="fas fa-save me-2"></i>{% trans 'Guardar Cambios' %}
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="card shadow mt-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-secondary">
+                        <i class="fas fa-info-circle me-2"></i>{% trans 'Información sobre Tipos de Reportes' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>{% trans 'Tipos de Reportes:' %}</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-users text-primary me-2"></i>{% trans 'Residentes - Información de residentes' %}</li>
+                                <li><i class="fas fa-user-tie text-primary me-2"></i>{% trans 'Personal - Información del staff' %}</li>
+                                <li><i class="fas fa-building text-primary me-2"></i>{% trans 'Instalaciones - Estado de las instalaciones' %}</li>
+                                <li><i class="fas fa-euro-sign text-primary me-2"></i>{% trans 'Financiero - Reportes financieros' %}</li>
+                                <li><i class="fas fa-heartbeat text-primary me-2"></i>{% trans 'Médico - Información médica' %}</li>
+                                <li><i class="fas fa-bed text-primary me-2"></i>{% trans 'Ocupación - Estado de ocupación' %}</li>
+                                <li><i class="fas fa-cog text-primary me-2"></i>{% trans 'Personalizado - Reporte a medida' %}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>{% trans 'Formatos Disponibles:' %}</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-file-pdf text-danger me-2"></i>PDF - {% trans 'Para impresión y archivo' %}</li>
+                                <li><i class="fas fa-file-excel text-success me-2"></i>Excel - {% trans 'Para análisis y edición' %}</li>
+                                <li><i class="fas fa-file-csv text-info me-2"></i>CSV - {% trans 'Para importar en otros sistemas' %}</li>
+                                <li><i class="fas fa-file-code text-warning me-2"></i>JSON - {% trans 'Para integración con APIs' %}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Validación de fechas
+        const dateFrom = document.getElementById('{{ form.date_from.id_for_label }}');
+        const dateTo = document.getElementById('{{ form.date_to.id_for_label }}');
+        
+        function validateDates() {
+            if (dateFrom.value && dateTo.value) {
+                if (dateFrom.value > dateTo.value) {
+                    dateTo.setCustomValidity('La fecha de fin debe ser posterior a la fecha de inicio');
+                } else {
+                    dateTo.setCustomValidity('');
+                }
+            }
+        }
+        
+        dateFrom.addEventListener('change', validateDates);
+        dateTo.addEventListener('change', validateDates);
+    });
+</script>
+{% endblock %} 

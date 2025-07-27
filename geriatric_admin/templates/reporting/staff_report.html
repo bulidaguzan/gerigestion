@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Reporte de Personal' %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-user-tie me-2"></i>{% trans 'Reporte de Personal' %}
+        </h1>
+        <a href="{% url 'reporting_web:index' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>{% trans 'Volver al Dashboard' %}
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-secondary">
+                        <i class="fas fa-filter me-2"></i>{% trans 'Configurar Filtros del Reporte' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Fechas -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.date_from.id_for_label }}" class="form-label">
+                                    {{ form.date_from.label }}
+                                </label>
+                                {{ form.date_from }}
+                                {% if form.date_from.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.date_from.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.date_to.id_for_label }}" class="form-label">
+                                    {{ form.date_to.label }}
+                                </label>
+                                {{ form.date_to }}
+                                {% if form.date_to.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.date_to.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Estado -->
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.status.id_for_label }}" class="form-label">
+                                    {{ form.status.label }}
+                                </label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.status.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Departamento -->
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.department.id_for_label }}" class="form-label">
+                                    {{ form.department.label }}
+                                </label>
+                                {{ form.department }}
+                                {% if form.department.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.department.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Salario Mínimo -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.min_salary.id_for_label }}" class="form-label">
+                                    {{ form.min_salary.label }}
+                                </label>
+                                {{ form.min_salary }}
+                                {% if form.min_salary.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.min_salary.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Salario Máximo -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.max_salary.id_for_label }}" class="form-label">
+                                    {{ form.max_salary.label }}
+                                </label>
+                                {{ form.max_salary }}
+                                {% if form.max_salary.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.max_salary.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Opciones de Información -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    {{ form.include_salary_info }}
+                                    <label class="form-check-label" for="{{ form.include_salary_info.id_for_label }}">
+                                        {{ form.include_salary_info.label }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    {{ form.include_schedule_info }}
+                                    <label class="form-check-label" for="{{ form.include_schedule_info.id_for_label }}">
+                                        {{ form.include_schedule_info.label }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Errores generales del formulario -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'reporting_web:index' %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>{% trans 'Cancelar' %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>{% trans 'Generar Reporte' %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="card shadow mt-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-secondary">
+                        <i class="fas fa-info-circle me-2"></i>{% trans 'Información del Reporte' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>{% trans 'Información Incluida:' %}</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-user text-primary me-2"></i>{% trans 'Datos personales básicos' %}</li>
+                                <li><i class="fas fa-calendar text-primary me-2"></i>{% trans 'Fecha de contratación' %}</li>
+                                <li><i class="fas fa-building text-primary me-2"></i>{% trans 'Información del departamento' %}</li>
+                                <li><i class="fas fa-euro-sign text-primary me-2"></i>{% trans 'Información salarial (opcional)' %}</li>
+                                <li><i class="fas fa-clock text-primary me-2"></i>{% trans 'Información de horarios (opcional)' %}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>{% trans 'Filtros Disponibles:' %}</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-calendar-alt text-success me-2"></i>{% trans 'Rango de fechas de contratación' %}</li>
+                                <li><i class="fas fa-toggle-on text-success me-2"></i>{% trans 'Estado de empleo' %}</li>
+                                <li><i class="fas fa-sitemap text-success me-2"></i>{% trans 'Filtro por departamento' %}</li>
+                                <li><i class="fas fa-euro-sign text-success me-2"></i>{% trans 'Rango de salarios' %}</li>
+                                <li><i class="fas fa-chart-line text-success me-2"></i>{% trans 'Años de servicio' %}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Validación de fechas
+        const dateFrom = document.getElementById('{{ form.date_from.id_for_label }}');
+        const dateTo = document.getElementById('{{ form.date_to.id_for_label }}');
+        
+        function validateDates() {
+            if (dateFrom.value && dateTo.value) {
+                if (dateFrom.value > dateTo.value) {
+                    dateTo.setCustomValidity('La fecha de fin debe ser posterior a la fecha de inicio');
+                } else {
+                    dateTo.setCustomValidity('');
+                }
+            }
+        }
+        
+        dateFrom.addEventListener('change', validateDates);
+        dateTo.addEventListener('change', validateDates);
+        
+        // Validación de salarios
+        const minSalary = document.getElementById('{{ form.min_salary.id_for_label }}');
+        const maxSalary = document.getElementById('{{ form.max_salary.id_for_label }}');
+        
+        function validateSalaries() {
+            if (minSalary.value && maxSalary.value) {
+                if (parseFloat(minSalary.value) > parseFloat(maxSalary.value)) {
+                    maxSalary.setCustomValidity('El salario máximo debe ser mayor que el salario mínimo');
+                } else {
+                    maxSalary.setCustomValidity('');
+                }
+            }
+        }
+        
+        minSalary.addEventListener('change', validateSalaries);
+        maxSalary.addEventListener('change', validateSalaries);
+    });
+</script>
+{% endblock %} 

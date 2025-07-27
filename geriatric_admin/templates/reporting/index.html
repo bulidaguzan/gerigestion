@@ -1,14 +1,28 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Reportes - Sistema de Administración Geriátrica{% endblock %}
+{% block title %}{% trans 'Reportes' %} - {% trans 'Sistema de Administración Geriátrica' %}{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <h1>Reportes</h1>
-            <p class="text-muted">Las funciones de reportes estarán disponibles en tareas posteriores.</p>
+            <div class="text-center py-5">
+                <i class="fas fa-chart-bar fa-4x text-primary mb-4"></i>
+                <h1 class="h3 mb-3">{% trans 'Módulo de Reportes' %}</h1>
+                <p class="text-muted mb-4">{% trans 'Redirigiendo al dashboard de reportes...' %}</p>
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">{% trans 'Cargando...' %}</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Redirigir automáticamente al dashboard de reportes
+    setTimeout(function() {
+        window.location.href = "{% url 'reporting_web:dashboard' %}";
+    }, 1000);
+</script>
 {% endblock %} 

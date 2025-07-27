@@ -375,9 +375,6 @@
                 <ul class="navbar-nav me-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'dashboard:index' %}">Panel Principal</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="{% url 'facilities_web:index' %}">Instalaciones</a>
                         </li>
                         <li class="nav-item">
@@ -385,9 +382,6 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'staff_web:index' %}">Personal</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'scheduling_web:index' %}">Agenda</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'reporting_web:index' %}">Reportes</a>
