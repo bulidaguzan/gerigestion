@@ -19,6 +19,7 @@ urlpatterns = [
     path('api/v1/staff/', include('apps.staff.urls', namespace='staff')),
     path('api/v1/medical/', include('apps.medical.urls', namespace='medical')),
     # path('api/v1/scheduling/', include('apps.scheduling.urls', namespace='scheduling')),
+    path('api/v1/financial/', include('apps.financial.urls', namespace='financial')),
     path('api/v1/reporting/', include('apps.reporting.urls', namespace='reporting')),
     
     # Web interface
@@ -29,6 +30,7 @@ urlpatterns = [
     path('staff/', include('apps.staff.web_urls', namespace='staff_web')),
     path('medical/', include('apps.medical.web_urls', namespace='medical_web')),
     # path('scheduling/', include('apps.scheduling.web_urls', namespace='scheduling_web')),
+    path('financial/', include('apps.financial.web_urls', namespace='financial_web')),
     path('reporting/', include('apps.reporting.web_urls', namespace='reporting_web')),
     
     # Authentication (use our custom views instead of Django's default)
