@@ -1,0 +1,374 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Dashboard del Personal' %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">{% trans 'Dashboard del Personal' %}</h1>
+            <p class="text-muted">{% trans 'Gestión y estadísticas del personal de la residencia' %}</p>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="{% url 'staff_web:staff_list' %}" class="btn btn-primary">
+                <i class="fas fa-users"></i> {% trans 'Ver Personal' %}
+            </a>
+            <a href="{% url 'staff_web:staff_create' %}" class="btn btn-success">
+                <i class="fas fa-user-plus"></i> {% trans 'Nuevo Empleado' %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Estadísticas Principales -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                {% trans 'Total de Personal' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_staff }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                {% trans 'Personal Activo' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ active_staff }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                {% trans 'Personal Inactivo' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ inactive_staff }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-times fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                {% trans 'Personal Suspendido' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ suspended_staff }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-slash fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Personal por Departamento -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Personal por Departamento' %}</h6>
+                </div>
+                <div class="card-body">
+                    {% if department_stats %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans 'Departamento' %}</th>
+                                        <th>{% trans 'Empleados' %}</th>
+                                        <th>{% trans 'Porcentaje' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for dept in department_stats %}
+                                    <tr>
+                                        <td>{{ dept.department }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ dept.count }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-primary" 
+                                                     style="width: {% widthratio dept.count total_staff 100 %}%">
+                                                    {% widthratio dept.count total_staff 100 %}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-bar fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">{% trans 'No hay datos de departamentos disponibles.' %}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal por Posición -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Personal por Posición' %}</h6>
+                </div>
+                <div class="card-body">
+                    {% if position_stats %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans 'Posición' %}</th>
+                                        <th>{% trans 'Empleados' %}</th>
+                                        <th>{% trans 'Porcentaje' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pos in position_stats %}
+                                    <tr>
+                                        <td>{{ pos.position }}</td>
+                                        <td>
+                                            <span class="badge bg-success">{{ pos.count }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-success" 
+                                                     style="width: {% widthratio pos.count total_staff 100 %}%">
+                                                    {% widthratio pos.count total_staff 100 %}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-user-tie fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">{% trans 'No hay datos de posiciones disponibles.' %}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Empleados Recién Contratados -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-user-plus"></i> {% trans 'Empleados Recién Contratados' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if recent_hires %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans 'Nombre' %}</th>
+                                        <th>{% trans 'Posición' %}</th>
+                                        <th>{% trans 'Fecha' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for staff in recent_hires %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'staff_web:staff_detail' staff.id %}" class="text-decoration-none">
+                                                {{ staff.full_name }}
+                                            </a>
+                                        </td>
+                                        <td>{{ staff.position }}</td>
+                                        <td>{{ staff.hire_date|date:"d/m/Y" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-user-plus fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">{% trans 'No hay empleados recién contratados.' %}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Empleados con Más Años de Servicio -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-medal"></i> {% trans 'Empleados con Más Años de Servicio' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if senior_staff %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans 'Nombre' %}</th>
+                                        <th>{% trans 'Posición' %}</th>
+                                        <th>{% trans 'Años' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for staff in senior_staff %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'staff_web:staff_detail' staff.id %}" class="text-decoration-none">
+                                                {{ staff.full_name }}
+                                            </a>
+                                        </td>
+                                        <td>{{ staff.position }}</td>
+                                        <td>
+                                            <span class="badge bg-warning">{{ staff.years_of_service }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-medal fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">{% trans 'No hay empleados con años de servicio registrados.' %}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Salario Promedio por Departamento -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-euro-sign"></i> {% trans 'Salario Promedio por Departamento' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if avg_salary_by_dept %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans 'Departamento' %}</th>
+                                        <th>{% trans 'Salario Promedio' %}</th>
+                                        <th>{% trans 'Comparación' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for dept in avg_salary_by_dept %}
+                                    <tr>
+                                        <td>{{ dept.department }}</td>
+                                        <td>
+                                            <strong>€{{ dept.avg_salary|floatformat:2 }}</strong>
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-info" 
+                                                     style="width: {% widthratio dept.avg_salary 2000 100 %}%">
+                                                    {% widthratio dept.avg_salary 2000 100 %}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-euro-sign fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">{% trans 'No hay datos de salarios disponibles.' %}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Acciones Rápidas' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'staff_web:staff_list' %}" class="btn btn-primary btn-block">
+                                <i class="fas fa-list"></i> {% trans 'Ver Todo el Personal' %}
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'staff_web:staff_create' %}" class="btn btn-success btn-block">
+                                <i class="fas fa-user-plus"></i> {% trans 'Contratar Empleado' %}
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'staff_web:staff_list' %}?status=active" class="btn btn-info btn-block">
+                                <i class="fas fa-user-check"></i> {% trans 'Personal Activo' %}
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'staff_web:staff_list' %}?status=inactive" class="btn btn-warning btn-block">
+                                <i class="fas fa-user-times"></i> {% trans 'Personal Inactivo' %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

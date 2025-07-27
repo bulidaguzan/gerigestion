@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Eliminar Empleado' %} - {{ staff.full_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">{% trans 'Eliminar Empleado' %}</h1>
+            <p class="text-muted">{% trans 'Confirmar eliminación del empleado' %}</p>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="{% url 'staff_web:staff_detail' staff.id %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> {% trans 'Volver a detalles' %}
+            </a>
+            <a href="{% url 'staff_web:staff_list' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-list"></i> {% trans 'Lista de empleados' %}
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Advertencia de Eliminación -->
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white py-3">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans 'Confirmar Eliminación' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger" role="alert">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle"></i> {% trans '¡Advertencia!' %}
+                        </h5>
+                        <p class="mb-0">
+                            {% trans 'Estás a punto de eliminar permanentemente al empleado' %} 
+                            <strong>{{ staff.full_name }}</strong>. 
+                            {% trans 'Esta acción no se puede deshacer.' %}
+                        </p>
+                    </div>
+
+                    <!-- Información del Empleado a Eliminar -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">{% trans 'Información del Empleado' %}</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>{% trans 'Nombre' %}:</strong></td>
+                                    <td>{{ staff.full_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'ID de Empleado' %}:</strong></td>
+                                    <td>{{ staff.employee_id }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Cargo' %}:</strong></td>
+                                    <td>{{ staff.position }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Departamento' %}:</strong></td>
+                                    <td>{{ staff.department }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">{% trans 'Detalles Laborales' %}</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>{% trans 'Estado' %}:</strong></td>
+                                    <td>
+                                        {% if staff.employment_status == 'active' %}
+                                        <span class="badge bg-success">{% trans 'Activo' %}</span>
+                                        {% elif staff.employment_status == 'inactive' %}
+                                        <span class="badge bg-warning">{% trans 'Inactivo' %}</span>
+                                        {% elif staff.employment_status == 'suspended' %}
+                                        <span class="badge bg-danger">{% trans 'Suspendido' %}</span>
+                                        {% elif staff.employment_status == 'terminated' %}
+                                        <span class="badge bg-dark">{% trans 'Terminado' %}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Fecha de Contratación' %}:</strong></td>
+                                    <td>{{ staff.hire_date|date:"d/m/Y" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Años de Servicio' %}:</strong></td>
+                                    <td>{{ staff.years_of_service }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Salario' %}:</strong></td>
+                                    <td>€{{ staff.salary|floatformat:2 }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Información de Contacto -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary">{% trans 'Información de Contacto' %}</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>{% trans 'Email' %}:</strong> {{ staff.email }}</p>
+                                    <p><strong>{% trans 'Teléfono' %}:</strong> {{ staff.phone }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>{% trans 'Ciudad' %}:</strong> {{ staff.city }}</p>
+                                    <p><strong>{% trans 'Dirección' %}:</strong> {{ staff.address }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consecuencias de la Eliminación -->
+                    <div class="alert alert-warning" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-info-circle"></i> {% trans 'Consecuencias de la Eliminación' %}
+                        </h6>
+                        <ul class="mb-0">
+                            <li>{% trans 'Todos los datos del empleado serán eliminados permanentemente' %}</li>
+                            <li>{% trans 'No se podrá recuperar la información eliminada' %}</li>
+                            <li>{% trans 'Se perderá el historial laboral del empleado' %}</li>
+                            <li>{% trans 'Los registros relacionados pueden verse afectados' %}</li>
+                        </ul>
+                    </div>
+
+                    <!-- Formulario de Confirmación -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="confirmDelete" required>
+                                    <label class="form-check-label" for="confirmDelete">
+                                        {% trans 'Confirmo que entiendo las consecuencias y deseo eliminar permanentemente a este empleado' %}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'staff_web:staff_detail' staff.id %}" class="btn btn-secondary me-2">
+                                <i class="fas fa-times"></i> {% trans 'Cancelar' %}
+                            </a>
+                            <button type="submit" class="btn btn-danger" id="deleteBtn" disabled>
+                                <i class="fas fa-trash"></i> {% trans 'Eliminar Permanentemente' %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información Adicional -->
+            <div class="card shadow mt-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-lightbulb"></i> {% trans 'Alternativas Recomendadas' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-success">{% trans 'En lugar de eliminar, considera:' %}</h6>
+                            <ul>
+                                <li>{% trans 'Cambiar el estado a "Inactivo"' %}</li>
+                                <li>{% trans 'Cambiar el estado a "Terminado"' %}</li>
+                                <li>{% trans 'Archivar los datos del empleado' %}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-info">{% trans 'Acciones disponibles:' %}</h6>
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'staff_web:staff_update' staff.id %}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> {% trans 'Editar Empleado' %}
+                                </a>
+                                <a href="{% url 'staff_web:staff_detail' staff.id %}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> {% trans 'Ver Detalles' %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmCheckbox = document.getElementById('confirmDelete');
+    const deleteBtn = document.getElementById('deleteBtn');
+    
+    confirmCheckbox.addEventListener('change', function() {
+        deleteBtn.disabled = !this.checked;
+    });
+    
+    // Confirmación adicional antes de enviar el formulario
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (!confirm('{% trans "¿Estás completamente seguro de que deseas eliminar a este empleado? Esta acción no se puede deshacer." %}')) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %} 

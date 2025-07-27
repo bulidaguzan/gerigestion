@@ -1,0 +1,421 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% if action == 'create' %}
+        {% trans 'Nuevo Empleado' %}
+    {% else %}
+        {% trans 'Editar Empleado' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                {% if action == 'create' %}
+                    {% trans 'Nuevo Empleado' %}
+                {% else %}
+                    {% trans 'Editar Empleado' %}
+                {% endif %}
+            </h1>
+            <p class="text-muted">
+                {% if action == 'create' %}
+                    {% trans 'Crear un nuevo empleado en el sistema' %}
+                {% else %}
+                    {% trans 'Actualizar información del empleado' %}
+                {% endif %}
+            </p>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="{% url 'staff_web:staff_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> {% trans 'Volver al listado' %}
+            </a>
+            {% if action == 'update' %}
+            <a href="{% url 'staff_web:staff_detail' staff.id %}" class="btn btn-info">
+                <i class="fas fa-eye"></i> {% trans 'Ver detalles' %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                {% if action == 'create' %}
+                    {% trans 'Información del Nuevo Empleado' %}
+                {% else %}
+                    {% trans 'Información del Empleado' %}
+                {% endif %}
+            </h6>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                <!-- Información Personal -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-user"></i> {% trans 'Información Personal' %}
+                        </h5>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                            {{ form.first_name.label }} *
+                        </label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.first_name.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                            {{ form.last_name.label }} *
+                        </label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.last_name.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">
+                            {{ form.date_of_birth.label }} *
+                        </label>
+                        {{ form.date_of_birth }}
+                        {% if form.date_of_birth.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.date_of_birth.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.gender.id_for_label }}" class="form-label">
+                            {{ form.gender.label }} *
+                        </label>
+                        {{ form.gender }}
+                        {% if form.gender.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.gender.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.marital_status.id_for_label }}" class="form-label">
+                            {{ form.marital_status.label }} *
+                        </label>
+                        {{ form.marital_status }}
+                        {% if form.marital_status.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.marital_status.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Información de Contacto -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-address-book"></i> {% trans 'Información de Contacto' %}
+                        </h5>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.phone.id_for_label }}" class="form-label">
+                            {{ form.phone.label }} *
+                        </label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.phone.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                            {{ form.email.label }} *
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.email.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <label for="{{ form.address.id_for_label }}" class="form-label">
+                            {{ form.address.label }} *
+                        </label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.address.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.city.id_for_label }}" class="form-label">
+                            {{ form.city.label }} *
+                        </label>
+                        {{ form.city }}
+                        {% if form.city.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.city.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Información Laboral -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-briefcase"></i> {% trans 'Información Laboral' %}
+                        </h5>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.employee_id.id_for_label }}" class="form-label">
+                            {{ form.employee_id.label }} *
+                        </label>
+                        {{ form.employee_id }}
+                        {% if form.employee_id.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.employee_id.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.position.id_for_label }}" class="form-label">
+                            {{ form.position.label }} *
+                        </label>
+                        {{ form.position }}
+                        {% if form.position.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.position.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.department.id_for_label }}" class="form-label">
+                            {{ form.department.label }} *
+                        </label>
+                        {{ form.department }}
+                        {% if form.department.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.department.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.hire_date.id_for_label }}" class="form-label">
+                            {{ form.hire_date.label }} *
+                        </label>
+                        {{ form.hire_date }}
+                        {% if form.hire_date.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.hire_date.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.employment_status.id_for_label }}" class="form-label">
+                            {{ form.employment_status.label }} *
+                        </label>
+                        {{ form.employment_status }}
+                        {% if form.employment_status.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.employment_status.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.salary.id_for_label }}" class="form-label">
+                            {{ form.salary.label }} *
+                        </label>
+                        {{ form.salary }}
+                        {% if form.salary.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.salary.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Horarios -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-clock"></i> {% trans 'Horarios' %}
+                        </h5>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.work_schedule.id_for_label }}" class="form-label">
+                            {{ form.work_schedule.label }} *
+                        </label>
+                        {{ form.work_schedule }}
+                        {% if form.work_schedule.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.work_schedule.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.shift_type.id_for_label }}" class="form-label">
+                            {{ form.shift_type.label }} *
+                        </label>
+                        {{ form.shift_type }}
+                        {% if form.shift_type.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.shift_type.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Contacto de Emergencia -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-exclamation-triangle"></i> {% trans 'Contacto de Emergencia' %}
+                        </h5>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.emergency_contact_name.id_for_label }}" class="form-label">
+                            {{ form.emergency_contact_name.label }} *
+                        </label>
+                        {{ form.emergency_contact_name }}
+                        {% if form.emergency_contact_name.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.emergency_contact_name.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.emergency_contact_relationship.id_for_label }}" class="form-label">
+                            {{ form.emergency_contact_relationship.label }} *
+                        </label>
+                        {{ form.emergency_contact_relationship }}
+                        {% if form.emergency_contact_relationship.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.emergency_contact_relationship.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.emergency_contact_phone.id_for_label }}" class="form-label">
+                            {{ form.emergency_contact_phone.label }} *
+                        </label>
+                        {{ form.emergency_contact_phone }}
+                        {% if form.emergency_contact_phone.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.emergency_contact_phone.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Información Médica -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-heartbeat"></i> {% trans 'Información Médica' %}
+                        </h5>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.blood_type.id_for_label }}" class="form-label">
+                            {{ form.blood_type.label }}
+                        </label>
+                        {{ form.blood_type }}
+                        {% if form.blood_type.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.blood_type.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <label for="{{ form.allergies.id_for_label }}" class="form-label">
+                            {{ form.allergies.label }}
+                        </label>
+                        {{ form.allergies }}
+                        {% if form.allergies.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.allergies.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="{{ form.medical_conditions.id_for_label }}" class="form-label">
+                            {{ form.medical_conditions.label }}
+                        </label>
+                        {{ form.medical_conditions }}
+                        {% if form.medical_conditions.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.medical_conditions.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Información Adicional -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-info-circle"></i> {% trans 'Información Adicional' %}
+                        </h5>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.skills.id_for_label }}" class="form-label">
+                            {{ form.skills.label }}
+                        </label>
+                        {{ form.skills }}
+                        {% if form.skills.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.skills.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.notes.id_for_label }}" class="form-label">
+                            {{ form.notes.label }}
+                        </label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.notes.errors.0 }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="row">
+                    <div class="col-12">
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'staff_web:staff_list' %}" class="btn btn-secondary me-2">
+                                <i class="fas fa-times"></i> {% trans 'Cancelar' %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                {% if action == 'create' %}
+                                    {% trans 'Crear Empleado' %}
+                                {% else %}
+                                    {% trans 'Actualizar Empleado' %}
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

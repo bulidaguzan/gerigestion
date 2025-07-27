@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Lista del Personal' %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">{% trans 'Lista del Personal' %}</h1>
+            <p class="text-muted">{% trans 'Gestión completa del personal de la residencia' %}</p>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="{% url 'staff_web:index' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-chart-bar"></i> {% trans 'Dashboard' %}
+            </a>
+            <a href="{% url 'staff_web:staff_create' %}" class="btn btn-success">
+                <i class="fas fa-user-plus"></i> {% trans 'Nuevo Empleado' %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros y Búsqueda -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{% trans 'Filtros y Búsqueda' %}</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="search" class="form-label">{% trans 'Buscar' %}</label>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           value="{{ search }}" placeholder="{% trans 'Nombre, ID, email...' %}">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="department" class="form-label">{% trans 'Departamento' %}</label>
+                    <select class="form-control" id="department" name="department">
+                        <option value="">{% trans 'Todos' %}</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept }}" {% if department_filter == dept %}selected{% endif %}>
+                            {{ dept }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="position" class="form-label">{% trans 'Posición' %}</label>
+                    <select class="form-control" id="position" name="position">
+                        <option value="">{% trans 'Todas' %}</option>
+                        {% for pos in positions %}
+                        <option value="{{ pos }}" {% if position_filter == pos %}selected{% endif %}>
+                            {{ pos }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="status" class="form-label">{% trans 'Estado' %}</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="">{% trans 'Todos' %}</option>
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search"></i> {% trans 'Filtrar' %}
+                    </button>
+                    <a href="{% url 'staff_web:staff_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> {% trans 'Limpiar' %}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Personal -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                {% trans 'Personal' %} 
+                <span class="badge bg-primary">{{ page_obj.paginator.count }}</span>
+            </h6>
+        </div>
+        <div class="card-body">
+            {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-bordered" id="staffTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Empleado' %}</th>
+                            <th>{% trans 'ID' %}</th>
+                            <th>{% trans 'Posición' %}</th>
+                            <th>{% trans 'Departamento' %}</th>
+                            <th>{% trans 'Estado' %}</th>
+                            <th>{% trans 'Contratación' %}</th>
+                            <th>{% trans 'Años' %}</th>
+                            <th>{% trans 'Salario' %}</th>
+                            <th>{% trans 'Acciones' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for staff in page_obj %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <span class="text-white fw-bold">{{ staff.first_name|first }}{{ staff.last_name|first }}</span>
+                                    </div>
+                                    <div>
+                                        <strong>{{ staff.full_name }}</strong>
+                                        <br><small class="text-muted">{{ staff.email }}</small>
+                                        {% if staff.phone %}
+                                        <br><small class="text-muted">{{ staff.phone }}</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">{{ staff.employee_id }}</span>
+                            </td>
+                            <td>{{ staff.position }}</td>
+                            <td>{{ staff.department }}</td>
+                            <td>
+                                {% if staff.employment_status == 'active' %}
+                                <span class="badge bg-success">{% trans 'Activo' %}</span>
+                                {% elif staff.employment_status == 'inactive' %}
+                                <span class="badge bg-warning">{% trans 'Inactivo' %}</span>
+                                {% elif staff.employment_status == 'suspended' %}
+                                <span class="badge bg-danger">{% trans 'Suspendido' %}</span>
+                                {% elif staff.employment_status == 'terminated' %}
+                                <span class="badge bg-dark">{% trans 'Terminado' %}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ staff.hire_date|date:"d/m/Y" }}</td>
+                            <td>
+                                <span class="badge bg-info">{{ staff.years_of_service }}</span>
+                            </td>
+                            <td>
+                                <strong>€{{ staff.salary|floatformat:2 }}</strong>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'staff_web:staff_detail' staff.id %}" 
+                                       class="btn btn-sm btn-info" title="{% trans 'Ver detalles' %}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'staff_web:staff_update' staff.id %}" 
+                                       class="btn btn-sm btn-warning" title="{% trans 'Editar' %}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'staff_web:staff_delete' staff.id %}" 
+                                       class="btn btn-sm btn-danger" title="{% trans 'Eliminar' %}">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="{% trans 'Navegación de páginas' %}">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
+            {% else %}
+            <div class="text-center py-4">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">{% trans 'No se encontró personal' %}</h5>
+                <p class="text-muted">{% trans 'No hay empleados que coincidan con los filtros aplicados.' %}</p>
+                <a href="{% url 'staff_web:staff_create' %}" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> {% trans 'Contratar primer empleado' %}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // DataTable para mejor funcionalidad
+    $('#staffTable').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+        },
+        "pageLength": 25,
+        "order": [[0, "asc"]]
+    });
+});
+</script>
+{% endblock %} 
