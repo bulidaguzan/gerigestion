@@ -25,7 +25,7 @@
     <!-- Filtros y Búsqueda -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">{% trans 'Filtros y Búsqueda' %}</h6>
+                               <h6 class="m-0 font-weight-bold text-secondary">{% trans 'Filtros y Búsqueda' %}</h6>
         </div>
         <div class="card-body">
             <form method="get" class="row">
@@ -82,15 +82,15 @@
     <!-- Lista de Personal -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-                {% trans 'Personal' %} 
-                <span class="badge bg-primary">{{ page_obj.paginator.count }}</span>
-            </h6>
+                               <h6 class="m-0 font-weight-bold text-secondary">
+                       {% trans 'Personal' %} 
+                       <span class="badge bg-primary">{{ page_obj.paginator.count }}</span>
+                   </h6>
         </div>
         <div class="card-body">
             {% if page_obj %}
             <div class="table-responsive">
-                <table class="table table-bordered" id="staffTable" width="100%" cellspacing="0">
+                                       <table class="table" id="staffTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>{% trans 'Empleado' %}</th>

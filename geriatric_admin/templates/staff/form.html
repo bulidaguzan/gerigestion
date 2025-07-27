@@ -45,13 +45,13 @@
     <!-- Formulario -->
     <div class="card shadow">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-                {% if action == 'create' %}
-                    {% trans 'Información del Nuevo Empleado' %}
-                {% else %}
-                    {% trans 'Información del Empleado' %}
-                {% endif %}
-            </h6>
+                         <h6 class="m-0 font-weight-bold text-secondary">
+                 {% if action == 'create' %}
+                     {% trans 'Información del Nuevo Empleado' %}
+                 {% else %}
+                     {% trans 'Información del Empleado' %}
+                 {% endif %}
+             </h6>
         </div>
         <div class="card-body">
             <form method="post" novalidate>
@@ -60,9 +60,9 @@
                 <!-- Información Personal -->
                 <div class="row mb-4">
                     <div class="col-12">
-                        <h5 class="text-primary mb-3">
-                            <i class="fas fa-user"></i> {% trans 'Información Personal' %}
-                        </h5>
+                        <h6 class="text-secondary mb-3 fw-bold">
+                            <i class="fas fa-user me-2"></i> {% trans 'Información Personal' %}
+                        </h6>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="{{ form.first_name.id_for_label }}" class="form-label">
@@ -124,9 +124,9 @@
                 <!-- Información de Contacto -->
                 <div class="row mb-4">
                     <div class="col-12">
-                        <h5 class="text-primary mb-3">
-                            <i class="fas fa-address-book"></i> {% trans 'Información de Contacto' %}
-                        </h5>
+                        <h6 class="text-secondary mb-3 fw-bold">
+                            <i class="fas fa-address-book me-2"></i> {% trans 'Información de Contacto' %}
+                        </h6>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="{{ form.phone.id_for_label }}" class="form-label">
@@ -177,9 +177,9 @@
                 <!-- Información Laboral -->
                 <div class="row mb-4">
                     <div class="col-12">
-                        <h5 class="text-primary mb-3">
-                            <i class="fas fa-briefcase"></i> {% trans 'Información Laboral' %}
-                        </h5>
+                        <h6 class="text-secondary mb-3 fw-bold">
+                            <i class="fas fa-briefcase me-2"></i> {% trans 'Información Laboral' %}
+                        </h6>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="{{ form.employee_id.id_for_label }}" class="form-label">
@@ -252,9 +252,9 @@
                 <!-- Horarios -->
                 <div class="row mb-4">
                     <div class="col-12">
-                        <h5 class="text-primary mb-3">
-                            <i class="fas fa-clock"></i> {% trans 'Horarios' %}
-                        </h5>
+                        <h6 class="text-secondary mb-3 fw-bold">
+                            <i class="fas fa-clock me-2"></i> {% trans 'Horarios' %}
+                        </h6>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="{{ form.work_schedule.id_for_label }}" class="form-label">
@@ -283,9 +283,9 @@
                 <!-- Contacto de Emergencia -->
                 <div class="row mb-4">
                     <div class="col-12">
-                        <h5 class="text-primary mb-3">
-                            <i class="fas fa-exclamation-triangle"></i> {% trans 'Contacto de Emergencia' %}
-                        </h5>
+                        <h6 class="text-secondary mb-3 fw-bold">
+                            <i class="fas fa-exclamation-triangle me-2"></i> {% trans 'Contacto de Emergencia' %}
+                        </h6>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="{{ form.emergency_contact_name.id_for_label }}" class="form-label">
@@ -325,9 +325,9 @@
                 <!-- Información Médica -->
                 <div class="row mb-4">
                     <div class="col-12">
-                        <h5 class="text-primary mb-3">
-                            <i class="fas fa-heartbeat"></i> {% trans 'Información Médica' %}
-                        </h5>
+                        <h6 class="text-secondary mb-3 fw-bold">
+                            <i class="fas fa-heartbeat me-2"></i> {% trans 'Información Médica' %}
+                        </h6>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="{{ form.blood_type.id_for_label }}" class="form-label">
@@ -367,9 +367,9 @@
                 <!-- Información Adicional -->
                 <div class="row mb-4">
                     <div class="col-12">
-                        <h5 class="text-primary mb-3">
-                            <i class="fas fa-info-circle"></i> {% trans 'Información Adicional' %}
-                        </h5>
+                        <h6 class="text-secondary mb-3 fw-bold">
+                            <i class="fas fa-info-circle me-2"></i> {% trans 'Información Adicional' %}
+                        </h6>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="{{ form.skills.id_for_label }}" class="form-label">

@@ -22,99 +22,83 @@
         </div>
     </div>
 
-    <!-- Estadísticas Principales -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                {% trans 'Total de Personal' %}
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_staff }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                {% trans 'Personal Activo' %}
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ active_staff }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                {% trans 'Personal Inactivo' %}
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ inactive_staff }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user-times fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                {% trans 'Personal Suspendido' %}
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ suspended_staff }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user-slash fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+               <!-- Estadísticas Principales -->
+           <div class="row mb-4">
+               <div class="col-xl-3 col-md-6 mb-4">
+                   <div class="stats-card">
+                       <div class="d-flex align-items-center">
+                           <div class="flex-grow-1">
+                               <h3>{{ total_staff }}</h3>
+                               <p>{% trans 'Total de Personal' %}</p>
+                           </div>
+                           <div class="icon-large">
+                               <i class="fas fa-users"></i>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+       
+               <div class="col-xl-3 col-md-6 mb-4">
+                   <div class="stats-card" style="border-left-color: var(--success-color);">
+                       <div class="d-flex align-items-center">
+                           <div class="flex-grow-1">
+                               <h3 style="color: var(--success-color);">{{ active_staff }}</h3>
+                               <p>{% trans 'Personal Activo' %}</p>
+                           </div>
+                           <div class="icon-large" style="color: var(--success-color);">
+                               <i class="fas fa-user-check"></i>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+       
+               <div class="col-xl-3 col-md-6 mb-4">
+                   <div class="stats-card" style="border-left-color: var(--warning-color);">
+                       <div class="d-flex align-items-center">
+                           <div class="flex-grow-1">
+                               <h3 style="color: var(--warning-color);">{{ inactive_staff }}</h3>
+                               <p>{% trans 'Personal Inactivo' %}</p>
+                           </div>
+                           <div class="icon-large" style="color: var(--warning-color);">
+                               <i class="fas fa-user-times"></i>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+       
+               <div class="col-xl-3 col-md-6 mb-4">
+                   <div class="stats-card" style="border-left-color: var(--danger-color);">
+                       <div class="d-flex align-items-center">
+                           <div class="flex-grow-1">
+                               <h3 style="color: var(--danger-color);">{{ suspended_staff }}</h3>
+                               <p>{% trans 'Personal Suspendido' %}</p>
+                           </div>
+                           <div class="icon-large" style="color: var(--danger-color);">
+                               <i class="fas fa-user-slash"></i>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
 
     <div class="row">
         <!-- Personal por Departamento -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Personal por Departamento' %}</h6>
+                                           <h6 class="m-0 font-weight-bold text-secondary">{% trans 'Personal por Departamento' %}</h6>
                 </div>
                 <div class="card-body">
                     {% if department_stats %}
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>{% trans 'Departamento' %}</th>
-                                        <th>{% trans 'Empleados' %}</th>
-                                        <th>{% trans 'Porcentaje' %}</th>
-                                    </tr>
-                                </thead>
+                                                       <div class="table-responsive">
+                                   <table class="table">
+                                       <thead>
+                                           <tr>
+                                               <th>{% trans 'Departamento' %}</th>
+                                               <th>{% trans 'Empleados' %}</th>
+                                               <th>{% trans 'Porcentaje' %}</th>
+                                           </tr>
+                                       </thead>
                                 <tbody>
                                     {% for dept in department_stats %}
                                     <tr>
@@ -149,19 +133,19 @@
         <div class="col-lg-6 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Personal por Posición' %}</h6>
+                                           <h6 class="m-0 font-weight-bold text-secondary">{% trans 'Personal por Posición' %}</h6>
                 </div>
                 <div class="card-body">
                     {% if position_stats %}
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>{% trans 'Posición' %}</th>
-                                        <th>{% trans 'Empleados' %}</th>
-                                        <th>{% trans 'Porcentaje' %}</th>
-                                    </tr>
-                                </thead>
+                                                       <div class="table-responsive">
+                                   <table class="table">
+                                       <thead>
+                                           <tr>
+                                               <th>{% trans 'Posición' %}</th>
+                                               <th>{% trans 'Empleados' %}</th>
+                                               <th>{% trans 'Porcentaje' %}</th>
+                                           </tr>
+                                       </thead>
                                 <tbody>
                                     {% for pos in position_stats %}
                                     <tr>
@@ -198,9 +182,9 @@
         <div class="col-lg-6 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-user-plus"></i> {% trans 'Empleados Recién Contratados' %}
-                    </h6>
+                                               <h6 class="m-0 font-weight-bold text-secondary">
+                               <i class="fas fa-user-plus me-2"></i> {% trans 'Empleados Recién Contratados' %}
+                           </h6>
                 </div>
                 <div class="card-body">
                     {% if recent_hires %}
@@ -242,9 +226,9 @@
         <div class="col-lg-6 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-medal"></i> {% trans 'Empleados con Más Años de Servicio' %}
-                    </h6>
+                                               <h6 class="m-0 font-weight-bold text-secondary">
+                               <i class="fas fa-medal me-2"></i> {% trans 'Empleados con Más Años de Servicio' %}
+                           </h6>
                 </div>
                 <div class="card-body">
                     {% if senior_staff %}
@@ -290,21 +274,21 @@
         <div class="col-12 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-euro-sign"></i> {% trans 'Salario Promedio por Departamento' %}
-                    </h6>
+                                           <h6 class="m-0 font-weight-bold text-secondary">
+                           <i class="fas fa-euro-sign me-2"></i> {% trans 'Salario Promedio por Departamento' %}
+                       </h6>
                 </div>
                 <div class="card-body">
                     {% if avg_salary_by_dept %}
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>{% trans 'Departamento' %}</th>
-                                        <th>{% trans 'Salario Promedio' %}</th>
-                                        <th>{% trans 'Comparación' %}</th>
-                                    </tr>
-                                </thead>
+                                                       <div class="table-responsive">
+                                   <table class="table">
+                                       <thead>
+                                           <tr>
+                                               <th>{% trans 'Departamento' %}</th>
+                                               <th>{% trans 'Salario Promedio' %}</th>
+                                               <th>{% trans 'Comparación' %}</th>
+                                           </tr>
+                                       </thead>
                                 <tbody>
                                     {% for dept in avg_salary_by_dept %}
                                     <tr>
@@ -341,7 +325,7 @@
         <div class="col-12">
             <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Acciones Rápidas' %}</h6>
+                                           <h6 class="m-0 font-weight-bold text-secondary">{% trans 'Acciones Rápidas' %}</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
