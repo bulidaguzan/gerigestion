@@ -13,6 +13,7 @@ class RoomAdmin(admin.ModelAdmin):
         'total_beds', 
         'occupied_beds', 
         'available_beds_display',
+        'residents_count_display',
         'occupancy_rate_display',
         'status_display',
         'is_available_display'
@@ -72,6 +73,20 @@ class RoomAdmin(admin.ModelAdmin):
             return format_html('<span style="color: green; font-weight: bold;">{}</span>', available)
     available_beds_display.short_description = _('Camas Disponibles')
     available_beds_display.admin_order_field = 'occupied_beds'
+    
+    def residents_count_display(self, obj):
+        """Muestra el número de residentes asignados"""
+        count = obj.residents_count
+        if count > 0:
+            return format_html(
+                '<span style="color: blue; font-weight: bold;">{} {}</span>', 
+                count, 
+                _('residente' if count == 1 else 'residentes')
+            )
+        else:
+            return format_html('<span style="color: gray;">{}</span>', _('Sin residentes'))
+    residents_count_display.short_description = _('Residentes')
+    residents_count_display.admin_order_field = 'residents_count'
     
     def occupancy_rate_display(self, obj):
         """Muestra el porcentaje de ocupación con color"""

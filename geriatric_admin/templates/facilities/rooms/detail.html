@@ -161,6 +161,66 @@
                     <div id="occupancyMessage" class="mt-3"></div>
                 </div>
             </div>
+
+            <!-- Residentes Asignados -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Residentes Asignados' %}</h6>
+                    <a href="{% url 'facilities_web:room_manage_residents' room.id %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-users"></i> {% trans 'Gestionar Residentes' %}
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if residents %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans 'Nombre' %}</th>
+                                        <th>{% trans 'Edad' %}</th>
+                                        <th>{% trans 'Fecha de Admisión' %}</th>
+                                        <th>{% trans 'Acciones' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for resident in residents %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ resident.full_name }}</strong>
+                                            {% if resident.phone %}
+                                            <br><small class="text-muted">{{ resident.phone }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ resident.age }} {% trans 'años' %}</td>
+                                        <td>{{ resident.admission_date|date:"d/m/Y" }}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{% url 'residents_web:resident_detail' resident.id %}" 
+                                                   class="btn btn-outline-primary" title="{% trans 'Ver detalles' %}">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{% url 'residents_web:resident_update' resident.id %}" 
+                                                   class="btn btn-outline-warning" title="{% trans 'Editar' %}">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">{% trans 'No hay residentes asignados a esta habitación.' %}</p>
+                            <a href="{% url 'facilities_web:room_manage_residents' room.id %}" class="btn btn-primary">
+                                <i class="fas fa-user-plus"></i> {% trans 'Asignar Residentes' %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
         <div class="col-lg-4">

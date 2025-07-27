@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Gestionar Residentes' %} - {% trans 'Habitación' %} {{ room.room_number }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">{% trans 'Gestionar Residentes' %}</h1>
+            <p class="text-muted">{% trans 'Habitación' %} {{ room.room_number }} - {% trans 'Piso' %} {{ room.floor }}</p>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="{% url 'facilities_web:room_detail' room.id %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> {% trans 'Volver a Habitación' %}
+            </a>
+            <a href="{% url 'facilities_web:room_list' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-list"></i> {% trans 'Lista de Habitaciones' %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Información de la Habitación -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Información de la Habitación' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-primary">{{ room.room_number }}</h4>
+                                <p class="text-muted">{% trans 'Número de Habitación' %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-info">{{ room.floor }}</h4>
+                                <p class="text-muted">{% trans 'Piso' %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-success">{{ room.available_beds }}</h4>
+                                <p class="text-muted">{% trans 'Camas Disponibles' %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-warning">{{ room.occupied_beds }}</h4>
+                                <p class="text-muted">{% trans 'Camas Ocupadas' %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Residentes Asignados -->
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-users"></i> {% trans 'Residentes Asignados' %} 
+                        <span class="badge bg-primary">{{ assigned_residents.count }}</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if assigned_residents %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans 'Nombre' %}</th>
+                                        <th>{% trans 'Edad' %}</th>
+                                        <th>{% trans 'Acciones' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for resident in assigned_residents %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ resident.full_name }}</strong>
+                                            {% if resident.phone %}
+                                            <br><small class="text-muted">{{ resident.phone }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ resident.age }} {% trans 'años' %}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{% url 'residents_web:resident_detail' resident.id %}" 
+                                                   class="btn btn-outline-primary" title="{% trans 'Ver detalles' %}">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <form method="post" style="display: inline;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="unassign">
+                                                    <input type="hidden" name="resident_id" value="{{ resident.id }}">
+                                                    <button type="submit" class="btn btn-outline-danger" 
+                                                            title="{% trans 'Desasignar' %}"
+                                                            onclick="return confirm('{% trans '¿Estás seguro de desasignar a este residente?' %}')">
+                                                        <i class="fas fa-user-minus"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">{% trans 'No hay residentes asignados a esta habitación.' %}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Residentes Disponibles -->
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-user-plus"></i> {% trans 'Residentes Disponibles' %}
+                        <span class="badge bg-success">{{ available_residents.count }}</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if available_residents %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans 'Nombre' %}</th>
+                                        <th>{% trans 'Edad' %}</th>
+                                        <th>{% trans 'Acciones' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for resident in available_residents %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ resident.full_name }}</strong>
+                                            {% if resident.phone %}
+                                            <br><small class="text-muted">{{ resident.phone }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ resident.age }} {% trans 'años' %}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{% url 'residents_web:resident_detail' resident.id %}" 
+                                                   class="btn btn-outline-primary" title="{% trans 'Ver detalles' %}">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <form method="post" style="display: inline;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="assign">
+                                                    <input type="hidden" name="resident_id" value="{{ resident.id }}">
+                                                    <button type="submit" class="btn btn-outline-success" 
+                                                            title="{% trans 'Asignar' %}"
+                                                            {% if room.available_beds == 0 %}disabled{% endif %}>
+                                                        <i class="fas fa-user-plus"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-user-plus fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">{% trans 'No hay residentes disponibles para asignar.' %}</p>
+                            <a href="{% url 'residents_web:resident_create' %}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> {% trans 'Crear Nuevo Residente' %}
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advertencias y Notas -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans 'Información Importante' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>{% trans 'Capacidad de la Habitación' %}</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-bed text-primary"></i> {% trans 'Total de camas' %}: {{ room.total_beds }}</li>
+                                <li><i class="fas fa-user-check text-success"></i> {% trans 'Camas disponibles' %}: {{ room.available_beds }}</li>
+                                <li><i class="fas fa-user text-warning"></i> {% trans 'Camas ocupadas' %}: {{ room.occupied_beds }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>{% trans 'Reglas de Asignación' %}</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-info-circle text-info"></i> {% trans 'Solo se pueden asignar residentes sin habitación' %}</li>
+                                <li><i class="fas fa-info-circle text-info"></i> {% trans 'No se puede exceder la capacidad de la habitación' %}</li>
+                                <li><i class="fas fa-info-circle text-info"></i> {% trans 'Los cambios se aplican inmediatamente' %}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

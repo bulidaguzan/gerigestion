@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Eliminar Residente - Sistema de Administración Geriátrica{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-danger">
+                        <i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-times fa-3x text-danger mb-3"></i>
+                        <h5 class="text-gray-800">¿Estás seguro de que quieres eliminar este residente?</h5>
+                        <p class="text-muted">Esta acción no se puede deshacer.</p>
+                    </div>
+
+                    <!-- Información del residente -->
+                    <div class="card border-left-danger mb-4">
+                        <div class="card-body">
+                            <h6 class="font-weight-bold text-danger">Residente a eliminar:</h6>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0 font-weight-bold">Nombre:</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ resident.full_name }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0 font-weight-bold">Edad:</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ resident.age }} años</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0 font-weight-bold">Habitación:</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">
+                                        {% if resident.room %}
+                                        {{ resident.room.room_number }}
+                                        {% else %}
+                                        Sin asignar
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0 font-weight-bold">Fecha de Admisión:</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ resident.admission_date|date:"d/m/Y" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advertencia -->
+                    <div class="alert alert-warning" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle"></i> Advertencia
+                        </h6>
+                        <p class="mb-0">
+                            Al eliminar este residente, se eliminarán todos los datos asociados, incluyendo:
+                        </p>
+                        <ul class="mb-0 mt-2">
+                            <li>Información personal y médica</li>
+                            <li>Historial de contacto de emergencia</li>
+                            <li>Notas y observaciones</li>
+                            <li>Todos los registros relacionados</li>
+                        </ul>
+                    </div>
+
+                    <!-- Formulario de confirmación -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'residents_web:resident_detail' resident.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Sí, Eliminar Residente
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

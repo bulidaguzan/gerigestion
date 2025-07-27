@@ -91,6 +91,17 @@ class Room(models.Model):
         """Retorna True si hay camas disponibles"""
         return self.available_beds > 0 and self.status == 'available'
     
+    @property
+    def residents(self):
+        """Retorna los residentes asignados a esta habitación"""
+        from apps.residents.models import Resident
+        return Resident.objects.filter(room=self)
+    
+    @property
+    def residents_count(self):
+        """Retorna el número de residentes asignados"""
+        return self.residents.count()
+    
     def clean(self):
         """Validación personalizada del modelo"""
         from django.core.exceptions import ValidationError

@@ -148,6 +148,7 @@
                             <th>{% trans 'Total Camas' %}</th>
                             <th>{% trans 'Ocupadas' %}</th>
                             <th>{% trans 'Disponibles' %}</th>
+                            <th>{% trans 'Residentes' %}</th>
                             <th>{% trans 'Ocupación' %}</th>
                             <th>{% trans 'Estado' %}</th>
                             <th>{% trans 'Acciones' %}</th>
@@ -175,6 +176,14 @@
                                 {% endif %}
                             </td>
                             <td>
+                                {% if room.residents_count > 0 %}
+                                <span class="badge bg-primary">{{ room.residents_count }}</span>
+                                <br><small class="text-muted">{{ room.residents_count }} {% trans 'asignado' %}{{ room.residents_count|pluralize:"s" }}</small>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
                                 {% if room.occupancy_rate >= 90 %}
                                 <span class="text-danger fw-bold">{{ room.occupancy_rate }}%</span>
                                 {% elif room.occupancy_rate >= 70 %}
@@ -197,6 +206,10 @@
                                     <a href="{% url 'facilities_web:room_detail' room.id %}" 
                                        class="btn btn-sm btn-info" title="{% trans 'Ver detalles' %}">
                                         <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'facilities_web:room_manage_residents' room.id %}" 
+                                       class="btn btn-sm btn-primary" title="{% trans 'Gestionar residentes' %}">
+                                        <i class="fas fa-users"></i>
                                     </a>
                                     <a href="{% url 'facilities_web:room_update' room.id %}" 
                                        class="btn btn-sm btn-warning" title="{% trans 'Editar' %}">

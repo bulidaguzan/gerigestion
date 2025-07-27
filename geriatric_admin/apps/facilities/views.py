@@ -69,8 +69,12 @@ def room_detail(request, room_id):
     """Vista para mostrar detalles de una habitación"""
     room = get_object_or_404(Room, id=room_id)
     
+    # Obtener residentes asignados a esta habitación
+    residents = room.residents.all()
+    
     context = {
         'room': room,
+        'residents': residents,
     }
     
     return render(request, 'facilities/rooms/detail.html', context)
@@ -183,6 +187,61 @@ def room_update_occupancy(request, room_id):
             'success': False,
             'error': str(e)
         })
+
+
+@login_required
+def room_manage_residents(request, room_id):
+    """Vista para gestionar residentes de una habitación"""
+    room = get_object_or_404(Room, id=room_id)
+    
+    if request.method == 'POST':
+        # Lógica para asignar/desasignar residentes
+        action = request.POST.get('action')
+        resident_id = request.POST.get('resident_id')
+        
+        if action == 'assign' and resident_id:
+            from apps.residents.models import Resident
+            try:
+                resident = Resident.objects.get(id=resident_id)
+                if resident.room is None:
+                    resident.room = room
+                    resident.save()
+                    messages.success(request, _('Residente {} asignado a la habitación {}.').format(
+                        resident.full_name, room.room_number
+                    ))
+                else:
+                    messages.warning(request, _('El residente {} ya está asignado a otra habitación.').format(
+                        resident.full_name
+                    ))
+            except Resident.DoesNotExist:
+                messages.error(request, _('Residente no encontrado.'))
+        
+        elif action == 'unassign' and resident_id:
+            from apps.residents.models import Resident
+            try:
+                resident = Resident.objects.get(id=resident_id, room=room)
+                resident.room = None
+                resident.save()
+                messages.success(request, _('Residente {} desasignado de la habitación {}.').format(
+                    resident.full_name, room.room_number
+                ))
+            except Resident.DoesNotExist:
+                messages.error(request, _('Residente no encontrado en esta habitación.'))
+        
+        return redirect('facilities_web:room_manage_residents', room_id=room.id)
+    
+    # Obtener residentes asignados y disponibles
+    from apps.residents.models import Resident
+    assigned_residents = room.residents.all()
+    available_residents = Resident.objects.filter(room__isnull=True)
+    
+    context = {
+        'room': room,
+        'assigned_residents': assigned_residents,
+        'available_residents': available_residents,
+    }
+    
+    return render(request, 'facilities/rooms/manage_residents.html', context)
 
 
 @login_required

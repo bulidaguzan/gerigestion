@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+
+{% block title %}{{ resident.full_name }} - Detalles del Residente{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-user"></i> {{ resident.full_name }}
+                </h1>
+                <div>
+                    <a href="{% url 'residents_web:resident_update' resident.id %}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <a href="{% url 'residents_web:resident_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información del residente -->
+    <div class="row">
+        <!-- Información Personal -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-user"></i> Información Personal
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Nombre:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">{{ resident.full_name }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Fecha de Nacimiento:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">{{ resident.date_of_birth|date:"d/m/Y" }} ({{ resident.age }} años)</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Género:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.gender == 'M' %}
+                                <span class="badge badge-primary">Masculino</span>
+                                {% elif resident.gender == 'F' %}
+                                <span class="badge badge-info">Femenino</span>
+                                {% else %}
+                                <span class="badge badge-secondary">Otro</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Estado Civil:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.marital_status %}
+                                {{ resident.get_marital_status_display }}
+                                {% else %}
+                                <span class="text-muted">No especificado</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Ocupación:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.occupation %}
+                                {{ resident.occupation }}
+                                {% else %}
+                                <span class="text-muted">No especificada</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de Contacto -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-phone"></i> Información de Contacto
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Teléfono:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.phone %}
+                                {{ resident.phone }}
+                                {% else %}
+                                <span class="text-muted">No disponible</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Email:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.email %}
+                                <a href="mailto:{{ resident.email }}">{{ resident.email }}</a>
+                                {% else %}
+                                <span class="text-muted">No disponible</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Dirección:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.address %}
+                                {{ resident.address }}
+                                {% if resident.city %}<br>{{ resident.city }}{% endif %}
+                                {% else %}
+                                <span class="text-muted">No disponible</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información Médica y de Admisión -->
+    <div class="row">
+        <!-- Información Médica -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-heartbeat"></i> Información Médica
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Tipo de Sangre:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.blood_type %}
+                                <span class="badge badge-danger">{{ resident.blood_type }}</span>
+                                {% else %}
+                                <span class="text-muted">No especificado</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Alergias:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.allergies %}
+                                {{ resident.allergies|linebreaks }}
+                                {% else %}
+                                <span class="text-muted">Ninguna conocida</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Condiciones Médicas:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.medical_conditions %}
+                                {{ resident.medical_conditions|linebreaks }}
+                                {% else %}
+                                <span class="text-muted">No especificadas</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Medicamentos:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.medications %}
+                                {{ resident.medications|linebreaks }}
+                                {% else %}
+                                <span class="text-muted">No especificados</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de Admisión -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-calendar-plus"></i> Información de Admisión
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Fecha de Admisión:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">{{ resident.admission_date|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Tiempo de Estancia:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">{{ resident.length_of_stay }} días</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 font-weight-bold">Habitación:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="text-muted mb-0">
+                                {% if resident.room %}
+                                <span class="badge badge-success">{{ resident.room.room_number }}</span>
+                                <br><small class="text-muted">Piso {{ resident.room.floor }}</small>
+                                {% else %}
+                                <span class="badge badge-warning">Sin asignar</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contacto de Emergencia -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-exclamation-triangle"></i> Contacto de Emergencia
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0 font-weight-bold">Nombre:</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ resident.emergency_contact_name }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0 font-weight-bold">Relación:</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">{{ resident.get_emergency_contact_relationship_display }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0 font-weight-bold">Teléfono:</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">
+                                        <a href="tel:{{ resident.emergency_contact_phone }}">{{ resident.emergency_contact_phone }}</a>
+                                    </p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p class="mb-0 font-weight-bold">Email:</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p class="text-muted mb-0">
+                                        {% if resident.emergency_contact_email %}
+                                        <a href="mailto:{{ resident.emergency_contact_email }}">{{ resident.emergency_contact_email }}</a>
+                                        {% else %}
+                                        <span class="text-muted">No disponible</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notas Adicionales -->
+    {% if resident.notes %}
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-sticky-note"></i> Notas Adicionales
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-0">{{ resident.notes|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Información de Auditoría -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-info-circle"></i> Información de Auditoría
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-0"><strong>Creado:</strong> {{ resident.created_at|date:"d/m/Y H:i" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-0"><strong>Última actualización:</strong> {{ resident.updated_at|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
