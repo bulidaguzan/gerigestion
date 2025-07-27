@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Gestión de Habitaciones' %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">{% trans 'Gestión de Habitaciones' %}</h1>
+            <p class="text-muted">{% trans 'Administra las habitaciones del geriátrico' %}</p>
+        </div>
+        <a href="{% url 'facilities_web:room_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> {% trans 'Nueva Habitación' %}
+        </a>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                {% trans 'Total Habitaciones' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_rooms }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-bed fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                {% trans 'Habitaciones Disponibles' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ available_rooms }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                {% trans 'Total Camas' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_beds }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-bed fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                {% trans 'Ocupación' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ occupancy_rate }}%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{% trans 'Filtros de Búsqueda' %}</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="search" class="form-label">{% trans 'Buscar' %}</label>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           value="{{ search }}" placeholder="{% trans 'Número o descripción...' %}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="floor" class="form-label">{% trans 'Piso' %}</label>
+                    <input type="number" class="form-control" id="floor" name="floor" 
+                           value="{{ floor_filter }}" min="1">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="status" class="form-label">{% trans 'Estado' %}</label>
+                    <select class="form-control" id="status" name="status">
+                        <option value="">{% trans 'Todos los estados' %}</option>
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search"></i> {% trans 'Filtrar' %}
+                    </button>
+                    <a href="{% url 'facilities_web:room_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Habitaciones -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{% trans 'Habitaciones' %}</h6>
+        </div>
+        <div class="card-body">
+            {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-bordered" id="roomsTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'Habitación' %}</th>
+                            <th>{% trans 'Piso' %}</th>
+                            <th>{% trans 'Total Camas' %}</th>
+                            <th>{% trans 'Ocupadas' %}</th>
+                            <th>{% trans 'Disponibles' %}</th>
+                            <th>{% trans 'Ocupación' %}</th>
+                            <th>{% trans 'Estado' %}</th>
+                            <th>{% trans 'Acciones' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for room in page_obj %}
+                        <tr>
+                            <td>
+                                <strong>{{ room.room_number }}</strong>
+                                {% if room.description %}
+                                <br><small class="text-muted">{{ room.description|truncatechars:50 }}</small>
+                                {% endif %}
+                            </td>
+                            <td>{{ room.floor }}</td>
+                            <td>{{ room.total_beds }}</td>
+                            <td>{{ room.occupied_beds }}</td>
+                            <td>
+                                {% if room.available_beds == 0 %}
+                                <span class="badge bg-danger">{{ room.available_beds }}</span>
+                                {% elif room.available_beds <= 2 %}
+                                <span class="badge bg-warning">{{ room.available_beds }}</span>
+                                {% else %}
+                                <span class="badge bg-success">{{ room.available_beds }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if room.occupancy_rate >= 90 %}
+                                <span class="text-danger fw-bold">{{ room.occupancy_rate }}%</span>
+                                {% elif room.occupancy_rate >= 70 %}
+                                <span class="text-warning fw-bold">{{ room.occupancy_rate }}%</span>
+                                {% else %}
+                                <span class="text-success fw-bold">{{ room.occupancy_rate }}%</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if room.status == 'available' %}
+                                <span class="badge bg-success">{% trans 'Disponible' %}</span>
+                                {% elif room.status == 'maintenance' %}
+                                <span class="badge bg-warning">{% trans 'Mantenimiento' %}</span>
+                                {% elif room.status == 'quarantine' %}
+                                <span class="badge bg-danger">{% trans 'Cuarentena' %}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'facilities_web:room_detail' room.id %}" 
+                                       class="btn btn-sm btn-info" title="{% trans 'Ver detalles' %}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'facilities_web:room_update' room.id %}" 
+                                       class="btn btn-sm btn-warning" title="{% trans 'Editar' %}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'facilities_web:room_delete' room.id %}" 
+                                       class="btn btn-sm btn-danger" title="{% trans 'Eliminar' %}">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="{% trans 'Navegación de páginas' %}">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if floor_filter %}&floor={{ floor_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if floor_filter %}&floor={{ floor_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if floor_filter %}&floor={{ floor_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if floor_filter %}&floor={{ floor_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if floor_filter %}&floor={{ floor_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
+            {% else %}
+            <div class="text-center py-4">
+                <i class="fas fa-bed fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">{% trans 'No se encontraron habitaciones' %}</h5>
+                <p class="text-muted">{% trans 'No hay habitaciones que coincidan con los filtros aplicados.' %}</p>
+                <a href="{% url 'facilities_web:room_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> {% trans 'Crear primera habitación' %}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // DataTable para mejor funcionalidad
+    $('#roomsTable').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+        },
+        "pageLength": 25,
+        "order": [[1, "asc"], [0, "asc"]]
+    });
+});
+</script>
+{% endblock %} 

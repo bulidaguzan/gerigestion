@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Dashboard de Habitaciones' %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">{% trans 'Dashboard de Habitaciones' %}</h1>
+            <p class="text-muted">{% trans 'Vista general del estado de las habitaciones' %}</p>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="{% url 'facilities_web:room_list' %}" class="btn btn-primary">
+                <i class="fas fa-list"></i> {% trans 'Ver Todas' %}
+            </a>
+            <a href="{% url 'facilities_web:room_create' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> {% trans 'Nueva Habitación' %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Estadísticas Principales -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                {% trans 'Total Habitaciones' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_rooms }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-bed fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                {% trans 'Disponibles' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ available_rooms }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                {% trans 'Mantenimiento' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ maintenance_rooms }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tools fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                {% trans 'Cuarentena' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ quarantine_rooms }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-shield-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas de Camas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                {% trans 'Total Camas' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_beds }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-bed fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                {% trans 'Ocupadas' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ occupied_beds }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                {% trans 'Disponibles' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ available_beds }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                {% trans 'Ocupación' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ occupancy_rate }}%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Gráfico de Ocupación por Piso -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Ocupación por Piso' %}</h6>
+                </div>
+                <div class="card-body">
+                    {% if floor_stats %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Piso' %}</th>
+                                    <th>{% trans 'Habitaciones' %}</th>
+                                    <th>{% trans 'Total Camas' %}</th>
+                                    <th>{% trans 'Ocupadas' %}</th>
+                                    <th>{% trans 'Disponibles' %}</th>
+                                    <th>{% trans 'Ocupación' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for floor in floor_stats %}
+                                <tr>
+                                    <td><strong>{{ floor.floor }}</strong></td>
+                                    <td>{{ floor.total_rooms }}</td>
+                                    <td>{{ floor.total_beds }}</td>
+                                    <td>{{ floor.occupied_beds }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if floor.available_beds == 0 %}danger{% elif floor.available_beds <= 2 %}warning{% else %}success{% endif %}">
+                                            {{ floor.available_beds }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-{% if floor.occupancy_rate >= 90 %}danger{% elif floor.occupancy_rate >= 70 %}warning{% else %}success{% endif %}" 
+                                                 role="progressbar" 
+                                                 style="width: {{ floor.occupancy_rate }}%" 
+                                                 aria-valuenow="{{ floor.occupancy_rate }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                {{ floor.occupancy_rate }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">{% trans 'No hay datos disponibles' %}</h5>
+                        <p class="text-muted">{% trans 'Crea habitaciones para ver las estadísticas por piso.' %}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Habitaciones con Baja Disponibilidad -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        <i class="fas fa-exclamation-triangle"></i> {% trans 'Baja Disponibilidad' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if low_availability_rooms %}
+                    <div class="list-group list-group-flush">
+                        {% for room in low_availability_rooms %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ room.room_number }}</strong>
+                                <br><small class="text-muted">{% trans 'Piso' %} {{ room.floor }}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-{% if room.available_beds == 0 %}danger{% else %}warning{% endif %}">
+                                    {{ room.available_beds }} {% trans 'disponible' %}{{ room.available_beds|pluralize:"s" }}
+                                </span>
+                                <br><small class="text-muted">{{ room.occupancy_rate }}% {% trans 'ocupada' %}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'facilities_web:room_list' %}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-eye"></i> {% trans 'Ver Todas' %}
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h5 class="text-success">{% trans '¡Excelente!' %}</h5>
+                        <p class="text-muted">{% trans 'Todas las habitaciones tienen buena disponibilidad.' %}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Acciones Rápidas' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'facilities_web:room_create' %}" class="btn btn-success w-100">
+                                <i class="fas fa-plus"></i><br>
+                                {% trans 'Nueva Habitación' %}
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'facilities_web:room_list' %}" class="btn btn-primary w-100">
+                                <i class="fas fa-list"></i><br>
+                                {% trans 'Ver Todas' %}
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'facilities_web:room_list' %}?status=available" class="btn btn-info w-100">
+                                <i class="fas fa-check-circle"></i><br>
+                                {% trans 'Disponibles' %}
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'facilities_web:room_list' %}?status=maintenance" class="btn btn-warning w-100">
+                                <i class="fas fa-tools"></i><br>
+                                {% trans 'Mantenimiento' %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Actualizar dashboard cada 30 segundos
+    setInterval(function() {
+        location.reload();
+    }, 30000);
+});
+</script>
+{% endblock %} 

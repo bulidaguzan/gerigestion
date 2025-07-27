@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Detalles de Habitación' %} {{ room.room_number }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">{% trans 'Habitación' %} {{ room.room_number }}</h1>
+            <p class="text-muted">{% trans 'Información detallada de la habitación' %}</p>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="{% url 'facilities_web:room_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> {% trans 'Volver al listado' %}
+            </a>
+            <a href="{% url 'facilities_web:room_update' room.id %}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> {% trans 'Editar' %}
+            </a>
+            <a href="{% url 'facilities_web:room_delete' room.id %}" class="btn btn-danger">
+                <i class="fas fa-trash"></i> {% trans 'Eliminar' %}
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Información Principal -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Información General' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>{% trans 'Número de Habitación' %}:</strong></td>
+                                    <td>{{ room.room_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Piso' %}:</strong></td>
+                                    <td>{{ room.floor }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Estado' %}:</strong></td>
+                                    <td>
+                                        {% if room.status == 'available' %}
+                                        <span class="badge bg-success">{% trans 'Disponible' %}</span>
+                                        {% elif room.status == 'maintenance' %}
+                                        <span class="badge bg-warning">{% trans 'Mantenimiento' %}</span>
+                                        {% elif room.status == 'quarantine' %}
+                                        <span class="badge bg-danger">{% trans 'Cuarentena' %}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Fecha de Creación' %}:</strong></td>
+                                    <td>{{ room.created_at|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>{% trans 'Total de Camas' %}:</strong></td>
+                                    <td>{{ room.total_beds }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Camas Ocupadas' %}:</strong></td>
+                                    <td>{{ room.occupied_beds }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Camas Disponibles' %}:</strong></td>
+                                    <td>
+                                        <span class="badge bg-{% if room.available_beds == 0 %}danger{% elif room.available_beds <= 2 %}warning{% else %}success{% endif %}">
+                                            {{ room.available_beds }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>{% trans 'Última Actualización' %}:</strong></td>
+                                    <td>{{ room.updated_at|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    {% if room.description %}
+                    <div class="mt-3">
+                        <h6 class="font-weight-bold">{% trans 'Descripción' %}:</h6>
+                        <p class="text-muted">{{ room.description }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Estadísticas de Ocupación -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Estadísticas de Ocupación' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <h4 class="text-{% if room.occupancy_rate >= 90 %}danger{% elif room.occupancy_rate >= 70 %}warning{% else %}success{% endif %}">
+                                    {{ room.occupancy_rate }}%
+                                </h4>
+                                <p class="text-muted">{% trans 'Porcentaje de Ocupación' %}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="progress mb-3" style="height: 25px;">
+                                <div class="progress-bar bg-{% if room.occupancy_rate >= 90 %}danger{% elif room.occupancy_rate >= 70 %}warning{% else %}success{% endif %}" 
+                                     role="progressbar" 
+                                     style="width: {{ room.occupancy_rate }}%" 
+                                     aria-valuenow="{{ room.occupancy_rate }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    {{ room.occupancy_rate }}%
+                                </div>
+                            </div>
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="border-end">
+                                        <h5 class="text-success">{{ room.available_beds }}</h5>
+                                        <small class="text-muted">{% trans 'Disponibles' %}</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <h5 class="text-primary">{{ room.occupied_beds }}</h5>
+                                    <small class="text-muted">{% trans 'Ocupadas' %}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actualización Rápida de Ocupación -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Actualizar Ocupación' %}</h6>
+                </div>
+                <div class="card-body">
+                    <form id="occupancyForm" class="row align-items-end">
+                        <div class="col-md-6">
+                            <label for="occupied_beds" class="form-label">{% trans 'Camas Ocupadas' %}</label>
+                            <input type="number" class="form-control" id="occupied_beds" 
+                                   value="{{ room.occupied_beds }}" min="0" max="{{ room.total_beds }}">
+                        </div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {% trans 'Actualizar' %}
+                            </button>
+                        </div>
+                    </form>
+                    <div id="occupancyMessage" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Estado de la Habitación -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Estado de la Habitación' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        {% if room.is_available %}
+                        <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                        <h5 class="text-success">{% trans 'Disponible' %}</h5>
+                        <p class="text-muted">{% trans 'La habitación está lista para uso' %}</p>
+                        {% else %}
+                        <i class="fas fa-times-circle fa-3x text-danger mb-2"></i>
+                        <h5 class="text-danger">{% trans 'No Disponible' %}</h5>
+                        <p class="text-muted">
+                            {% if room.is_full %}
+                                {% trans 'Habitación completamente ocupada' %}
+                            {% elif room.status == 'maintenance' %}
+                                {% trans 'Habitación en mantenimiento' %}
+                            {% elif room.status == 'quarantine' %}
+                                {% trans 'Habitación en cuarentena' %}
+                            {% endif %}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            {% trans 'Completamente Ocupada' %}
+                            {% if room.is_full %}
+                            <span class="badge bg-danger">{% trans 'Sí' %}</span>
+                            {% else %}
+                            <span class="badge bg-success">{% trans 'No' %}</span>
+                            {% endif %}
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            {% trans 'Camas Disponibles' %}
+                            <span class="badge bg-{% if room.available_beds == 0 %}danger{% elif room.available_beds <= 2 %}warning{% else %}success{% endif %}">
+                                {{ room.available_beds }}
+                            </span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            {% trans 'Porcentaje de Ocupación' %}
+                            <span class="text-{% if room.occupancy_rate >= 90 %}danger{% elif room.occupancy_rate >= 70 %}warning{% else %}success{% endif %} fw-bold">
+                                {{ room.occupancy_rate }}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones Rápidas -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Acciones Rápidas' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'facilities_web:room_update' room.id %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> {% trans 'Editar Habitación' %}
+                        </a>
+                        <button class="btn btn-success" onclick="setOccupancy(0)">
+                            <i class="fas fa-bed"></i> {% trans 'Marcar como Vacía' %}
+                        </button>
+                        <button class="btn btn-info" onclick="setOccupancy({{ room.total_beds }})">
+                            <i class="fas fa-users"></i> {% trans 'Marcar como Llena' %}
+                        </button>
+                        <a href="{% url 'facilities_web:room_delete' room.id %}" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> {% trans 'Eliminar Habitación' %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del Sistema -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Información del Sistema' %}</h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <div><strong>{% trans 'ID' %}:</strong> {{ room.id }}</div>
+                        <div><strong>{% trans 'Creada' %}:</strong> {{ room.created_at|date:"d/m/Y H:i" }}</div>
+                        <div><strong>{% trans 'Actualizada' %}:</strong> {{ room.updated_at|date:"d/m/Y H:i" }}</div>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function setOccupancy(occupied) {
+    $('#occupied_beds').val(occupied);
+    updateOccupancy();
+}
+
+function updateOccupancy() {
+    var occupied = $('#occupied_beds').val();
+    var total = {{ room.total_beds }};
+    
+    if (occupied > total) {
+        $('#occupancyMessage').html('<div class="alert alert-danger">{% trans "El número de camas ocupadas no puede ser mayor al total." %}</div>');
+        return;
+    }
+    
+    $.ajax({
+        url: '{% url "facilities_web:room_update_occupancy" room.id %}',
+        method: 'POST',
+        data: {
+            'occupied_beds': occupied,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            if (response.success) {
+                $('#occupancyMessage').html('<div class="alert alert-success">{% trans "Ocupación actualizada exitosamente." %}</div>');
+                // Recargar la página para mostrar los cambios
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);
+            } else {
+                $('#occupancyMessage').html('<div class="alert alert-danger">' + response.error + '</div>');
+            }
+        },
+        error: function() {
+            $('#occupancyMessage').html('<div class="alert alert-danger">{% trans "Error al actualizar la ocupación." %}</div>');
+        }
+    });
+}
+
+$(document).ready(function() {
+    $('#occupancyForm').on('submit', function(e) {
+        e.preventDefault();
+        updateOccupancy();
+    });
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% if action == 'create' %}
+        {% trans 'Nueva Habitación' %}
+    {% else %}
+        {% trans 'Editar Habitación' %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                {% if action == 'create' %}
+                    {% trans 'Nueva Habitación' %}
+                {% else %}
+                    {% trans 'Editar Habitación' %}
+                {% endif %}
+            </h1>
+            <p class="text-muted">
+                {% if action == 'create' %}
+                    {% trans 'Crear una nueva habitación en el geriátrico' %}
+                {% else %}
+                    {% trans 'Modificar información de la habitación' %}
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'facilities_web:room_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {% trans 'Volver al listado' %}
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Formulario -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        {% if action == 'create' %}
+                            {% trans 'Información de la Habitación' %}
+                        {% else %}
+                            {% trans 'Modificar Habitación' %}
+                        {% endif %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="roomForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Número de Habitación -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.room_number.id_for_label }}" class="form-label">
+                                    {{ form.room_number.label }}
+                                </label>
+                                {{ form.room_number }}
+                                {% if form.room_number.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.room_number.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% if form.room_number.help_text %}
+                                <div class="form-text">{{ form.room_number.help_text }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Piso -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.floor.id_for_label }}" class="form-label">
+                                    {{ form.floor.label }}
+                                </label>
+                                {{ form.floor }}
+                                {% if form.floor.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.floor.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% if form.floor.help_text %}
+                                <div class="form-text">{{ form.floor.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Total de Camas -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.total_beds.id_for_label }}" class="form-label">
+                                    {{ form.total_beds.label }}
+                                </label>
+                                {{ form.total_beds }}
+                                {% if form.total_beds.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.total_beds.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% if form.total_beds.help_text %}
+                                <div class="form-text">{{ form.total_beds.help_text }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Camas Ocupadas -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.occupied_beds.id_for_label }}" class="form-label">
+                                    {{ form.occupied_beds.label }}
+                                </label>
+                                {{ form.occupied_beds }}
+                                {% if form.occupied_beds.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.occupied_beds.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% if form.occupied_beds.help_text %}
+                                <div class="form-text">{{ form.occupied_beds.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Estado -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.status.id_for_label }}" class="form-label">
+                                    {{ form.status.label }}
+                                </label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.status.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% if form.status.help_text %}
+                                <div class="form-text">{{ form.status.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                {{ form.description.label }}
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.description.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% if form.description.help_text %}
+                            <div class="form-text">{{ form.description.help_text }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between">
+                                        <a href="{% url 'facilities_web:room_list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> {% trans 'Cancelar' %}
+            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                {% if action == 'create' %}
+                                    {% trans 'Crear Habitación' %}
+                                {% else %}
+                                    {% trans 'Guardar Cambios' %}
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Información de Ayuda -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Información de Ayuda' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="font-weight-bold">{% trans 'Número de Habitación' %}</h6>
+                        <p class="text-muted small">
+                            {% trans 'Ingresa un número único para identificar la habitación. Puede ser alfanumérico.' %}
+                        </p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="font-weight-bold">{% trans 'Piso' %}</h6>
+                        <p class="text-muted small">
+                            {% trans 'Especifica en qué piso se encuentra la habitación.' %}
+                        </p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="font-weight-bold">{% trans 'Total de Camas' %}</h6>
+                        <p class="text-muted small">
+                            {% trans 'Número total de camas disponibles en la habitación.' %}
+                        </p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="font-weight-bold">{% trans 'Camas Ocupadas' %}</h6>
+                        <p class="text-muted small">
+                            {% trans 'Número de camas actualmente ocupadas. No puede ser mayor al total.' %}
+                        </p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="font-weight-bold">{% trans 'Estado' %}</h6>
+                        <ul class="text-muted small">
+                            <li><strong>{% trans 'Disponible' %}:</strong> {% trans 'Habitación lista para uso' %}</li>
+                            <li><strong>{% trans 'Mantenimiento' %}:</strong> {% trans 'Habitación en reparación' %}</li>
+                            <li><strong>{% trans 'Cuarentena' %}:</strong> {% trans 'Habitación aislada por protocolo' %}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista Previa -->
+            {% if action == 'update' and room %}
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Vista Previa' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong>{% trans 'Habitación' %}:</strong> {{ room.room_number }}
+                    </div>
+                    <div class="mb-2">
+                        <strong>{% trans 'Piso' %}:</strong> {{ room.floor }}
+                    </div>
+                    <div class="mb-2">
+                        <strong>{% trans 'Camas Disponibles' %}:</strong> 
+                        <span class="badge bg-{% if room.available_beds == 0 %}danger{% elif room.available_beds <= 2 %}warning{% else %}success{% endif %}">
+                            {{ room.available_beds }}
+                        </span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>{% trans 'Ocupación' %}:</strong> 
+                        <span class="text-{% if room.occupancy_rate >= 90 %}danger{% elif room.occupancy_rate >= 70 %}warning{% else %}success{% endif %} fw-bold">
+                            {{ room.occupancy_rate }}%
+                        </span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>{% trans 'Estado' %}:</strong> 
+                        {% if room.status == 'available' %}
+                        <span class="badge bg-success">{% trans 'Disponible' %}</span>
+                        {% elif room.status == 'maintenance' %}
+                        <span class="badge bg-warning">{% trans 'Mantenimiento' %}</span>
+                        {% elif room.status == 'quarantine' %}
+                        <span class="badge bg-danger">{% trans 'Cuarentena' %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Validación en tiempo real
+    $('#roomForm').on('submit', function(e) {
+        var totalBeds = parseInt($('#id_total_beds').val()) || 0;
+        var occupiedBeds = parseInt($('#id_occupied_beds').val()) || 0;
+        
+        if (occupiedBeds > totalBeds) {
+            e.preventDefault();
+            alert('{% trans "El número de camas ocupadas no puede ser mayor al total de camas." %}');
+            return false;
+        }
+    });
+    
+    // Actualizar validación cuando cambien los campos
+    $('#id_total_beds, #id_occupied_beds').on('change', function() {
+        var totalBeds = parseInt($('#id_total_beds').val()) || 0;
+        var occupiedBeds = parseInt($('#id_occupied_beds').val()) || 0;
+        
+        if (occupiedBeds > totalBeds) {
+            $('#id_occupied_beds').addClass('is-invalid');
+        } else {
+            $('#id_occupied_beds').removeClass('is-invalid');
+        }
+    });
+});
+</script>
+{% endblock %} 
