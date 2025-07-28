@@ -1,0 +1,102 @@
+{% extends 'base_modern.html' %}
+{% load static %}
+
+{% block title %}Eliminar Informe - {{ resident.full_name }}{% endblock %}
+{% block page_title %}Eliminar Informe{% endblock %}
+{% block page_subtitle %}Confirmar eliminación del informe{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <div class="flex items-center space-x-4">
+        <a href="{% url 'residents_web:resident_report_detail' resident.id report.id %}" 
+           class="btn-secondary">
+            <span class="material-icons">arrow_back</span>
+            Volver al Informe
+        </a>
+        <div class="flex-1">
+            <h1 class="text-2xl font-bold text-slate-900">Eliminar Informe</h1>
+            <p class="text-slate-600 mt-1">Confirmar eliminación del informe</p>
+        </div>
+    </div>
+</div>
+
+<!-- Información del residente -->
+<div class="content-card mb-6">
+    <div class="flex items-center space-x-4">
+        <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                <span class="material-icons text-indigo-600 text-xl">elderly</span>
+            </div>
+        </div>
+        <div class="flex-1">
+            <h3 class="text-lg font-semibold text-slate-900">{{ resident.full_name }}</h3>
+            <p class="text-slate-600">{{ resident.age }} años • {{ resident.get_gender_display }}</p>
+            {% if resident.room %}
+                <p class="text-slate-500 text-sm">Habitación {{ resident.room.room_number }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Confirmación de eliminación -->
+<div class="content-card">
+    <div class="text-center">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-icons text-red-600 text-2xl">warning</span>
+        </div>
+        
+        <h3 class="text-lg font-medium text-slate-900 mb-2">¿Estás seguro?</h3>
+        <p class="text-slate-600 mb-6">
+            Estás a punto de eliminar el informe del {{ report.report_date|date:"d/m/Y" }} 
+            ({{ report.get_report_type_display }}) de {{ resident.full_name }}.
+        </p>
+        
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div class="flex items-start">
+                <span class="material-icons text-red-600 mr-2 mt-0.5">info</span>
+                <div>
+                    <h4 class="text-sm font-medium text-red-800 mb-1">Esta acción no se puede deshacer</h4>
+                    <p class="text-sm text-red-700">
+                        Una vez eliminado, el informe y toda su información se perderán permanentemente.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información del informe a eliminar -->
+        <div class="bg-slate-50 rounded-lg p-4 mb-6 text-left">
+            <h4 class="font-medium text-slate-900 mb-2">Información del informe:</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <span class="text-slate-500">Tipo:</span>
+                    <span class="text-slate-900 font-medium">{{ report.get_report_type_display }}</span>
+                </div>
+                <div>
+                    <span class="text-slate-500">Fecha:</span>
+                    <span class="text-slate-900 font-medium">{{ report.report_date|date:"d/m/Y" }}</span>
+                </div>
+                <div>
+                    <span class="text-slate-500">Estado:</span>
+                    <span class="text-slate-900 font-medium">{{ report.get_status_display }}</span>
+                </div>
+                <div>
+                    <span class="text-slate-500">Creado por:</span>
+                    <span class="text-slate-900 font-medium">{{ report.created_by.get_full_name|default:report.created_by.username }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <form method="post" class="flex items-center justify-center space-x-4">
+            {% csrf_token %}
+            <a href="{% url 'residents_web:resident_report_detail' resident.id report.id %}" 
+               class="btn-secondary">
+                Cancelar
+            </a>
+            <button type="submit" class="btn-danger">
+                <span class="material-icons">delete</span>
+                Eliminar Informe
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %} 

@@ -14,6 +14,12 @@
         .nav-link {
             @apply flex items-center px-4 py-2 text-slate-300 rounded-md transition-all duration-300 ease-in-out;
         }
+        .nav-link .material-icons {
+            @apply flex-shrink-0;
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+        }
         .nav-link:hover {
             @apply bg-slate-700 text-white transform lg:-translate-y-1;
         }
@@ -28,6 +34,12 @@
         }
         .action-button {
             @apply w-full flex items-center justify-center font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out;
+        }
+        .action-button .material-icons {
+            @apply flex-shrink-0;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
         }
         .action-button:hover {
             @apply transform lg:-translate-y-1 shadow-xl;
@@ -82,27 +94,27 @@
         </div>
         <nav class="hidden lg:flex flex-1 flex-col px-4 py-4 space-y-2" id="sidebar-nav">
             <a class="nav-link {% if request.resolver_match.namespace == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:index' %}">
-                <span class="material-icons mr-3">dashboard</span>
+                <span class="material-icons">dashboard</span>
                 Dashboard
             </a>
             <a class="nav-link {% if request.resolver_match.namespace == 'facilities_web' %}active{% endif %}" href="{% url 'facilities_web:index' %}">
-                <span class="material-icons mr-3">hotel</span>
+                <span class="material-icons">hotel</span>
                 Instalaciones
             </a>
             <a class="nav-link {% if request.resolver_match.namespace == 'residents_web' %}active{% endif %}" href="{% url 'residents_web:dashboard' %}">
-                <span class="material-icons mr-3">elderly</span>
+                <span class="material-icons">elderly</span>
                 Residentes
             </a>
             <a class="nav-link {% if request.resolver_match.namespace == 'staff_web' %}active{% endif %}" href="{% url 'staff_web:index' %}">
-                <span class="material-icons mr-3">badge</span>
+                <span class="material-icons">badge</span>
                 Personal
             </a>
             <a class="nav-link {% if request.resolver_match.namespace == 'financial_web' %}active{% endif %}" href="{% url 'financial_web:dashboard' %}">
-                <span class="material-icons mr-3">account_balance_wallet</span>
+                <span class="material-icons">account_balance_wallet</span>
                 Financiero
             </a>
             <a class="nav-link {% if request.resolver_match.namespace == 'reporting_web' %}active{% endif %}" href="{% url 'reporting_web:index' %}">
-                <span class="material-icons mr-3">assessment</span>
+                <span class="material-icons">assessment</span>
                 Reportes
             </a>
         </nav>
@@ -134,19 +146,19 @@
                 <h2 class="text-lg font-semibold text-slate-700 mb-4">Acciones Rápidas</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <a href="{% url 'residents_web:dashboard' %}" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white">
-                        <span class="material-icons mr-2">elderly</span>
+                        <span class="material-icons">elderly</span>
                         Gestionar Residentes
                     </a>
                     <a href="{% url 'facilities_web:index' %}" class="action-button bg-slate-600 hover:bg-slate-700 text-white">
-                        <span class="material-icons mr-2">hotel</span>
+                        <span class="material-icons">hotel</span>
                         Ver Instalaciones
                     </a>
                     <a href="{% url 'financial_web:dashboard' %}" class="action-button bg-emerald-600 hover:bg-emerald-700 text-white">
-                        <span class="material-icons mr-2">account_balance_wallet</span>
+                        <span class="material-icons">account_balance_wallet</span>
                         Finanzas
                     </a>
                     <a href="{% url 'reporting_web:index' %}" class="action-button bg-amber-600 hover:bg-amber-700 text-white">
-                        <span class="material-icons mr-2">assessment</span>
+                        <span class="material-icons">assessment</span>
                         Reportes
                     </a>
                 </div>
@@ -156,19 +168,19 @@
                 <h2 class="text-lg font-semibold text-slate-700 mb-4">Acciones Rápidas</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <a href="{% url 'facilities_web:room_create' %}" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white">
-                        <span class="material-icons mr-2">add</span>
+                        <span class="material-icons">add</span>
                         Nueva Habitación
                     </a>
                     <a href="{% url 'facilities_web:room_list' %}" class="action-button bg-slate-600 hover:bg-slate-700 text-white">
-                        <span class="material-icons mr-2">visibility</span>
+                        <span class="material-icons">visibility</span>
                         Ver Todas
                     </a>
                     <a href="{% url 'facilities_web:room_list' %}?status=available" class="action-button bg-emerald-600 hover:bg-emerald-700 text-white">
-                        <span class="material-icons mr-2">check_circle</span>
+                        <span class="material-icons">check_circle</span>
                         Disponibles
                     </a>
                     <a href="{% url 'facilities_web:room_list' %}?status=maintenance" class="action-button bg-amber-600 hover:bg-amber-700 text-white">
-                        <span class="material-icons mr-2">build</span>
+                        <span class="material-icons">build</span>
                         Mantenimiento
                     </a>
                 </div>
@@ -179,26 +191,26 @@
                 <h2 class="text-lg font-semibold text-slate-700 mb-4">Acciones Rápidas</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <a href="{% url 'residents_web:resident_update' resident.id %}" class="action-button bg-amber-600 hover:bg-amber-700 text-white">
-                        <span class="material-icons mr-2">edit</span>
+                        <span class="material-icons">edit</span>
                         Editar Residente
                     </a>
                     {% if resident.room %}
                     <a href="{% url 'facilities_web:room_detail' resident.room.id %}" class="action-button bg-emerald-600 hover:bg-emerald-700 text-white">
-                        <span class="material-icons mr-2">hotel</span>
+                        <span class="material-icons">hotel</span>
                         Ver Habitación
                     </a>
                     {% else %}
                     <a href="{% url 'facilities_web:room_list' %}" class="action-button bg-slate-600 hover:bg-slate-700 text-white">
-                        <span class="material-icons mr-2">hotel</span>
+                        <span class="material-icons">hotel</span>
                         Asignar Habitación
                     </a>
                     {% endif %}
                     <a href="{% url 'residents_web:resident_list' %}" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white">
-                        <span class="material-icons mr-2">list</span>
+                        <span class="material-icons">list</span>
                         Ver Todos
                     </a>
                     <a href="{% url 'residents_web:resident_delete' resident.id %}" class="action-button bg-red-600 hover:bg-red-700 text-white">
-                        <span class="material-icons mr-2">delete</span>
+                        <span class="material-icons">delete</span>
                         Eliminar
                     </a>
                 </div>
@@ -209,19 +221,19 @@
                 <h2 class="text-lg font-semibold text-slate-700 mb-4">Acciones Rápidas</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <a href="{% url 'staff_web:staff_create' %}" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white">
-                        <span class="material-icons mr-2">add</span>
+                        <span class="material-icons">add</span>
                         Nuevo Empleado
                     </a>
                     <a href="{% url 'staff_web:staff_list' %}" class="action-button bg-slate-600 hover:bg-slate-700 text-white">
-                        <span class="material-icons mr-2">visibility</span>
+                        <span class="material-icons">visibility</span>
                         Ver Todos
                     </a>
                     <a href="{% url 'staff_web:staff_search' %}" class="action-button bg-emerald-600 hover:bg-emerald-700 text-white">
-                        <span class="material-icons mr-2">search</span>
+                        <span class="material-icons">search</span>
                         Buscar
                     </a>
                     <a href="{% url 'staff_web:staff_list' %}?status=active" class="action-button bg-amber-600 hover:bg-amber-700 text-white">
-                        <span class="material-icons mr-2">check_circle</span>
+                        <span class="material-icons">check_circle</span>
                         Activos
                     </a>
                 </div>
@@ -231,19 +243,19 @@
                 <h2 class="text-lg font-semibold text-slate-700 mb-4">Acciones Rápidas</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <a href="{% url 'financial_web:income_create' %}" class="action-button bg-emerald-600 hover:bg-emerald-700 text-white">
-                        <span class="material-icons mr-2">add</span>
+                        <span class="material-icons">add</span>
                         Nuevo Ingreso
                     </a>
                     <a href="{% url 'financial_web:expense_create' %}" class="action-button bg-red-600 hover:bg-red-700 text-white">
-                        <span class="material-icons mr-2">remove</span>
+                        <span class="material-icons">remove</span>
                         Nuevo Gasto
                     </a>
                     <a href="{% url 'financial_web:reports' %}" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white">
-                        <span class="material-icons mr-2">assessment</span>
+                        <span class="material-icons">assessment</span>
                         Reportes
                     </a>
                     <a href="{% url 'financial_web:category_list' %}" class="action-button bg-amber-600 hover:bg-amber-700 text-white">
-                        <span class="material-icons mr-2">category</span>
+                        <span class="material-icons">category</span>
                         Categorías
                     </a>
                 </div>
@@ -253,19 +265,19 @@
                 <h2 class="text-lg font-semibold text-slate-700 mb-4">Acciones Rápidas</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <a href="{% url 'reporting_web:report_create' %}" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white">
-                        <span class="material-icons mr-2">add</span>
+                        <span class="material-icons">add</span>
                         Nuevo Reporte
                     </a>
                     <a href="{% url 'reporting_web:quick_report' %}" class="action-button bg-emerald-600 hover:bg-emerald-700 text-white">
-                        <span class="material-icons mr-2">flash_on</span>
+                        <span class="material-icons">flash_on</span>
                         Reporte Rápido
                     </a>
                     <a href="{% url 'reporting_web:resident_report' %}" class="action-button bg-blue-600 hover:bg-blue-700 text-white">
-                        <span class="material-icons mr-2">elderly</span>
+                        <span class="material-icons">elderly</span>
                         Reporte Residentes
                     </a>
                     <a href="{% url 'reporting_web:staff_report' %}" class="action-button bg-amber-600 hover:bg-amber-700 text-white">
-                        <span class="material-icons mr-2">badge</span>
+                        <span class="material-icons">badge</span>
                         Reporte Personal
                     </a>
                 </div>

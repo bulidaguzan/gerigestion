@@ -1,0 +1,232 @@
+{% extends 'base_modern.html' %}
+{% load static %}
+
+{% block title %}Informe de {{ resident.full_name }} - {{ report.report_date|date:"d/m/Y" }}{% endblock %}
+{% block page_title %}Informe Periódico{% endblock %}
+{% block page_subtitle %}{{ report.get_report_type_display }} - {{ report.report_date|date:"d/m/Y" }}{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <div class="flex items-center space-x-4">
+        <a href="{% url 'residents_web:resident_reports_list' resident.id %}" 
+           class="btn-secondary">
+            <span class="material-icons">arrow_back</span>
+            Volver a Informes
+        </a>
+        <div class="flex-1">
+            <h1 class="text-2xl font-bold text-slate-900">Informe Periódico</h1>
+            <p class="text-slate-600 mt-1">{{ resident.full_name }} - {{ report.report_date|date:"d/m/Y" }}</p>
+        </div>
+        <div class="flex space-x-2">
+            <a href="{% url 'residents_web:resident_report_update' resident.id report.id %}" 
+               class="btn-secondary">
+                <span class="material-icons">edit</span>
+                Editar
+            </a>
+            <a href="{% url 'residents_web:resident_report_delete' resident.id report.id %}" 
+               class="btn-danger">
+                <span class="material-icons">delete</span>
+                Eliminar
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Información del residente -->
+<div class="content-card mb-6">
+    <div class="flex items-center space-x-4">
+        <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                <span class="material-icons text-indigo-600 text-xl">elderly</span>
+            </div>
+        </div>
+        <div class="flex-1">
+            <h3 class="text-lg font-semibold text-slate-900">{{ resident.full_name }}</h3>
+            <p class="text-slate-600">{{ resident.age }} años • {{ resident.get_gender_display }}</p>
+            {% if resident.room %}
+                <p class="text-slate-500 text-sm">Habitación {{ resident.room.room_number }}</p>
+            {% endif %}
+            {% if resident.is_in_treatment %}
+                <p class="text-emerald-600 text-sm font-medium">En tratamiento: {{ resident.treatment_type }}</p>
+            {% endif %}
+        </div>
+        <div class="flex-shrink-0">
+            <a href="{% url 'residents_web:resident_detail' resident.id %}" 
+               class="btn-secondary">
+                Ver Residente
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Información del informe -->
+<div class="content-card mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1">Tipo de Informe</label>
+            <p class="text-slate-900 font-medium">{{ report.get_report_type_display }}</p>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1">Fecha del Informe</label>
+            <p class="text-slate-900 font-medium">{{ report.report_date|date:"d/m/Y" }}</p>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1">Estado</label>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                {% if report.status == 'completed' %}bg-green-100 text-green-800
+                {% elif report.status == 'draft' %}bg-yellow-100 text-yellow-800
+                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ report.get_status_display }}
+            </span>
+        </div>
+    </div>
+    <div class="mt-4 pt-4 border-t border-slate-200">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-500 mb-1">Creado por</label>
+                <p class="text-slate-900">{{ report.created_by.get_full_name|default:report.created_by.username }}</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-500 mb-1">Fecha de Creación</label>
+                <p class="text-slate-900">{{ report.created_at|date:"d/m/Y H:i" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenido del informe -->
+<div class="space-y-6">
+    <!-- Evaluación Física -->
+    {% if report.physical_condition or report.medical_treatment or report.medication_changes %}
+    <div class="content-card">
+        <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center">
+            <span class="material-icons text-blue-600 mr-2">fitness_center</span>
+            Evaluación Física
+        </h3>
+        
+        {% if report.physical_condition %}
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Estado Físico</label>
+            <div class="bg-slate-50 rounded-lg p-4">
+                <p class="text-slate-900 whitespace-pre-wrap">{{ report.physical_condition }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if report.medical_treatment %}
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Tratamiento Médico</label>
+            <div class="bg-slate-50 rounded-lg p-4">
+                <p class="text-slate-900 whitespace-pre-wrap">{{ report.medical_treatment }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if report.medication_changes %}
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Cambios en Medicación</label>
+            <div class="bg-slate-50 rounded-lg p-4">
+                <p class="text-slate-900 whitespace-pre-wrap">{{ report.medication_changes }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Evaluación Mental y Social -->
+    {% if report.mental_condition or report.social_activity %}
+    <div class="content-card">
+        <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center">
+            <span class="material-icons text-purple-600 mr-2">psychology</span>
+            Evaluación Mental y Social
+        </h3>
+        
+        {% if report.mental_condition %}
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Estado Mental</label>
+            <div class="bg-slate-50 rounded-lg p-4">
+                <p class="text-slate-900 whitespace-pre-wrap">{{ report.mental_condition }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if report.social_activity %}
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Actividad Social</label>
+            <div class="bg-slate-50 rounded-lg p-4">
+                <p class="text-slate-900 whitespace-pre-wrap">{{ report.social_activity }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Eventos y Metas -->
+    {% if report.incidents or report.goals_achieved or report.next_goals %}
+    <div class="content-card">
+        <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center">
+            <span class="material-icons text-amber-600 mr-2">event</span>
+            Eventos y Metas
+        </h3>
+        
+        {% if report.incidents %}
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Incidentes</label>
+            <div class="bg-slate-50 rounded-lg p-4">
+                <p class="text-slate-900 whitespace-pre-wrap">{{ report.incidents }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% if report.goals_achieved %}
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Metas Alcanzadas</label>
+                <div class="bg-slate-50 rounded-lg p-4">
+                    <p class="text-slate-900 whitespace-pre-wrap">{{ report.goals_achieved }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if report.next_goals %}
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Próximas Metas</label>
+                <div class="bg-slate-50 rounded-lg p-4">
+                    <p class="text-slate-900 whitespace-pre-wrap">{{ report.next_goals }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recomendaciones -->
+    {% if report.recommendations %}
+    <div class="content-card">
+        <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center">
+            <span class="material-icons text-emerald-600 mr-2">recommend</span>
+            Recomendaciones
+        </h3>
+        
+        <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+            <p class="text-slate-900 whitespace-pre-wrap">{{ report.recommendations }}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Información de auditoría -->
+<div class="content-card mt-6">
+    <h3 class="text-lg font-semibold text-slate-700 mb-4">Información de Auditoría</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1">Creado el</label>
+            <p class="text-slate-900">{{ report.created_at|date:"d/m/Y H:i" }}</p>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1">Última actualización</label>
+            <p class="text-slate-900">{{ report.updated_at|date:"d/m/Y H:i" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

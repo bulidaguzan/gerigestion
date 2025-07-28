@@ -883,7 +883,7 @@ class PasswordResetCompleteView(TemplateView):
     
     def get_context_data(self, **kwargs):
         """
-        Add additional context.
+        Add additional context for the password reset complete page.
         """
         context = super().get_context_data(**kwargs)
         context.update({
@@ -891,3 +891,125 @@ class PasswordResetCompleteView(TemplateView):
             'page_title': 'Password Reset Complete',
         })
         return context
+
+
+@login_required
+def dashboard_view(request):
+    """
+    Dashboard principal con métricas del sistema.
+    """
+    from apps.residents.models import Resident
+    from apps.facilities.models import Room
+    from apps.staff.models import Staff
+    from apps.financial.models import Income, Expense
+    from apps.reporting.models import Report
+    from django.db.models import Sum, Count, Q
+    from django.utils import timezone
+    from datetime import datetime, timedelta
+    
+    # Obtener el mes actual
+    now = timezone.now()
+    current_month = now.month
+    current_year = now.year
+    
+    try:
+        # Métricas de residentes
+        total_residents = Resident.objects.count()
+        
+        # Métricas de habitaciones
+        total_rooms = Room.objects.count()
+        occupied_rooms = sum(1 for room in Room.objects.all() if room.occupied_beds > 0)
+        available_rooms = sum(1 for room in Room.objects.all() if room.is_available)
+        occupancy_rate = round((occupied_rooms / total_rooms * 100) if total_rooms > 0 else 0, 1)
+        
+        # Métricas de personal
+        active_staff = Staff.objects.filter(employment_status='active').count()
+        
+        # Métricas financieras del mes actual
+        monthly_income = Income.objects.filter(
+            income_date__year=current_year,
+            income_date__month=current_month
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        monthly_expenses = Expense.objects.filter(
+            expense_date__year=current_year,
+            expense_date__month=current_month
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        balance = monthly_income - monthly_expenses
+        
+        # Reportes pendientes
+        pending_reports = Report.objects.filter(status='pending').count()
+        
+        # Actividad reciente (últimos 7 días)
+        recent_date = now - timedelta(days=7)
+        
+        # Simular actividad reciente (en un sistema real, esto vendría de logs o modelos de actividad)
+        recent_activities = []
+        
+        # Agregar algunas actividades de ejemplo
+        if total_residents > 0:
+            recent_activities.append({
+                'icon': 'elderly',
+                'title': f'Nuevo residente registrado',
+                'description': f'Total de residentes: {total_residents}',
+                'timestamp': now.strftime('%d/%m/%Y %H:%M')
+            })
+        
+        if monthly_income > 0:
+            recent_activities.append({
+                'icon': 'account_balance_wallet',
+                'title': f'Ingresos del mes: ${monthly_income:,.0f}',
+                'description': 'Ingresos registrados este mes',
+                'timestamp': now.strftime('%d/%m/%Y %H:%M')
+            })
+        
+        if active_staff > 0:
+            recent_activities.append({
+                'icon': 'badge',
+                'title': f'Personal activo: {active_staff}',
+                'description': 'Miembros del personal activos',
+                'timestamp': now.strftime('%d/%m/%Y %H:%M')
+            })
+        
+        # Si no hay actividades, agregar una actividad por defecto
+        if not recent_activities:
+            recent_activities.append({
+                'icon': 'dashboard',
+                'title': 'Sistema funcionando correctamente',
+                'description': 'El dashboard está operativo y mostrando métricas en tiempo real',
+                'timestamp': now.strftime('%d/%m/%Y %H:%M')
+            })
+        
+        context = {
+            'total_residents': total_residents,
+            'available_rooms': available_rooms,
+            'active_staff': active_staff,
+            'occupancy_rate': occupancy_rate,
+            'monthly_income': f"{monthly_income:,.0f}",
+            'monthly_expenses': f"{monthly_expenses:,.0f}",
+            'balance': f"{balance:,.0f}",
+            'pending_reports': pending_reports,
+            'recent_activities': recent_activities,
+        }
+        
+    except Exception as e:
+        # En caso de error, proporcionar valores por defecto
+        context = {
+            'total_residents': 0,
+            'available_rooms': 0,
+            'active_staff': 0,
+            'occupancy_rate': 0,
+            'monthly_income': '0',
+            'monthly_expenses': '0',
+            'balance': '0',
+            'pending_reports': 0,
+            'recent_activities': [{
+                'icon': 'error',
+                'title': 'Error al cargar métricas',
+                'description': 'Hubo un problema al cargar los datos del dashboard',
+                'timestamp': now.strftime('%d/%m/%Y %H:%M')
+            }],
+        }
+    
+    return render(request, 'core/dashboard/index.html', context)

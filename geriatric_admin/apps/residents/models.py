@@ -134,11 +134,46 @@ class Resident(models.Model):
         help_text=_('Indica si el residente está actualmente en tratamiento médico')
     )
     
+    TREATMENT_TYPE_CHOICES = [
+        ('physical_therapy', _('Fisioterapia')),
+        ('occupational_therapy', _('Terapia Ocupacional')),
+        ('speech_therapy', _('Terapia del Habla')),
+        ('psychological_therapy', _('Terapia Psicológica')),
+        ('medical_treatment', _('Tratamiento Médico')),
+        ('rehabilitation', _('Rehabilitación')),
+        ('pain_management', _('Manejo del Dolor')),
+        ('cardiac_rehabilitation', _('Rehabilitación Cardíaca')),
+        ('respiratory_therapy', _('Terapia Respiratoria')),
+        ('nutritional_therapy', _('Terapia Nutricional')),
+        ('social_work', _('Trabajo Social')),
+        ('recreational_therapy', _('Terapia Recreativa')),
+        ('cognitive_therapy', _('Terapia Cognitiva')),
+        ('other', _('Otro')),
+    ]
+    
+    TREATMENT_STATUS_CHOICES = [
+        ('active', _('Activo')),
+        ('completed', _('Completado')),
+        ('suspended', _('Suspendido')),
+        ('discontinued', _('Discontinuado')),
+        ('maintenance', _('Mantenimiento')),
+        ('evaluation', _('En Evaluación')),
+    ]
+    
     treatment_type = models.CharField(
         max_length=50,
+        choices=TREATMENT_TYPE_CHOICES,
         blank=True,
         verbose_name=_('Tipo de Tratamiento'),
-        help_text=_('Tipo de tratamiento que está recibiendo (ej: fisioterapia, terapia ocupacional, etc.)')
+        help_text=_('Tipo específico de tratamiento que está recibiendo')
+    )
+    
+    treatment_status = models.CharField(
+        max_length=20,
+        choices=TREATMENT_STATUS_CHOICES,
+        blank=True,
+        verbose_name=_('Estado del Tratamiento'),
+        help_text=_('Estado actual del tratamiento')
     )
     
     treatment_start_date = models.DateField(
@@ -146,6 +181,39 @@ class Resident(models.Model):
         blank=True,
         verbose_name=_('Fecha de Inicio del Tratamiento'),
         help_text=_('Fecha en que comenzó el tratamiento actual')
+    )
+    
+    treatment_end_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Fecha de Finalización del Tratamiento'),
+        help_text=_('Fecha en que finalizó o se espera que finalice el tratamiento')
+    )
+    
+    treatment_frequency = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_('Frecuencia del Tratamiento'),
+        help_text=_('Frecuencia del tratamiento (ej: diario, 3 veces por semana, etc.)')
+    )
+    
+    treatment_provider = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_('Proveedor del Tratamiento'),
+        help_text=_('Nombre del profesional o institución que proporciona el tratamiento')
+    )
+    
+    treatment_goals = models.TextField(
+        blank=True,
+        verbose_name=_('Objetivos del Tratamiento'),
+        help_text=_('Objetivos específicos del tratamiento actual')
+    )
+    
+    treatment_progress = models.TextField(
+        blank=True,
+        verbose_name=_('Progreso del Tratamiento'),
+        help_text=_('Evaluación del progreso del tratamiento')
     )
     
     treatment_notes = models.TextField(
@@ -265,6 +333,161 @@ class Resident(models.Model):
         if self.date_of_birth and self.admission_date and self.date_of_birth >= self.admission_date:
             raise ValidationError({
                 'admission_date': _('La fecha de admisión debe ser posterior a la fecha de nacimiento.')
+            })
+    
+    def save(self, *args, **kwargs):
+        """Sobrescribir save para aplicar validaciones"""
+        self.clean()
+        super().save(*args, **kwargs)
+
+
+class ResidentReport(models.Model):
+    """
+    Modelo para informes periódicos de residentes
+    """
+    REPORT_TYPES = [
+        ('weekly', _('Semanal')),
+        ('monthly', _('Mensual')),
+        ('quarterly', _('Trimestral')),
+        ('custom', _('Personalizado')),
+    ]
+    
+    STATUS_CHOICES = [
+        ('draft', _('Borrador')),
+        ('completed', _('Completado')),
+        ('archived', _('Archivado')),
+    ]
+    
+    # Información básica
+    resident = models.ForeignKey(
+        Resident,
+        on_delete=models.CASCADE,
+        related_name='reports',
+        verbose_name=_('Residente'),
+        help_text=_('Residente al que pertenece este informe')
+    )
+    
+    report_type = models.CharField(
+        max_length=20,
+        choices=REPORT_TYPES,
+        default='monthly',
+        verbose_name=_('Tipo de Informe'),
+        help_text=_('Tipo de informe periódico')
+    )
+    
+    report_date = models.DateField(
+        verbose_name=_('Fecha del Informe'),
+        help_text=_('Fecha en que se realiza el informe')
+    )
+    
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='draft',
+        verbose_name=_('Estado'),
+        help_text=_('Estado actual del informe')
+    )
+    
+    # Contenido del informe
+    physical_condition = models.TextField(
+        blank=True,
+        verbose_name=_('Estado Físico'),
+        help_text=_('Evaluación del estado físico del residente')
+    )
+    
+    mental_condition = models.TextField(
+        blank=True,
+        verbose_name=_('Estado Mental'),
+        help_text=_('Evaluación del estado mental y emocional')
+    )
+    
+    social_activity = models.TextField(
+        blank=True,
+        verbose_name=_('Actividad Social'),
+        help_text=_('Participación en actividades sociales y recreativas')
+    )
+    
+    medical_treatment = models.TextField(
+        blank=True,
+        verbose_name=_('Tratamiento Médico'),
+        help_text=_('Información sobre tratamientos médicos actuales')
+    )
+    
+    medication_changes = models.TextField(
+        blank=True,
+        verbose_name=_('Cambios en Medicación'),
+        help_text=_('Cambios en la medicación durante el período')
+    )
+    
+    incidents = models.TextField(
+        blank=True,
+        verbose_name=_('Incidentes'),
+        help_text=_('Incidentes o eventos importantes durante el período')
+    )
+    
+    goals_achieved = models.TextField(
+        blank=True,
+        verbose_name=_('Metas Alcanzadas'),
+        help_text=_('Metas alcanzadas durante el período')
+    )
+    
+    next_goals = models.TextField(
+        blank=True,
+        verbose_name=_('Próximas Metas'),
+        help_text=_('Metas para el próximo período')
+    )
+    
+    recommendations = models.TextField(
+        blank=True,
+        verbose_name=_('Recomendaciones'),
+        help_text=_('Recomendaciones para el cuidado del residente')
+    )
+    
+    # Metadatos
+    created_by = models.ForeignKey(
+        'core.User',
+        on_delete=models.CASCADE,
+        verbose_name=_('Creado por'),
+        help_text=_('Usuario que creó el informe')
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_('Fecha de Creación')
+    )
+    
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Fecha de Actualización')
+    )
+    
+    class Meta:
+        verbose_name = _('Informe de Residente')
+        verbose_name_plural = _('Informes de Residentes')
+        ordering = ['-report_date', '-created_at']
+        unique_together = ['resident', 'report_date', 'report_type']
+    
+    def __str__(self):
+        return f"Informe de {self.resident.full_name} - {self.get_report_type_display()} - {self.report_date}"
+    
+    @property
+    def is_completed(self):
+        """Retorna True si el informe está completado"""
+        return self.status == 'completed'
+    
+    @property
+    def is_draft(self):
+        """Retorna True si el informe está en borrador"""
+        return self.status == 'draft'
+    
+    def clean(self):
+        """Validación personalizada del modelo"""
+        from django.core.exceptions import ValidationError
+        
+        # Validar que la fecha del informe no sea en el futuro
+        if self.report_date and self.report_date > date.today():
+            raise ValidationError({
+                'report_date': _('La fecha del informe no puede ser en el futuro.')
             })
     
     def save(self, *args, **kwargs):

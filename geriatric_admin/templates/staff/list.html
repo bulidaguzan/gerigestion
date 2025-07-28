@@ -4,239 +4,335 @@
 
 {% block title %}{% trans 'Lista del Personal' %}{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">{% trans 'Lista del Personal' %}</h1>
-            <p class="text-muted">{% trans 'Gestión completa del personal de la residencia' %}</p>
-        </div>
-        <div class="btn-group" role="group">
-            <a href="{% url 'staff_web:index' %}" class="btn btn-outline-secondary">
-                <i class="fas fa-chart-bar"></i> {% trans 'Dashboard' %}
-            </a>
-            <a href="{% url 'staff_web:staff_create' %}" class="btn btn-success">
-                <i class="fas fa-user-plus"></i> {% trans 'Nuevo Empleado' %}
-            </a>
-        </div>
-    </div>
+{% block page_title %}{% trans 'Lista del Personal' %}{% endblock %}
 
-    <!-- Filtros y Búsqueda -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-                               <h6 class="m-0 font-weight-bold text-secondary">{% trans 'Filtros y Búsqueda' %}</h6>
-        </div>
-        <div class="card-body">
-            <form method="get" class="row">
-                <div class="col-md-3 mb-3">
-                    <label for="search" class="form-label">{% trans 'Buscar' %}</label>
-                    <input type="text" class="form-control" id="search" name="search" 
-                           value="{{ search }}" placeholder="{% trans 'Nombre, ID, email...' %}">
-                </div>
-                <div class="col-md-2 mb-3">
-                    <label for="department" class="form-label">{% trans 'Departamento' %}</label>
-                    <select class="form-control" id="department" name="department">
-                        <option value="">{% trans 'Todos' %}</option>
-                        {% for dept in departments %}
-                        <option value="{{ dept }}" {% if department_filter == dept %}selected{% endif %}>
-                            {{ dept }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-2 mb-3">
-                    <label for="position" class="form-label">{% trans 'Posición' %}</label>
-                    <select class="form-control" id="position" name="position">
-                        <option value="">{% trans 'Todas' %}</option>
-                        {% for pos in positions %}
-                        <option value="{{ pos }}" {% if position_filter == pos %}selected{% endif %}>
-                            {{ pos }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-2 mb-3">
-                    <label for="status" class="form-label">{% trans 'Estado' %}</label>
-                    <select class="form-control" id="status" name="status">
-                        <option value="">{% trans 'Todos' %}</option>
-                        {% for value, label in status_choices %}
-                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-3 mb-3 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary me-2">
-                        <i class="fas fa-search"></i> {% trans 'Filtrar' %}
-                    </button>
-                    <a href="{% url 'staff_web:staff_list' %}" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> {% trans 'Limpiar' %}
-                    </a>
-                </div>
-            </form>
-        </div>
-    </div>
+{% block page_subtitle %}{% trans 'Gestión completa del personal de la residencia' %}{% endblock %}
 
-    <!-- Lista de Personal -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-                               <h6 class="m-0 font-weight-bold text-secondary">
-                       {% trans 'Personal' %} 
-                       <span class="badge bg-primary">{{ page_obj.paginator.count }}</span>
-                   </h6>
-        </div>
-        <div class="card-body">
-            {% if page_obj %}
-            <div class="table-responsive">
-                                       <table class="table" id="staffTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>{% trans 'Empleado' %}</th>
-                            <th>{% trans 'ID' %}</th>
-                            <th>{% trans 'Posición' %}</th>
-                            <th>{% trans 'Departamento' %}</th>
-                            <th>{% trans 'Estado' %}</th>
-                            <th>{% trans 'Contratación' %}</th>
-                            <th>{% trans 'Años' %}</th>
-                            <th>{% trans 'Salario' %}</th>
-                            <th>{% trans 'Acciones' %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for staff in page_obj %}
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center me-3">
-                                        <span class="text-white fw-bold">{{ staff.first_name|first }}{{ staff.last_name|first }}</span>
-                                    </div>
-                                    <div>
-                                        <strong>{{ staff.full_name }}</strong>
-                                        <br><small class="text-muted">{{ staff.email }}</small>
-                                        {% if staff.phone %}
-                                        <br><small class="text-muted">{{ staff.phone }}</small>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge bg-secondary">{{ staff.employee_id }}</span>
-                            </td>
-                            <td>{{ staff.position }}</td>
-                            <td>{{ staff.department }}</td>
-                            <td>
-                                {% if staff.employment_status == 'active' %}
-                                <span class="badge bg-success">{% trans 'Activo' %}</span>
-                                {% elif staff.employment_status == 'inactive' %}
-                                <span class="badge bg-warning">{% trans 'Inactivo' %}</span>
-                                {% elif staff.employment_status == 'suspended' %}
-                                <span class="badge bg-danger">{% trans 'Suspendido' %}</span>
-                                {% elif staff.employment_status == 'terminated' %}
-                                <span class="badge bg-dark">{% trans 'Terminado' %}</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ staff.hire_date|date:"d/m/Y" }}</td>
-                            <td>
-                                <span class="badge bg-info">{{ staff.years_of_service }}</span>
-                            </td>
-                            <td>
-                                <strong>€{{ staff.salary|floatformat:2 }}</strong>
-                            </td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{% url 'staff_web:staff_detail' staff.id %}" 
-                                       class="btn btn-sm btn-info" title="{% trans 'Ver detalles' %}">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{% url 'staff_web:staff_update' staff.id %}" 
-                                       class="btn btn-sm btn-warning" title="{% trans 'Editar' %}">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="{% url 'staff_web:staff_delete' staff.id %}" 
-                                       class="btn btn-sm btn-danger" title="{% trans 'Eliminar' %}">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Paginación -->
-            {% if page_obj.has_other_pages %}
-            <nav aria-label="{% trans 'Navegación de páginas' %}">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
-                            <i class="fas fa-angle-double-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
-                            <i class="fas fa-angle-left"></i>
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                        <li class="page-item active">
-                            <span class="page-link">{{ num }}</span>
-                        </li>
-                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a>
-                        </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
-                            <i class="fas fa-angle-right"></i>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
-                            <i class="fas fa-angle-double-right"></i>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
-
-            {% else %}
-            <div class="text-center py-4">
-                <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">{% trans 'No se encontró personal' %}</h5>
-                <p class="text-muted">{% trans 'No hay empleados que coincidan con los filtros aplicados.' %}</p>
-                <a href="{% url 'staff_web:staff_create' %}" class="btn btn-primary">
-                    <i class="fas fa-user-plus"></i> {% trans 'Contratar primer empleado' %}
-                </a>
-            </div>
-            {% endif %}
-        </div>
-    </div>
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'staff_web:index' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">dashboard</span>
+        <span class="text-sm">Dashboard</span>
+    </a>
+    <a href="{% url 'staff_web:staff_create' %}" class="flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">person_add</span>
+        <span class="text-sm">Nuevo Empleado</span>
+    </a>
 </div>
 {% endblock %}
 
-{% block extra_js %}
-<script>
-$(document).ready(function() {
-    // DataTable para mejor funcionalidad
-    $('#staffTable').DataTable({
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
-        },
-        "pageLength": 25,
-        "order": [[0, "asc"]]
-    });
-});
-</script>
+{% block content %}
+<!-- Header con gradiente -->
+<div class="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 shadow-2xl">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative p-8">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white border-opacity-30">
+                        <span class="material-icons text-white text-3xl">groups</span>
+                    </div>
+                </div>
+                <div class="text-white">
+                    <h2 class="text-3xl font-bold mb-2">{% trans 'Lista del Personal' %}</h2>
+                    <p class="text-white text-opacity-90 text-lg">{% trans 'Gestión completa del personal de la residencia' %}</p>
+                </div>
+            </div>
+            <div class="text-white text-right">
+                <div class="text-4xl font-bold">{{ page_obj.paginator.count|default:"0" }}</div>
+                <div class="text-white text-opacity-80">Empleados</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros y Búsqueda -->
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+    <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-4">
+        <h3 class="text-lg font-semibold text-white flex items-center">
+            <span class="material-icons mr-2">filter_list</span>
+            {% trans 'Filtros y Búsqueda' %}
+        </h3>
+    </div>
+    <div class="p-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div>
+                <label for="search" class="block text-sm font-medium text-slate-700 mb-3">
+                    🔍 {% trans 'Buscar' %}
+                </label>
+                <input type="text" 
+                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                       id="search" 
+                       name="search" 
+                       value="{{ search }}" 
+                       placeholder="{% trans 'Nombre, ID, email...' %}">
+            </div>
+            
+            <div>
+                <label for="department" class="block text-sm font-medium text-slate-700 mb-3">
+                    🏢 {% trans 'Departamento' %}
+                </label>
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                        id="department" 
+                        name="department">
+                    <option value="">{% trans 'Todos' %}</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept }}" {% if department_filter == dept %}selected{% endif %}>
+                        {{ dept }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="position" class="block text-sm font-medium text-slate-700 mb-3">
+                    💼 {% trans 'Posición' %}
+                </label>
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                        id="position" 
+                        name="position">
+                    <option value="">{% trans 'Todas' %}</option>
+                    {% for pos in positions %}
+                    <option value="{{ pos }}" {% if position_filter == pos %}selected{% endif %}>
+                        {{ pos }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="status" class="block text-sm font-medium text-slate-700 mb-3">
+                    ✅ {% trans 'Estado' %}
+                </label>
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                        id="status" 
+                        name="status">
+                    <option value="">{% trans 'Todos' %}</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="flex items-end space-x-3">
+                <button type="submit" class="flex-1 flex items-center justify-center bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons mr-2 text-sm">search</span>
+                    <span class="text-sm">{% trans 'Filtrar' %}</span>
+                </button>
+                <a href="{% url 'staff_web:staff_list' %}" 
+                   class="flex items-center justify-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">clear</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista de Personal -->
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+    <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">people</span>
+                {% trans 'Personal' %}
+            </h3>
+            <div class="flex items-center space-x-4 text-white">
+                <div class="flex items-center space-x-2">
+                    <span class="material-icons text-sm">person</span>
+                    <span class="text-sm">{{ page_obj.paginator.count|default:"0" }} empleados</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="material-icons text-sm">schedule</span>
+                    <span class="text-sm">Página {{ page_obj.number|default:"1" }} de {{ page_obj.paginator.num_pages|default:"1" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="p-6">
+        {% if page_obj %}
+        <div class="space-y-4">
+            {% for staff in page_obj %}
+            <div class="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <!-- Información del empleado -->
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                {{ staff.first_name|first }}{{ staff.last_name|first }}
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <h4 class="text-lg font-semibold text-slate-800">{{ staff.full_name }}</h4>
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-slate-200 text-slate-800">
+                                    {{ staff.employee_id }}
+                                </span>
+                                {% if staff.employment_status == 'active' %}
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                    <span class="material-icons text-xs mr-1">check_circle</span>
+                                    Activo
+                                </span>
+                                {% elif staff.employment_status == 'inactive' %}
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    <span class="material-icons text-xs mr-1">pause_circle</span>
+                                    Inactivo
+                                </span>
+                                {% elif staff.employment_status == 'suspended' %}
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                    <span class="material-icons text-xs mr-1">block</span>
+                                    Suspendido
+                                </span>
+                                {% elif staff.employment_status == 'terminated' %}
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    <span class="material-icons text-xs mr-1">cancel</span>
+                                    Terminado
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-slate-600">
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-slate-400 text-sm">work</span>
+                                    <span>{{ staff.position }}</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-slate-400 text-sm">business</span>
+                                    <span>{{ staff.department }}</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-slate-400 text-sm">event</span>
+                                    <span>{{ staff.hire_date|date:"d/m/Y" }}</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-slate-400 text-sm">schedule</span>
+                                    <span>{{ staff.years_of_service }} años</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 mt-3 text-sm text-slate-500">
+                                {% if staff.email %}
+                                <div class="flex items-center space-x-1">
+                                    <span class="material-icons text-slate-400 text-sm">email</span>
+                                    <span>{{ staff.email }}</span>
+                                </div>
+                                {% endif %}
+                                {% if staff.phone %}
+                                <div class="flex items-center space-x-1">
+                                    <span class="material-icons text-slate-400 text-sm">phone</span>
+                                    <span>{{ staff.phone }}</span>
+                                </div>
+                                {% endif %}
+                                <div class="flex items-center space-x-1">
+                                    <span class="material-icons text-slate-400 text-sm">euro</span>
+                                    <span class="font-semibold text-slate-700">€{{ staff.salary|floatformat:2 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Acciones -->
+                    <div class="flex items-center space-x-2">
+                        <a href="{% url 'staff_web:staff_detail' staff.id %}" 
+                           class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105"
+                           title="{% trans 'Ver detalles' %}">
+                            <span class="material-icons text-sm">visibility</span>
+                        </a>
+                        <a href="{% url 'staff_web:staff_update' staff.id %}" 
+                           class="flex items-center bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105"
+                           title="{% trans 'Editar' %}">
+                            <span class="material-icons text-sm">edit</span>
+                        </a>
+                        <a href="{% url 'staff_web:staff_delete' staff.id %}" 
+                           class="flex items-center bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105"
+                           title="{% trans 'Eliminar' %}">
+                            <span class="material-icons text-sm">delete</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginación -->
+        {% if page_obj.has_other_pages %}
+        <div class="mt-8 flex items-center justify-center">
+            <nav class="flex items-center space-x-2">
+                {% if page_obj.has_previous %}
+                <a href="?page=1{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                   class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">first_page</span>
+                </a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                   class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">chevron_left</span>
+                </a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="flex items-center bg-blue-500 text-white font-semibold py-2 px-3 rounded-lg shadow-sm">
+                        {{ num }}
+                    </span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                   class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">chevron_right</span>
+                </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if department_filter %}&department={{ department_filter }}{% endif %}{% if position_filter %}&position={{ position_filter }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                   class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">last_page</span>
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- Estado vacío -->
+        <div class="text-center py-12">
+            <div class="w-24 h-24 bg-gradient-to-br from-slate-200 to-slate-300 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="material-icons text-slate-400 text-4xl">people</span>
+            </div>
+            <h3 class="text-xl font-semibold text-slate-700 mb-2">{% trans 'No se encontró personal' %}</h3>
+            <p class="text-slate-500 mb-6">{% trans 'No hay empleados que coincidan con los filtros aplicados.' %}</p>
+            <a href="{% url 'staff_web:staff_create' %}" 
+               class="inline-flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+                <span class="material-icons mr-2">person_add</span>
+                {% trans 'Contratar primer empleado' %}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Información adicional -->
+<div class="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-6">
+    <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+        <span class="material-icons mr-2 text-slate-600">info</span>
+        Información del Personal
+    </h4>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600">
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-slate-400">schedule</span>
+            <span>Última actualización: {% now "d/m/Y H:i" %}</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-slate-400">security</span>
+            <span>Datos confidenciales protegidos</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-slate-400">verified</span>
+            <span>Sistema de gestión de personal</span>
+        </div>
+    </div>
+</div>
 {% endblock %} 

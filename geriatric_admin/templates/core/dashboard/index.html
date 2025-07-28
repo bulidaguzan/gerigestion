@@ -83,9 +83,9 @@
 </div>
 
 <!-- Contenido principal -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+<div class="grid grid-cols-1 gap-8 mb-8">
     <!-- Actividad reciente -->
-    <div class="lg:col-span-2 content-card">
+    <div class="content-card">
         <h2 class="text-lg font-semibold text-slate-700 mb-4">Actividad Reciente</h2>
         {% if recent_activities %}
         <div class="space-y-4">
@@ -109,30 +109,6 @@
             <p class="text-sm">Las actividades aparecerán aquí cuando se realicen acciones en el sistema.</p>
         </div>
         {% endif %}
-    </div>
-
-    <!-- Estado del sistema -->
-    <div class="content-card flex flex-col items-center justify-center text-center">
-        <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-            <span class="material-icons text-4xl sm:text-5xl text-emerald-600">check_circle</span>
-            <span class="absolute h-full w-full bg-emerald-200 rounded-full animate-ping opacity-75"></span>
-        </div>
-        <h2 class="text-lg font-semibold text-slate-800">¡Sistema Operativo!</h2>
-        <p class="text-slate-500 mt-2 text-sm sm:text-base">Todos los servicios funcionando correctamente.</p>
-        <div class="mt-4 space-y-2 text-xs text-slate-500">
-            <div class="flex items-center justify-between">
-                <span>Base de datos</span>
-                <span class="text-emerald-600">✓</span>
-            </div>
-            <div class="flex items-center justify-between">
-                <span>Servidor web</span>
-                <span class="text-emerald-600">✓</span>
-            </div>
-            <div class="flex items-center justify-between">
-                <span>Backup</span>
-                <span class="text-emerald-600">✓</span>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %}

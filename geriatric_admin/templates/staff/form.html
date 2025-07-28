@@ -10,411 +10,587 @@
     {% endif %}
 {% endblock %}
 
+{% block page_title %}
+    {% if action == 'create' %}
+        {% trans 'Nuevo Empleado' %}
+    {% else %}
+        {% trans 'Editar Empleado' %}
+    {% endif %}
+{% endblock %}
+
+{% block page_subtitle %}
+    {% if action == 'create' %}
+        {% trans 'Crear un nuevo empleado en el sistema' %}
+    {% else %}
+        {% trans 'Actualizar información del empleado' %}
+    {% endif %}
+{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'staff_web:staff_list' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">Volver</span>
+    </a>
+    {% if action == 'update' %}
+    <a href="{% url 'staff_web:staff_detail' staff.id %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">visibility</span>
+        <span class="text-sm">Ver Detalles</span>
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">
-                {% if action == 'create' %}
-                    {% trans 'Nuevo Empleado' %}
-                {% else %}
-                    {% trans 'Editar Empleado' %}
-                {% endif %}
-            </h1>
-            <p class="text-muted">
-                {% if action == 'create' %}
-                    {% trans 'Crear un nuevo empleado en el sistema' %}
-                {% else %}
-                    {% trans 'Actualizar información del empleado' %}
-                {% endif %}
-            </p>
-        </div>
-        <div class="btn-group" role="group">
-            <a href="{% url 'staff_web:staff_list' %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> {% trans 'Volver al listado' %}
-            </a>
-            {% if action == 'update' %}
-            <a href="{% url 'staff_web:staff_detail' staff.id %}" class="btn btn-info">
-                <i class="fas fa-eye"></i> {% trans 'Ver detalles' %}
-            </a>
-            {% endif %}
+<!-- Header con gradiente -->
+<div class="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 shadow-2xl">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative p-8">
+        <div class="flex items-center space-x-6">
+            <div class="flex-shrink-0">
+                <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white border-opacity-30">
+                    <span class="material-icons text-white text-3xl">person_add</span>
+                </div>
+            </div>
+            <div class="flex-1 text-white">
+                <h2 class="text-3xl font-bold mb-2">
+                    {% if action == 'create' %}
+                        {% trans 'Nuevo Empleado' %}
+                    {% else %}
+                        {% trans 'Editar Empleado' %}
+                    {% endif %}
+                </h2>
+                <p class="text-white text-opacity-90 text-lg">
+                    {% if action == 'create' %}
+                        {% trans 'Complete la información para registrar un nuevo empleado' %}
+                    {% else %}
+                        {% trans 'Actualice la información del empleado' %}
+                    {% endif %}
+                </p>
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- Formulario -->
-    <div class="card shadow">
-        <div class="card-header py-3">
-                         <h6 class="m-0 font-weight-bold text-secondary">
-                 {% if action == 'create' %}
-                     {% trans 'Información del Nuevo Empleado' %}
-                 {% else %}
-                     {% trans 'Información del Empleado' %}
-                 {% endif %}
-             </h6>
-        </div>
-        <div class="card-body">
-            <form method="post" novalidate>
-                {% csrf_token %}
+<!-- Formulario principal -->
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+    <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+        <h3 class="text-lg font-semibold text-white flex items-center">
+            <span class="material-icons mr-2">assignment</span>
+            {% if action == 'create' %}
+                {% trans 'Información del Nuevo Empleado' %}
+            {% else %}
+                {% trans 'Información del Empleado' %}
+            {% endif %}
+        </h3>
+    </div>
+    
+    <form method="post" novalidate class="p-6 space-y-8">
+        {% csrf_token %}
+        
+        <!-- Información Personal -->
+        <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-6">
+            <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                <span class="material-icons mr-2 text-indigo-600">person</span>
+                {% trans 'Información Personal' %}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div>
+                    <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        👤 {{ form.first_name.label }} *
+                    </label>
+                    <input type="text" 
+                           name="{{ form.first_name.name }}" 
+                           id="{{ form.first_name.id_for_label }}"
+                           value="{{ form.first_name.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.first_name.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Nombre del empleado">
+                    {% if form.first_name.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
                 
-                <!-- Información Personal -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-secondary mb-3 fw-bold">
-                            <i class="fas fa-user me-2"></i> {% trans 'Información Personal' %}
-                        </h6>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="{{ form.first_name.id_for_label }}" class="form-label">
-                            {{ form.first_name.label }} *
-                        </label>
-                        {{ form.first_name }}
-                        {% if form.first_name.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.first_name.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="{{ form.last_name.id_for_label }}" class="form-label">
-                            {{ form.last_name.label }} *
-                        </label>
-                        {{ form.last_name }}
-                        {% if form.last_name.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.last_name.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">
-                            {{ form.date_of_birth.label }} *
-                        </label>
-                        {{ form.date_of_birth }}
-                        {% if form.date_of_birth.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.date_of_birth.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.gender.id_for_label }}" class="form-label">
-                            {{ form.gender.label }} *
-                        </label>
-                        {{ form.gender }}
-                        {% if form.gender.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.gender.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.marital_status.id_for_label }}" class="form-label">
-                            {{ form.marital_status.label }} *
-                        </label>
-                        {{ form.marital_status }}
-                        {% if form.marital_status.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.marital_status.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
+                <div>
+                    <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        👤 {{ form.last_name.label }} *
+                    </label>
+                    <input type="text" 
+                           name="{{ form.last_name.name }}" 
+                           id="{{ form.last_name.id_for_label }}"
+                           value="{{ form.last_name.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.last_name.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Apellido del empleado">
+                    {% if form.last_name.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
+                    {% endif %}
                 </div>
+                
+                <div>
+                    <label for="{{ form.date_of_birth.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        📅 {{ form.date_of_birth.label }} *
+                    </label>
+                    <input type="date" 
+                           name="{{ form.date_of_birth.name }}" 
+                           id="{{ form.date_of_birth.id_for_label }}"
+                           value="{{ form.date_of_birth.value|date:'Y-m-d'|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.date_of_birth.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                    {% if form.date_of_birth.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.date_of_birth.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.gender.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        👥 {{ form.gender.label }} *
+                    </label>
+                    <select name="{{ form.gender.name }}" 
+                            id="{{ form.gender.id_for_label }}"
+                            class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.gender.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                        <option value="">Seleccionar género</option>
+                        {% for value, label in form.gender.field.choices %}
+                        <option value="{{ value }}" {% if form.gender.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.gender.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.gender.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.marital_status.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        💍 {{ form.marital_status.label }} *
+                    </label>
+                    <select name="{{ form.marital_status.name }}" 
+                            id="{{ form.marital_status.id_for_label }}"
+                            class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.marital_status.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                        <option value="">Seleccionar estado civil</option>
+                        {% for value, label in form.marital_status.field.choices %}
+                        <option value="{{ value }}" {% if form.marital_status.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.marital_status.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.marital_status.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-                <!-- Información de Contacto -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-secondary mb-3 fw-bold">
-                            <i class="fas fa-address-book me-2"></i> {% trans 'Información de Contacto' %}
-                        </h6>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="{{ form.phone.id_for_label }}" class="form-label">
-                            {{ form.phone.label }} *
-                        </label>
-                        {{ form.phone }}
-                        {% if form.phone.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.phone.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">
-                            {{ form.email.label }} *
-                        </label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.email.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-8 mb-3">
-                        <label for="{{ form.address.id_for_label }}" class="form-label">
-                            {{ form.address.label }} *
-                        </label>
-                        {{ form.address }}
-                        {% if form.address.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.address.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.city.id_for_label }}" class="form-label">
-                            {{ form.city.label }} *
-                        </label>
-                        {{ form.city }}
-                        {% if form.city.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.city.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
+        <!-- Información de Contacto -->
+        <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6">
+            <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                <span class="material-icons mr-2 text-emerald-600">contact_phone</span>
+                {% trans 'Información de Contacto' %}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        📞 {{ form.phone.label }} *
+                    </label>
+                    <input type="tel" 
+                           name="{{ form.phone.name }}" 
+                           id="{{ form.phone.id_for_label }}"
+                           value="{{ form.phone.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.phone.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Número de teléfono">
+                    {% if form.phone.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.phone.errors.0 }}</p>
+                    {% endif %}
                 </div>
+                
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        📧 {{ form.email.label }} *
+                    </label>
+                    <input type="email" 
+                           name="{{ form.email.name }}" 
+                           id="{{ form.email.id_for_label }}"
+                           value="{{ form.email.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.email.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Correo electrónico">
+                    {% if form.email.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        🏠 {{ form.address.label }} *
+                    </label>
+                    <input type="text" 
+                           name="{{ form.address.name }}" 
+                           id="{{ form.address.id_for_label }}"
+                           value="{{ form.address.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.address.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Dirección completa">
+                    {% if form.address.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.address.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.city.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        🏙️ {{ form.city.label }} *
+                    </label>
+                    <input type="text" 
+                           name="{{ form.city.name }}" 
+                           id="{{ form.city.id_for_label }}"
+                           value="{{ form.city.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.city.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Ciudad">
+                    {% if form.city.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.city.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-                <!-- Información Laboral -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-secondary mb-3 fw-bold">
-                            <i class="fas fa-briefcase me-2"></i> {% trans 'Información Laboral' %}
-                        </h6>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.employee_id.id_for_label }}" class="form-label">
-                            {{ form.employee_id.label }} *
-                        </label>
-                        {{ form.employee_id }}
-                        {% if form.employee_id.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.employee_id.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.position.id_for_label }}" class="form-label">
-                            {{ form.position.label }} *
-                        </label>
-                        {{ form.position }}
-                        {% if form.position.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.position.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.department.id_for_label }}" class="form-label">
-                            {{ form.department.label }} *
-                        </label>
-                        {{ form.department }}
-                        {% if form.department.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.department.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.hire_date.id_for_label }}" class="form-label">
-                            {{ form.hire_date.label }} *
-                        </label>
-                        {{ form.hire_date }}
-                        {% if form.hire_date.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.hire_date.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.employment_status.id_for_label }}" class="form-label">
-                            {{ form.employment_status.label }} *
-                        </label>
-                        {{ form.employment_status }}
-                        {% if form.employment_status.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.employment_status.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.salary.id_for_label }}" class="form-label">
-                            {{ form.salary.label }} *
-                        </label>
-                        {{ form.salary }}
-                        {% if form.salary.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.salary.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
+        <!-- Información Laboral -->
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6">
+            <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                <span class="material-icons mr-2 text-amber-600">work</span>
+                {% trans 'Información Laboral' %}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div>
+                    <label for="{{ form.employee_id.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        🆔 {{ form.employee_id.label }} *
+                    </label>
+                    <input type="text" 
+                           name="{{ form.employee_id.name }}" 
+                           id="{{ form.employee_id.id_for_label }}"
+                           value="{{ form.employee_id.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.employee_id.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="ID del empleado">
+                    {% if form.employee_id.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.employee_id.errors.0 }}</p>
+                    {% endif %}
                 </div>
+                
+                <div>
+                    <label for="{{ form.position.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        💼 {{ form.position.label }} *
+                    </label>
+                    <input type="text" 
+                           name="{{ form.position.name }}" 
+                           id="{{ form.position.id_for_label }}"
+                           value="{{ form.position.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.position.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Cargo o puesto">
+                    {% if form.position.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.position.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.department.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        🏢 {{ form.department.label }} *
+                    </label>
+                    <input type="text" 
+                           name="{{ form.department.name }}" 
+                           id="{{ form.department.id_for_label }}"
+                           value="{{ form.department.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.department.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Departamento">
+                    {% if form.department.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.department.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.hire_date.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        📅 {{ form.hire_date.label }} *
+                    </label>
+                    <input type="date" 
+                           name="{{ form.hire_date.name }}" 
+                           id="{{ form.hire_date.id_for_label }}"
+                           value="{{ form.hire_date.value|date:'Y-m-d'|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.hire_date.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                    {% if form.hire_date.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.hire_date.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.employment_status.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        ✅ {{ form.employment_status.label }} *
+                    </label>
+                    <select name="{{ form.employment_status.name }}" 
+                            id="{{ form.employment_status.id_for_label }}"
+                            class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.employment_status.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                        <option value="">Seleccionar estado</option>
+                        {% for value, label in form.employment_status.field.choices %}
+                        <option value="{{ value }}" {% if form.employment_status.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.employment_status.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.employment_status.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.salary.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        💰 {{ form.salary.label }} *
+                    </label>
+                    <input type="number" 
+                           name="{{ form.salary.name }}" 
+                           id="{{ form.salary.id_for_label }}"
+                           value="{{ form.salary.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.salary.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Salario">
+                    {% if form.salary.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.salary.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-                <!-- Horarios -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-secondary mb-3 fw-bold">
-                            <i class="fas fa-clock me-2"></i> {% trans 'Horarios' %}
-                        </h6>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="{{ form.work_schedule.id_for_label }}" class="form-label">
-                            {{ form.work_schedule.label }} *
-                        </label>
-                        {{ form.work_schedule }}
-                        {% if form.work_schedule.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.work_schedule.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="{{ form.shift_type.id_for_label }}" class="form-label">
-                            {{ form.shift_type.label }} *
-                        </label>
-                        {{ form.shift_type }}
-                        {% if form.shift_type.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.shift_type.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
+        <!-- Horarios -->
+        <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6">
+            <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                <span class="material-icons mr-2 text-purple-600">schedule</span>
+                {% trans 'Horarios' %}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.work_schedule.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        ⏰ {{ form.work_schedule.label }} *
+                    </label>
+                    <input type="text" 
+                           name="{{ form.work_schedule.name }}" 
+                           id="{{ form.work_schedule.id_for_label }}"
+                           value="{{ form.work_schedule.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.work_schedule.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Ej: Lunes a Viernes 8:00-17:00">
+                    {% if form.work_schedule.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.work_schedule.errors.0 }}</p>
+                    {% endif %}
                 </div>
+                
+                <div>
+                    <label for="{{ form.shift_type.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        🔄 {{ form.shift_type.label }} *
+                    </label>
+                    <select name="{{ form.shift_type.name }}" 
+                            id="{{ form.shift_type.id_for_label }}"
+                            class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.shift_type.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                        <option value="">Seleccionar turno</option>
+                        {% for value, label in form.shift_type.field.choices %}
+                        <option value="{{ value }}" {% if form.shift_type.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.shift_type.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.shift_type.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-                <!-- Contacto de Emergencia -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-secondary mb-3 fw-bold">
-                            <i class="fas fa-exclamation-triangle me-2"></i> {% trans 'Contacto de Emergencia' %}
-                        </h6>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.emergency_contact_name.id_for_label }}" class="form-label">
-                            {{ form.emergency_contact_name.label }} *
-                        </label>
-                        {{ form.emergency_contact_name }}
-                        {% if form.emergency_contact_name.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.emergency_contact_name.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.emergency_contact_relationship.id_for_label }}" class="form-label">
-                            {{ form.emergency_contact_relationship.label }} *
-                        </label>
-                        {{ form.emergency_contact_relationship }}
-                        {% if form.emergency_contact_relationship.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.emergency_contact_relationship.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.emergency_contact_phone.id_for_label }}" class="form-label">
-                            {{ form.emergency_contact_phone.label }} *
-                        </label>
-                        {{ form.emergency_contact_phone }}
-                        {% if form.emergency_contact_phone.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.emergency_contact_phone.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
+        <!-- Contacto de Emergencia -->
+        <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6">
+            <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                <span class="material-icons mr-2 text-red-600">emergency</span>
+                {% trans 'Contacto de Emergencia' %}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="{{ form.emergency_contact_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        🚨 {{ form.emergency_contact_name.label }} *
+                    </label>
+                    <input type="text" 
+                           name="{{ form.emergency_contact_name.name }}" 
+                           id="{{ form.emergency_contact_name.id_for_label }}"
+                           value="{{ form.emergency_contact_name.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-300 {% if form.emergency_contact_name.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Nombre del contacto">
+                    {% if form.emergency_contact_name.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.emergency_contact_name.errors.0 }}</p>
+                    {% endif %}
                 </div>
+                
+                <div>
+                    <label for="{{ form.emergency_contact_relationship.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        👥 {{ form.emergency_contact_relationship.label }} *
+                    </label>
+                    <select name="{{ form.emergency_contact_relationship.name }}" 
+                            id="{{ form.emergency_contact_relationship.id_for_label }}"
+                            class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-300 {% if form.emergency_contact_relationship.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                        <option value="">Seleccionar relación</option>
+                        {% for value, label in form.emergency_contact_relationship.field.choices %}
+                        <option value="{{ value }}" {% if form.emergency_contact_relationship.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.emergency_contact_relationship.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.emergency_contact_relationship.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.emergency_contact_phone.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        📞 {{ form.emergency_contact_phone.label }} *
+                    </label>
+                    <input type="tel" 
+                           name="{{ form.emergency_contact_phone.name }}" 
+                           id="{{ form.emergency_contact_phone.id_for_label }}"
+                           value="{{ form.emergency_contact_phone.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-300 {% if form.emergency_contact_phone.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Teléfono de emergencia">
+                    {% if form.emergency_contact_phone.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.emergency_contact_phone.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-                <!-- Información Médica -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-secondary mb-3 fw-bold">
-                            <i class="fas fa-heartbeat me-2"></i> {% trans 'Información Médica' %}
-                        </h6>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="{{ form.blood_type.id_for_label }}" class="form-label">
-                            {{ form.blood_type.label }}
-                        </label>
-                        {{ form.blood_type }}
-                        {% if form.blood_type.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.blood_type.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-8 mb-3">
-                        <label for="{{ form.allergies.id_for_label }}" class="form-label">
-                            {{ form.allergies.label }}
-                        </label>
-                        {{ form.allergies }}
-                        {% if form.allergies.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.allergies.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-12 mb-3">
-                        <label for="{{ form.medical_conditions.id_for_label }}" class="form-label">
-                            {{ form.medical_conditions.label }}
-                        </label>
-                        {{ form.medical_conditions }}
-                        {% if form.medical_conditions.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.medical_conditions.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
+        <!-- Información Médica -->
+        <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6">
+            <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                <span class="material-icons mr-2 text-green-600">medical_services</span>
+                {% trans 'Información Médica' %}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.blood_type.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        🩸 {{ form.blood_type.label }}
+                    </label>
+                    <input type="text" 
+                           name="{{ form.blood_type.name }}" 
+                           id="{{ form.blood_type.id_for_label }}"
+                           value="{{ form.blood_type.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 {% if form.blood_type.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Tipo de sangre">
+                    {% if form.blood_type.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.blood_type.errors.0 }}</p>
+                    {% endif %}
                 </div>
+                
+                <div>
+                    <label for="{{ form.allergies.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        ⚠️ {{ form.allergies.label }}
+                    </label>
+                    <input type="text" 
+                           name="{{ form.allergies.name }}" 
+                           id="{{ form.allergies.id_for_label }}"
+                           value="{{ form.allergies.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 {% if form.allergies.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Alergias conocidas">
+                    {% if form.allergies.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.allergies.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label for="{{ form.medical_conditions.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        🏥 {{ form.medical_conditions.label }}
+                    </label>
+                    <textarea name="{{ form.medical_conditions.name }}" 
+                              id="{{ form.medical_conditions.id_for_label }}"
+                              rows="3"
+                              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 resize-none {% if form.medical_conditions.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                              placeholder="Condiciones médicas importantes">{{ form.medical_conditions.value|default:'' }}</textarea>
+                    {% if form.medical_conditions.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.medical_conditions.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-                <!-- Información Adicional -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-secondary mb-3 fw-bold">
-                            <i class="fas fa-info-circle me-2"></i> {% trans 'Información Adicional' %}
-                        </h6>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="{{ form.skills.id_for_label }}" class="form-label">
-                            {{ form.skills.label }}
-                        </label>
-                        {{ form.skills }}
-                        {% if form.skills.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.skills.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="{{ form.notes.id_for_label }}" class="form-label">
-                            {{ form.notes.label }}
-                        </label>
-                        {{ form.notes }}
-                        {% if form.notes.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.notes.errors.0 }}
-                        </div>
-                        {% endif %}
-                    </div>
+        <!-- Información Adicional -->
+        <div class="bg-gradient-to-br from-slate-50 to-gray-50 rounded-xl p-6">
+            <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                <span class="material-icons mr-2 text-slate-600">info</span>
+                {% trans 'Información Adicional' %}
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.skills.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        🎯 {{ form.skills.label }}
+                    </label>
+                    <input type="text" 
+                           name="{{ form.skills.name }}" 
+                           id="{{ form.skills.id_for_label }}"
+                           value="{{ form.skills.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 {% if form.skills.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Habilidades especiales">
+                    {% if form.skills.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.skills.errors.0 }}</p>
+                    {% endif %}
                 </div>
+                
+                <div>
+                    <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                        📝 {{ form.notes.label }}
+                    </label>
+                    <textarea name="{{ form.notes.name }}" 
+                              id="{{ form.notes.id_for_label }}"
+                              rows="3"
+                              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 resize-none {% if form.notes.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                              placeholder="Notas adicionales">{{ form.notes.value|default:'' }}</textarea>
+                    {% if form.notes.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.notes.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-                <!-- Botones de Acción -->
-                <div class="row">
-                    <div class="col-12">
-                        <hr>
-                        <div class="d-flex justify-content-end">
-                            <a href="{% url 'staff_web:staff_list' %}" class="btn btn-secondary me-2">
-                                <i class="fas fa-times"></i> {% trans 'Cancelar' %}
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                {% if action == 'create' %}
-                                    {% trans 'Crear Empleado' %}
-                                {% else %}
-                                    {% trans 'Actualizar Empleado' %}
-                                {% endif %}
-                            </button>
-                        </div>
+        <!-- Errores generales del formulario -->
+        {% if form.non_field_errors %}
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+            <div class="flex">
+                <span class="material-icons text-red-500 mr-2">error</span>
+                <div>
+                    <h3 class="text-sm font-medium text-red-800">Errores en el formulario</h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
                     </div>
                 </div>
-            </form>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Botones de acción -->
+        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-200">
+            <button type="submit" class="flex-1 flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+                <span class="material-icons mr-2">save</span>
+                {% if action == 'create' %}
+                    {% trans 'Crear Empleado' %}
+                {% else %}
+                    {% trans 'Actualizar Empleado' %}
+                {% endif %}
+            </button>
+            
+            <a href="{% url 'staff_web:staff_list' %}" 
+               class="flex-1 flex items-center justify-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-4 px-8 rounded-xl border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                <span class="material-icons mr-2">cancel</span>
+                {% trans 'Cancelar' %}
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Información adicional -->
+<div class="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-6">
+    <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+        <span class="material-icons mr-2 text-slate-600">info</span>
+        Información del Formulario
+    </h4>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-slate-400">schedule</span>
+            <span>Fecha de creación: {% now "d/m/Y H:i" %}</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-slate-400">security</span>
+            <span>Los datos son confidenciales</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-slate-400">assignment</span>
+            <span>Tipo: {% if action == 'create' %}Nuevo Empleado{% else %}Edición{% endif %}</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-slate-400">verified</span>
+            <span>Formulario validado</span>
         </div>
     </div>
 </div>

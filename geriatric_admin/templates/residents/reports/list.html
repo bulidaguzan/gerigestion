@@ -1,0 +1,138 @@
+{% extends 'base_modern.html' %}
+{% load static %}
+
+{% block title %}Informes de {{ resident.full_name }}{% endblock %}
+{% block page_title %}Informes de {{ resident.full_name }}{% endblock %}
+{% block page_subtitle %}Historial de informes periódicos{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h1 class="text-2xl font-bold text-slate-900">Informes de {{ resident.full_name }}</h1>
+        <p class="text-slate-600 mt-1">Historial de informes periódicos del residente</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+        <a href="{% url 'residents_web:resident_report_create' resident.id %}" 
+           class="btn-primary">
+            <span class="material-icons">add</span>
+            Nuevo Informe
+        </a>
+    </div>
+</div>
+
+<!-- Información del residente -->
+<div class="content-card mb-6">
+    <div class="flex items-center space-x-4">
+        <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                <span class="material-icons text-indigo-600 text-xl">elderly</span>
+            </div>
+        </div>
+        <div class="flex-1">
+            <h3 class="text-lg font-semibold text-slate-900">{{ resident.full_name }}</h3>
+            <p class="text-slate-600">{{ resident.age }} años • {{ resident.get_gender_display }}</p>
+            {% if resident.room %}
+                <p class="text-slate-500 text-sm">Habitación {{ resident.room.room_number }}</p>
+            {% endif %}
+        </div>
+        <div class="flex-shrink-0">
+            <a href="{% url 'residents_web:resident_detail' resident.id %}" 
+               class="btn-secondary">
+                Ver Detalles
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de informes -->
+<div class="content-card">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-slate-700">Informes Periódicos</h2>
+        <div class="text-sm text-slate-500">
+            {{ page_obj.paginator.count }} informe{{ page_obj.paginator.count|pluralize }}
+        </div>
+    </div>
+
+    {% if page_obj %}
+        <div class="space-y-4">
+            {% for report in page_obj %}
+            <div class="border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition-colors">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if report.status == 'completed' %}bg-green-100 text-green-800
+                                {% elif report.status == 'draft' %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ report.get_status_display }}
+                            </span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {{ report.get_report_type_display }}
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-medium text-slate-900 mb-1">
+                            Informe del {{ report.report_date|date:"d/m/Y" }}
+                        </h3>
+                        <p class="text-slate-600 text-sm mb-2">
+                            Creado por {{ report.created_by.get_full_name|default:report.created_by.username }}
+                            el {{ report.created_at|date:"d/m/Y H:i" }}
+                        </p>
+                        {% if report.recommendations %}
+                            <p class="text-slate-700 text-sm line-clamp-2">{{ report.recommendations|truncatewords:20 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <a href="{% url 'residents_web:resident_report_detail' resident.id report.id %}" 
+                           class="btn-secondary btn-sm">
+                            <span class="material-icons text-sm">visibility</span>
+                            Ver
+                        </a>
+                        <a href="{% url 'residents_web:resident_report_update' resident.id report.id %}" 
+                           class="btn-secondary btn-sm">
+                            <span class="material-icons text-sm">edit</span>
+                            Editar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginación -->
+        {% if page_obj.has_other_pages %}
+        <div class="mt-6 flex items-center justify-between">
+            <div class="text-sm text-slate-500">
+                Mostrando {{ page_obj.start_index }} a {{ page_obj.end_index }} de {{ page_obj.paginator.count }} informes
+            </div>
+            <div class="flex space-x-2">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" class="btn-secondary btn-sm">
+                        <span class="material-icons text-sm">chevron_left</span>
+                        Anterior
+                    </a>
+                {% endif %}
+                
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="btn-secondary btn-sm">
+                        Siguiente
+                        <span class="material-icons text-sm">chevron_right</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-12">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-icons text-slate-400 text-2xl">assessment</span>
+            </div>
+            <h3 class="text-lg font-medium text-slate-900 mb-2">No hay informes</h3>
+            <p class="text-slate-600 mb-4">Aún no se han creado informes para este residente.</p>
+            <a href="{% url 'residents_web:resident_report_create' resident.id %}" class="btn-primary">
+                <span class="material-icons">add</span>
+                Crear Primer Informe
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

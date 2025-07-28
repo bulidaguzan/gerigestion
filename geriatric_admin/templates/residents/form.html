@@ -250,6 +250,163 @@
             </div>
         </div>
 
+        <!-- Estado de Tratamiento -->
+        <div>
+            <h3 class="text-lg font-semibold text-slate-700 mb-6 flex items-center">
+                <span class="material-icons mr-2 text-emerald-600">healing</span>
+                Estado de Tratamiento
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex items-center space-x-3">
+                    <input type="checkbox" 
+                           name="{{ form.is_in_treatment.name }}" 
+                           id="{{ form.is_in_treatment.id_for_label }}"
+                           {% if form.is_in_treatment.value %}checked{% endif %}
+                           class="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
+                    <label for="{{ form.is_in_treatment.id_for_label }}" class="text-sm font-medium text-slate-700">
+                        {{ form.is_in_treatment.label }}
+                    </label>
+                </div>
+                
+                <div>
+                    <label for="{{ form.treatment_type.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        {{ form.treatment_type.label }}
+                    </label>
+                    <select name="{{ form.treatment_type.name }}" 
+                            id="{{ form.treatment_type.id_for_label }}"
+                            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.treatment_type.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                        <option value="">Seleccionar tipo de tratamiento</option>
+                        {% for value, label in form.treatment_type.field.choices %}
+                        <option value="{{ value }}" {% if form.treatment_type.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.treatment_type.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.treatment_type.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.treatment_status.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        {{ form.treatment_status.label }}
+                    </label>
+                    <select name="{{ form.treatment_status.name }}" 
+                            id="{{ form.treatment_status.id_for_label }}"
+                            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.treatment_status.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                        <option value="">Seleccionar estado del tratamiento</option>
+                        {% for value, label in form.treatment_status.field.choices %}
+                        <option value="{{ value }}" {% if form.treatment_status.value == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.treatment_status.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.treatment_status.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.treatment_start_date.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        {{ form.treatment_start_date.label }}
+                    </label>
+                    <input type="date" 
+                           name="{{ form.treatment_start_date.name }}" 
+                           id="{{ form.treatment_start_date.id_for_label }}"
+                           value="{{ form.treatment_start_date.value|date:'Y-m-d'|default:'' }}"
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.treatment_start_date.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                    {% if form.treatment_start_date.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.treatment_start_date.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.treatment_end_date.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        {{ form.treatment_end_date.label }}
+                    </label>
+                    <input type="date" 
+                           name="{{ form.treatment_end_date.name }}" 
+                           id="{{ form.treatment_end_date.id_for_label }}"
+                           value="{{ form.treatment_end_date.value|date:'Y-m-d'|default:'' }}"
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.treatment_end_date.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                    {% if form.treatment_end_date.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.treatment_end_date.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.treatment_frequency.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        {{ form.treatment_frequency.label }}
+                    </label>
+                    <input type="text" 
+                           name="{{ form.treatment_frequency.name }}" 
+                           id="{{ form.treatment_frequency.id_for_label }}"
+                           value="{{ form.treatment_frequency.value|default:'' }}"
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.treatment_frequency.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Ej: diario, 3 veces por semana">
+                    {% if form.treatment_frequency.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.treatment_frequency.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.treatment_provider.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        {{ form.treatment_provider.label }}
+                    </label>
+                    <input type="text" 
+                           name="{{ form.treatment_provider.name }}" 
+                           id="{{ form.treatment_provider.id_for_label }}"
+                           value="{{ form.treatment_provider.value|default:'' }}"
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.treatment_provider.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                           placeholder="Nombre del profesional o institución">
+                    {% if form.treatment_provider.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.treatment_provider.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-6 mt-6">
+                <div>
+                    <label for="{{ form.treatment_goals.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        {{ form.treatment_goals.label }}
+                    </label>
+                    <textarea name="{{ form.treatment_goals.name }}" 
+                              id="{{ form.treatment_goals.id_for_label }}"
+                              rows="3"
+                              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.treatment_goals.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                              placeholder="Objetivos específicos del tratamiento">{{ form.treatment_goals.value|default:'' }}</textarea>
+                    {% if form.treatment_goals.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.treatment_goals.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.treatment_progress.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        {{ form.treatment_progress.label }}
+                    </label>
+                    <textarea name="{{ form.treatment_progress.name }}" 
+                              id="{{ form.treatment_progress.id_for_label }}"
+                              rows="3"
+                              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.treatment_progress.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                              placeholder="Evaluación del progreso del tratamiento">{{ form.treatment_progress.value|default:'' }}</textarea>
+                    {% if form.treatment_progress.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.treatment_progress.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.treatment_notes.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        {{ form.treatment_notes.label }}
+                    </label>
+                    <textarea name="{{ form.treatment_notes.name }}" 
+                              id="{{ form.treatment_notes.id_for_label }}"
+                              rows="3"
+                              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.treatment_notes.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                              placeholder="Notas adicionales sobre el tratamiento">{{ form.treatment_notes.value|default:'' }}</textarea>
+                    {% if form.treatment_notes.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.treatment_notes.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
         <!-- Información Adicional -->
         <div>
             <h3 class="text-lg font-semibold text-slate-700 mb-6 flex items-center">
