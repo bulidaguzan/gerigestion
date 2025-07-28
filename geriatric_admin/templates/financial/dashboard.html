@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load humanize %}
 
 {% block title %}{% trans 'Dashboard Financiero' %}{% endblock %}
 
@@ -12,13 +13,13 @@
             <i class="fas fa-chart-line me-2"></i>{% trans 'Dashboard Financiero' %}
         </h1>
         <div class="btn-group" role="group">
-            <a href="{% url 'financial_web:expense_create' %}" class="btn btn-success btn-sm">
-                <i class="fas fa-plus me-1"></i>{% trans 'Nuevo Gasto' %}
-            </a>
-            <a href="{% url 'financial_web:income_create' %}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus me-1"></i>{% trans 'Nuevo Ingreso' %}
-            </a>
-            <a href="{% url 'financial_web:investment_create' %}" class="btn btn-info btn-sm">
+                                            <a href="{% url 'financial:expense_create' %}" class="btn btn-danger btn-sm">
+                    <i class="fas fa-plus me-1"></i>{% trans 'Nuevo Gasto' %}
+                </a>
+                                            <a href="{% url 'financial:income_create' %}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus me-1"></i>{% trans 'Nuevo Ingreso' %}
+                </a>
+                            <a href="{% url 'financial:investment_create' %}" class="btn btn-info btn-sm">
                 <i class="fas fa-plus me-1"></i>{% trans 'Nueva Inversión' %}
             </a>
         </div>
@@ -36,7 +37,7 @@
                                 {% trans 'Gastos del Mes' %}
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                €{{ monthly_expenses|floatformat:2 }}
+                                ${{ monthly_expenses|floatformat:0|intcomma }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -57,7 +58,7 @@
                                 {% trans 'Ingresos del Mes' %}
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                €{{ monthly_income|floatformat:2 }}
+                                ${{ monthly_income|floatformat:0|intcomma }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -78,7 +79,7 @@
                                 {% trans 'Balance del Mes' %}
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                €{{ monthly_balance|floatformat:2 }}
+                                ${{ monthly_balance|floatformat:0|intcomma }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -102,7 +103,7 @@
                                 {{ active_investments }}
                             </div>
                             <div class="text-xs text-muted">
-                                €{{ total_investment_amount|floatformat:2 }}
+                                ${{ total_investment_amount|floatformat:0|intcomma }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -140,7 +141,7 @@
                         </div>
                     </div>
                     <div class="text-center mt-3">
-                        <a href="{% url 'financial_web:expense_list' %}?status=pending" class="btn btn-outline-danger btn-sm">
+                                                    <a href="{% url 'financial:expense_list' %}?status=pending" class="btn btn-outline-danger btn-sm">
                             {% trans 'Ver Gastos Pendientes' %}
                         </a>
                     </div>
@@ -172,7 +173,7 @@
                         </div>
                     </div>
                     <div class="text-center mt-3">
-                        <a href="{% url 'financial_web:income_list' %}?status=pending" class="btn btn-outline-success btn-sm">
+                                                    <a href="{% url 'financial:income_list' %}?status=pending" class="btn btn-outline-success btn-sm">
                             {% trans 'Ver Ingresos Pendientes' %}
                         </a>
                     </div>
@@ -204,7 +205,7 @@
                                         </small>
                                     </div>
                                     <div class="text-end">
-                                        <div class="font-weight-bold text-danger">€{{ expense.amount|floatformat:2 }}</div>
+                                        <div class="font-weight-bold text-danger">${{ expense.amount|floatformat:0|intcomma }}</div>
                                         <small class="badge bg-{% if expense.status == 'paid' %}success{% elif expense.status == 'pending' %}warning{% else %}secondary{% endif %}">
                                             {{ expense.get_status_display }}
                                         </small>
@@ -214,8 +215,8 @@
                             {% endfor %}
                         </div>
                         <div class="text-center mt-3">
-                            <a href="{% url 'financial_web:expense_list' %}" class="btn btn-outline-danger btn-sm">
-                                {% trans 'Ver Todos los Gastos' %}
+                            <a href="{% url 'financial:expense_list' %}" class="btn btn-danger btn-lg">
+                                <i class="fas fa-list me-2"></i>{% trans 'Ver Todos los Gastos' %}
                             </a>
                         </div>
                     {% else %}
@@ -249,7 +250,7 @@
                                         </small>
                                     </div>
                                     <div class="text-end">
-                                        <div class="font-weight-bold text-success">€{{ income.amount|floatformat:2 }}</div>
+                                        <div class="font-weight-bold text-success">${{ income.amount|floatformat:0|intcomma }}</div>
                                         <small class="badge bg-{% if income.status == 'received' %}success{% elif income.status == 'pending' %}warning{% else %}secondary{% endif %}">
                                             {{ income.get_status_display }}
                                         </small>
@@ -259,8 +260,8 @@
                             {% endfor %}
                         </div>
                         <div class="text-center mt-3">
-                            <a href="{% url 'financial_web:income_list' %}" class="btn btn-outline-success btn-sm">
-                                {% trans 'Ver Todos los Ingresos' %}
+                            <a href="{% url 'financial:income_list' %}" class="btn btn-success btn-lg">
+                                <i class="fas fa-list me-2"></i>{% trans 'Ver Todos los Ingresos' %}
                             </a>
                         </div>
                     {% else %}
@@ -285,24 +286,40 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'financial_web:category_list' %}" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-tags me-2"></i>{% trans 'Categorías' %}
+                        <div class="col-md-2 mb-3">
+                            <a href="{% url 'financial:expense_list' %}" class="btn btn-danger w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                                <i class="fas fa-receipt fa-2x mb-2"></i>
+                                <span>{% trans 'Gastos' %}</span>
                             </a>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'financial_web:budget_list' %}" class="btn btn-outline-info w-100">
-                                <i class="fas fa-chart-pie me-2"></i>{% trans 'Presupuestos' %}
+                        <div class="col-md-2 mb-3">
+                            <a href="{% url 'financial:income_list' %}" class="btn btn-success w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                                <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                                <span>{% trans 'Ingresos' %}</span>
                             </a>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'financial_web:investment_list' %}" class="btn btn-outline-warning w-100">
-                                <i class="fas fa-chart-line me-2"></i>{% trans 'Inversiones' %}
+                        <div class="col-md-2 mb-3">
+                            <a href="{% url 'financial:category_list' %}" class="btn btn-outline-primary w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                                <i class="fas fa-tags fa-2x mb-2"></i>
+                                <span>{% trans 'Categorías' %}</span>
                             </a>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'financial_web:reports' %}" class="btn btn-outline-secondary w-100">
-                                <i class="fas fa-file-alt me-2"></i>{% trans 'Reportes' %}
+                        <div class="col-md-2 mb-3">
+                            <a href="{% url 'financial:investment_list' %}" class="btn btn-outline-warning w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                                <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                <span>{% trans 'Inversiones' %}</span>
+                            </a>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <a href="{% url 'financial:budget_list' %}" class="btn btn-outline-info w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                                <i class="fas fa-chart-pie fa-2x mb-2"></i>
+                                <span>{% trans 'Presupuestos' %}</span>
+                            </a>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <a href="{% url 'financial:reports' %}" class="btn btn-outline-secondary w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                                <i class="fas fa-file-alt fa-2x mb-2"></i>
+                                <span>{% trans 'Reportes' %}</span>
                             </a>
                         </div>
                     </div>
@@ -317,7 +334,7 @@
 <script>
 // Actualizar estadísticas en tiempo real
 function updateStats() {
-    fetch('{% url "financial_web:financial_stats" %}')
+                fetch('{% url "financial:financial_stats" %}')
         .then(response => response.json())
         .then(data => {
             // Actualizar estadísticas aquí si es necesario

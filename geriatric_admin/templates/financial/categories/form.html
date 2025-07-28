@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% if category %}Editar Categoría{% else %}Nueva Categoría{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background-color: #f8f9fa;
+        border-radius: 0.375rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .form-section h5 {
+        color: #495057;
+        margin-bottom: 1rem;
+    }
+    .required-field::after {
+        content: " *";
+        color: #dc3545;
+    }
+    .color-preview {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        border: 2px solid #dee2e6;
+        display: inline-block;
+        margin-left: 10px;
+    }
+    .category-type-info {
+        padding: 1rem;
+        border-radius: 0.375rem;
+        margin-bottom: 1rem;
+    }
+    .category-type-info.expense {
+        background-color: #f8d7da;
+        border-left: 4px solid #dc3545;
+    }
+    .category-type-info.income {
+        background-color: #d1ecf1;
+        border-left: 4px solid #17a2b8;
+    }
+    .category-type-info.investment {
+        background-color: #d4edda;
+        border-left: 4px solid #28a745;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                {% if category %}
+                    {% trans 'Editar Categoría' %}
+                {% else %}
+                    {% trans 'Nueva Categoría' %}
+                {% endif %}
+            </h1>
+            <p class="text-muted">
+                {% if category %}
+                    {% trans 'Modifica la información de la categoría' %}
+                {% else %}
+                    {% trans 'Crea una nueva categoría para organizar transacciones' %}
+                {% endif %}
+            </p>
+        </div>
+        <div>
+            <a href="{% url 'financial:category_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> {% trans 'Volver' %}
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Main Form -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        {% if category %}
+                            {% trans 'Información de la Categoría' %}
+                        {% else %}
+                            {% trans 'Datos de la Categoría' %}
+                        {% endif %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="categoryForm">
+                        {% csrf_token %}
+                        
+                        <!-- Basic Information -->
+                        <div class="form-section">
+                            <h5><i class="bi bi-info-circle"></i> {% trans 'Información Básica' %}</h5>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="{{ form.name.id_for_label }}" class="form-label required-field">
+                                            {{ form.name.label }}
+                                        </label>
+                                        {{ form.name }}
+                                        {% if form.name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.name.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="{{ form.category_type.id_for_label }}" class="form-label required-field">
+                                            {{ form.category_type.label }}
+                                        </label>
+                                        {{ form.category_type }}
+                                        {% if form.category_type.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.category_type.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">
+                                    {{ form.description.label }}
+                                </label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.description.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Category Type Information -->
+                        <div id="categoryTypeInfo" class="category-type-info" style="display: none;">
+                            <h6 class="mb-2"><i class="bi bi-info-circle"></i> {% trans 'Información del Tipo' %}</h6>
+                            <div id="typeDescription"></div>
+                        </div>
+
+                        <!-- Appearance -->
+                        <div class="form-section">
+                            <h5><i class="bi bi-palette"></i> {% trans 'Apariencia' %}</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="{{ form.color.id_for_label }}" class="form-label">
+                                            {{ form.color.label }}
+                                        </label>
+                                        <div class="d-flex align-items-center">
+                                            {{ form.color }}
+                                            <span class="color-preview" id="colorPreview"></span>
+                                        </div>
+                                        {% if form.color.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.color.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">
+                                            {% trans 'Selecciona un color para identificar esta categoría' %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="{{ form.is_active.id_for_label }}" class="form-label">
+                                            {{ form.is_active.label }}
+                                        </label>
+                                        <div class="form-check">
+                                            {{ form.is_active }}
+                                            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                                {% trans 'Activar esta categoría' %}
+                                            </label>
+                                        </div>
+                                        {% if form.is_active.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.is_active.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'financial:category_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> {% trans 'Cancelar' %}
+                            </a>
+                            <div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i>
+                                    {% if category %}
+                                        {% trans 'Actualizar Categoría' %}
+                                    {% else %}
+                                        {% trans 'Crear Categoría' %}
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Actions -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Acciones Rápidas' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'financial:category_create' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-plus-circle"></i> {% trans 'Nueva Categoría' %}
+                        </a>
+                        <a href="{% url 'financial:category_list' %}" class="btn btn-outline-info">
+                            <i class="bi bi-list"></i> {% trans 'Ver Todas' %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Ayuda' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="small text-muted">
+                        <p><strong>{% trans 'Campos obligatorios:' %}</strong></p>
+                        <ul class="mb-3">
+                            <li>{% trans 'Nombre de la categoría' %}</li>
+                            <li>{% trans 'Tipo de categoría' %}</li>
+                        </ul>
+                        
+                        <p><strong>{% trans 'Tipos de categorías:' %}</strong></p>
+                        <ul class="mb-3">
+                            <li><strong>{% trans 'Gasto:' %}</strong> {% trans 'Para registrar salidas de dinero' %}</li>
+                            <li><strong>{% trans 'Ingreso:' %}</strong> {% trans 'Para registrar entradas de dinero' %}</li>
+                            <li><strong>{% trans 'Inversión:' %}</strong> {% trans 'Para registrar inversiones y mejoras' %}</li>
+                        </ul>
+                        
+                        <p><strong>{% trans 'Consejos:' %}</strong></p>
+                        <ul>
+                            <li>{% trans 'Usa nombres descriptivos y específicos' %}</li>
+                            <li>{% trans 'Elige colores que faciliten la identificación' %}</li>
+                            <li>{% trans 'Mantén las categorías activas para mejor organización' %}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Color Palette -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Paleta de Colores' %}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-3">
+                            <div class="color-option" data-color="#dc3545" style="background-color: #dc3545; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#fd7e14" style="background-color: #fd7e14; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#ffc107" style="background-color: #ffc107; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#28a745" style="background-color: #28a745; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#20c997" style="background-color: #20c997; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#17a2b8" style="background-color: #17a2b8; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#007bff" style="background-color: #007bff; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#6f42c1" style="background-color: #6f42c1; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#e83e8c" style="background-color: #e83e8c; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#6c757d" style="background-color: #6c757d; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#343a40" style="background-color: #343a40; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="color-option" data-color="#f8f9fa" style="background-color: #f8f9fa; width: 30px; height: 30px; border-radius: 4px; cursor: pointer; border: 1px solid #dee2e6;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Color picker functionality
+    $('#{{ form.color.id_for_label }}').on('input', function() {
+        $('#colorPreview').css('background-color', $(this).val());
+    });
+
+    // Color palette functionality
+    $('.color-option').on('click', function() {
+        const color = $(this).data('color');
+        $('#{{ form.color.id_for_label }}').val(color);
+        $('#colorPreview').css('background-color', color);
+    });
+
+    // Category type information
+    $('#{{ form.category_type.id_for_label }}').on('change', function() {
+        const type = $(this).val();
+        const infoDiv = $('#categoryTypeInfo');
+        const descriptionDiv = $('#typeDescription');
+        
+        if (type) {
+            infoDiv.removeClass('expense income investment').addClass(type);
+            
+            let description = '';
+            let icon = '';
+            
+            switch(type) {
+                case 'expense':
+                    description = '{% trans "Esta categoría se usará para clasificar gastos y salidas de dinero del geriátrico." %}';
+                    icon = '<i class="bi bi-cash-stack text-danger"></i>';
+                    break;
+                case 'income':
+                    description = '{% trans "Esta categoría se usará para clasificar ingresos y entradas de dinero al geriátrico." %}';
+                    icon = '<i class="bi bi-cash-coin text-success"></i>';
+                    break;
+                case 'investment':
+                    description = '{% trans "Esta categoría se usará para clasificar inversiones y mejoras en el geriátrico." %}';
+                    icon = '<i class="bi bi-graph-up text-info"></i>';
+                    break;
+            }
+            
+            descriptionDiv.html(icon + ' ' + description);
+            infoDiv.show();
+        } else {
+            infoDiv.hide();
+        }
+    });
+
+    // Trigger change event on load if category type is already selected
+    if ($('#{{ form.category_type.id_for_label }}').val()) {
+        $('#{{ form.category_type.id_for_label }}').trigger('change');
+    }
+
+    // Initialize color preview
+    if ($('#{{ form.color.id_for_label }}').val()) {
+        $('#colorPreview').css('background-color', $('#{{ form.color.id_for_label }}').val());
+    } else {
+        $('#colorPreview').css('background-color', '#3498db');
+    }
+
+    // Form validation
+    $('#categoryForm').on('submit', function(e) {
+        const name = $('#{{ form.name.id_for_label }}').val().trim();
+        const categoryType = $('#{{ form.category_type.id_for_label }}').val();
+        
+        if (!name) {
+            e.preventDefault();
+            alert('{% trans "El nombre de la categoría es obligatorio" %}');
+            return false;
+        }
+        
+        if (!categoryType) {
+            e.preventDefault();
+            alert('{% trans "Debes seleccionar un tipo de categoría" %}');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %} 

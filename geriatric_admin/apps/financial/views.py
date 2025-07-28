@@ -119,7 +119,7 @@ def category_list(request):
         'category_types': Category.CATEGORY_TYPES
     }
     
-    return render(request, 'financial/category_list.html', context)
+    return render(request, 'financial/categories/list.html', context)
 
 
 @login_required
@@ -142,7 +142,7 @@ def category_create(request):
         'action': 'create'
     }
     
-    return render(request, 'financial/category_form.html', context)
+    return render(request, 'financial/categories/form.html', context)
 
 
 @login_required
@@ -165,7 +165,7 @@ def category_update(request, category_id):
         'action': 'update'
     }
     
-    return render(request, 'financial/category_form.html', context)
+    return render(request, 'financial/categories/form.html', context)
 
 
 @login_required
@@ -182,7 +182,7 @@ def category_delete(request, category_id):
         'category': category
     }
     
-    return render(request, 'financial/category_delete.html', context)
+    return render(request, 'financial/categories/delete.html', context)
 
 
 # Gestión de Gastos
@@ -225,16 +225,25 @@ def expense_list(request):
     # Estadísticas
     total_amount = expenses.aggregate(total=Sum('amount'))['total'] or 0
     pending_amount = expenses.filter(status='pending').aggregate(total=Sum('amount'))['total'] or 0
+    paid_count = expenses.filter(status='paid').count()
+    pending_count = expenses.filter(status='pending').count()
+    overdue_count = expenses.filter(
+        status='pending',
+        due_date__lt=timezone.now().date()
+    ).count()
     
     context = {
         'page_obj': page_obj,
         'total_amount': total_amount,
         'pending_amount': pending_amount,
+        'paid_count': paid_count,
+        'pending_count': pending_count,
+        'overdue_count': overdue_count,
         'categories': Category.objects.filter(category_type='expense', is_active=True),
         'status_choices': Expense.STATUS_CHOICES
     }
     
-    return render(request, 'financial/expense_list.html', context)
+    return render(request, 'financial/expenses/list.html', context)
 
 
 @login_required
@@ -248,7 +257,7 @@ def expense_create(request):
             expense.save()
             
             messages.success(request, _('Gasto creado exitosamente.'))
-            return redirect('financial_web:expense_list')
+            return redirect('financial:expense_list')
     else:
         form = ExpenseForm()
     
@@ -257,7 +266,7 @@ def expense_create(request):
         'action': 'create'
     }
     
-    return render(request, 'financial/expense_form.html', context)
+    return render(request, 'financial/expenses/form.html', context)
 
 
 @login_required
@@ -270,7 +279,7 @@ def expense_update(request, expense_id):
         if form.is_valid():
             form.save()
             messages.success(request, _('Gasto actualizado exitosamente.'))
-            return redirect('financial_web:expense_list')
+            return redirect('financial:expense_list')
     else:
         form = ExpenseForm(instance=expense)
     
@@ -280,7 +289,7 @@ def expense_update(request, expense_id):
         'action': 'update'
     }
     
-    return render(request, 'financial/expense_form.html', context)
+    return render(request, 'financial/expenses/form.html', context)
 
 
 @login_required
@@ -297,7 +306,7 @@ def expense_delete(request, expense_id):
         'expense': expense
     }
     
-    return render(request, 'financial/expense_delete.html', context)
+    return render(request, 'financial/expenses/delete.html', context)
 
 
 @login_required
@@ -309,7 +318,7 @@ def expense_detail(request, expense_id):
         'expense': expense
     }
     
-    return render(request, 'financial/expense_detail.html', context)
+    return render(request, 'financial/expenses/detail.html', context)
 
 
 # Gestión de Ingresos
@@ -352,16 +361,25 @@ def income_list(request):
     # Estadísticas
     total_amount = incomes.aggregate(total=Sum('amount'))['total'] or 0
     pending_amount = incomes.filter(status='pending').aggregate(total=Sum('amount'))['total'] or 0
+    received_count = incomes.filter(status='received').count()
+    pending_count = incomes.filter(status='pending').count()
+    overdue_count = incomes.filter(
+        status='pending',
+        due_date__lt=timezone.now().date()
+    ).count()
     
     context = {
         'page_obj': page_obj,
         'total_amount': total_amount,
         'pending_amount': pending_amount,
+        'received_count': received_count,
+        'pending_count': pending_count,
+        'overdue_count': overdue_count,
         'categories': Category.objects.filter(category_type='income', is_active=True),
         'status_choices': Income.STATUS_CHOICES
     }
     
-    return render(request, 'financial/income_list.html', context)
+    return render(request, 'financial/income/list.html', context)
 
 
 @login_required
@@ -375,7 +393,7 @@ def income_create(request):
             income.save()
             
             messages.success(request, _('Ingreso creado exitosamente.'))
-            return redirect('financial_web:income_list')
+            return redirect('financial:income_list')
     else:
         form = IncomeForm()
     
@@ -384,7 +402,7 @@ def income_create(request):
         'action': 'create'
     }
     
-    return render(request, 'financial/income_form.html', context)
+    return render(request, 'financial/income/form.html', context)
 
 
 @login_required
@@ -397,7 +415,7 @@ def income_update(request, income_id):
         if form.is_valid():
             form.save()
             messages.success(request, _('Ingreso actualizado exitosamente.'))
-            return redirect('financial_web:income_list')
+            return redirect('financial:income_list')
     else:
         form = IncomeForm(instance=income)
     
@@ -407,7 +425,7 @@ def income_update(request, income_id):
         'action': 'update'
     }
     
-    return render(request, 'financial/income_form.html', context)
+    return render(request, 'financial/income/form.html', context)
 
 
 @login_required
@@ -424,7 +442,7 @@ def income_delete(request, income_id):
         'income': income
     }
     
-    return render(request, 'financial/income_delete.html', context)
+    return render(request, 'financial/income/delete.html', context)
 
 
 @login_required
@@ -436,7 +454,7 @@ def income_detail(request, income_id):
         'income': income
     }
     
-    return render(request, 'financial/income_detail.html', context)
+    return render(request, 'financial/income/detail.html', context)
 
 
 # Gestión de Inversiones
@@ -479,7 +497,7 @@ def investment_list(request):
         'status_choices': Investment.STATUS_CHOICES
     }
     
-    return render(request, 'financial/investment_list.html', context)
+    return render(request, 'financial/investments/list.html', context)
 
 
 @login_required
@@ -502,7 +520,7 @@ def investment_create(request):
         'action': 'create'
     }
     
-    return render(request, 'financial/investment_form.html', context)
+    return render(request, 'financial/investments/form.html', context)
 
 
 @login_required
@@ -525,7 +543,7 @@ def investment_update(request, investment_id):
         'action': 'update'
     }
     
-    return render(request, 'financial/investment_form.html', context)
+    return render(request, 'financial/investments/form.html', context)
 
 
 @login_required
@@ -542,7 +560,7 @@ def investment_delete(request, investment_id):
         'investment': investment
     }
     
-    return render(request, 'financial/investment_delete.html', context)
+    return render(request, 'financial/investments/delete.html', context)
 
 
 @login_required
@@ -554,7 +572,7 @@ def investment_detail(request, investment_id):
         'investment': investment
     }
     
-    return render(request, 'financial/investment_detail.html', context)
+    return render(request, 'financial/investments/detail.html', context)
 
 
 # Gestión de Presupuestos

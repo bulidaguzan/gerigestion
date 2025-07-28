@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Eliminar Categoría' %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">{% trans 'Eliminar Categoría' %}</h1>
+            <p class="text-muted">{% trans 'Confirmar eliminación de la categoría' %}</p>
+        </div>
+        <div>
+            <a href="{% url 'financial:category_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> {% trans 'Volver' %}
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-danger">
+                        <i class="bi bi-exclamation-triangle"></i> {% trans 'Confirmar Eliminación' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h5 class="alert-heading">{% trans '¿Estás seguro?' %}</h5>
+                        <p>{% trans 'Estás a punto de eliminar la siguiente categoría:' %}</p>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="color-preview me-3" style="background-color: {{ category.color }}; width: 30px; height: 30px; border-radius: 4px;"></div>
+                                <div>
+                                    <h6 class="card-title mb-1">{{ category.name }}</h6>
+                                    <span class="badge 
+                                        {% if category.category_type == 'expense' %}bg-danger
+                                        {% elif category.category_type == 'income' %}bg-success
+                                        {% else %}bg-info{% endif %}">
+                                        {{ category.get_category_type_display }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            {% if category.description %}
+                            <p class="card-text">{{ category.description }}</p>
+                            {% endif %}
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>{% trans 'Tipo:' %}</strong> {{ category.get_category_type_display }}</p>
+                                    <p><strong>{% trans 'Color:' %}</strong> {{ category.color }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>{% trans 'Estado:' %}</strong> 
+                                        {% if category.is_active %}
+                                            <span class="badge bg-success">{% trans 'Activa' %}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{% trans 'Inactiva' %}</span>
+                                        {% endif %}
+                                    </p>
+                                    <p><strong>{% trans 'Creada:' %}</strong> {{ category.created_at|date:"d/m/Y" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>{% trans 'Advertencia:' %}</strong> 
+                        {% trans 'Esta acción puede afectar registros existentes que usen esta categoría.' %}
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'financial:category_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> {% trans 'Cancelar' %}
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> {% trans 'Eliminar Categoría' %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

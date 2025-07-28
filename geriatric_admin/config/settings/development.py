@@ -95,20 +95,20 @@ STATICFILES_DIRS = [
 ]
 
 # Development-specific middleware
-MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-] + MIDDLEWARE
+# MIDDLEWARE = [
+#     'debug_toolbar.middleware.DebugToolbarMiddleware',
+# ] + MIDDLEWARE
 
 # Add debug toolbar to installed apps
-INSTALLED_APPS += [
-    'debug_toolbar',
-]
+# INSTALLED_APPS += [
+#     'debug_toolbar',
+# ]
 
 # Debug toolbar configuration
-INTERNAL_IPS = [
-    '127.0.0.1',
-    'localhost',
-]
+# INTERNAL_IPS = [
+#     '127.0.0.1',
+#     'localhost',
+# ]
 
 # Disable security settings for development
 SECURE_SSL_REDIRECT = False

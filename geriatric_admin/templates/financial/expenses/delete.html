@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+
+{% block title %}{% trans 'Eliminar Gasto' %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">{% trans 'Eliminar Gasto' %}</h1>
+            <p class="text-muted">{% trans 'Confirmar eliminación del gasto' %}</p>
+        </div>
+        <div>
+            <a href="{% url 'financial:expense_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> {% trans 'Volver' %}
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-danger">
+                        <i class="bi bi-exclamation-triangle"></i> {% trans 'Confirmar Eliminación' %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h5 class="alert-heading">{% trans '¿Estás seguro?' %}</h5>
+                        <p>{% trans 'Estás a punto de eliminar el siguiente gasto:' %}</p>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ expense.title }}</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>{% trans 'Monto:' %}</strong> ${{ expense.amount|floatformat:0|intcomma }}</p>
+                                    <p><strong>{% trans 'Categoría:' %}</strong> {{ expense.category.name }}</p>
+                                    <p><strong>{% trans 'Fecha:' %}</strong> {{ expense.expense_date|date:"d/m/Y" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>{% trans 'Estado:' %}</strong> {{ expense.get_status_display }}</p>
+                                    <p><strong>{% trans 'Proveedor:' %}</strong> {{ expense.supplier|default:"-" }}</p>
+                                    <p><strong>{% trans 'Método de Pago:' %}</strong> {{ expense.get_payment_method_display }}</p>
+                                </div>
+                            </div>
+                            {% if expense.description %}
+                            <p><strong>{% trans 'Descripción:' %}</strong> {{ expense.description }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>{% trans 'Advertencia:' %}</strong> {% trans 'Esta acción no se puede deshacer. El gasto será eliminado permanentemente.' %}
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'financial:expense_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> {% trans 'Cancelar' %}
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> {% trans 'Eliminar Gasto' %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
