@@ -1,158 +1,194 @@
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
-
-{% block title %}Iniciar Sesión - {{ site_name }}{% endblock %}
-
-{% block extra_css %}
-<style>
-    .login-container {
-        max-width: 400px;
-        margin: 50px auto;
-        padding: 30px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    .login-header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-    
-    .login-header h2 {
-        color: #333;
-        margin-bottom: 10px;
-    }
-    
-    .login-header p {
-        color: #666;
-        margin: 0;
-    }
-    
-    .security-notice {
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        padding: 15px;
-        margin-bottom: 20px;
-        font-size: 0.9em;
-    }
-    
-    .security-notice .fa {
-        margin-right: 8px;
-        color: #6c757d;
-    }
-    
-    .form-group {
-        margin-bottom: 20px;
-    }
-    
-    .btn-login {
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        font-weight: 500;
-    }
-    
-    .login-footer {
-        text-align: center;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #dee2e6;
-        font-size: 0.9em;
-        color: #6c757d;
-    }
-    
-    .alert {
-        margin-bottom: 20px;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="container">
-    <div class="login-container">
-        <div class="login-header">
-            <h2>{{ site_name }}</h2>
-            <p>{{ page_title }}</p>
-        </div>
-        
-        <div class="security-notice">
-            <i class="fa fa-shield-alt"></i>
-            Este es un sistema seguro. Todos los intentos de acceso son registrados y monitoreados.
-        </div>
-        
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-        
-        <form method="post" novalidate>
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="{{ form.username.id_for_label }}" class="form-label">
-                    Usuario o ID de Empleado
-                </label>
-                {{ form.username }}
-                {% if form.username.errors %}
-                    <div class="invalid-feedback d-block">
-                        {{ form.username.errors.0 }}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Iniciar Sesión - GeriGestion</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <style type="text/tailwindcss">
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .login-card {
+            @apply bg-white p-8 sm:p-12 rounded-2xl shadow-2xl border border-slate-200;
+        }
+        .input-modern {
+            @apply w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300;
+        }
+        .input-modern:focus {
+            @apply outline-none;
+        }
+        .btn-login {
+            @apply w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+        }
+        .security-badge {
+            @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800;
+        }
+        .alert-modern {
+            @apply p-4 rounded-lg border-l-4 mb-6;
+        }
+        .alert-success {
+            @apply bg-green-50 border-green-400 text-green-700;
+        }
+        .alert-error {
+            @apply bg-red-50 border-red-400 text-red-700;
+        }
+        .alert-warning {
+            @apply bg-yellow-50 border-yellow-400 text-yellow-700;
+        }
+        .alert-info {
+            @apply bg-blue-50 border-blue-400 text-blue-700;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Login Card -->
+        <div class="login-card">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex justify-center mb-4">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
+                        <span class="material-icons text-3xl text-indigo-600">elderly</span>
                     </div>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.password.id_for_label }}" class="form-label">
-                    Contraseña
-                </label>
-                {{ form.password }}
-                {% if form.password.errors %}
-                    <div class="invalid-feedback d-block">
-                        {{ form.password.errors.0 }}
-                    </div>
-                {% endif %}
-            </div>
-            
-            {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {% for error in form.non_field_errors %}
-                        {{ error }}
-                    {% endfor %}
                 </div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">GeriGestion</h1>
+                <p class="text-slate-600">Inicia sesión para acceder al sistema</p>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
+                <div class="flex items-start">
+                    <span class="material-icons text-slate-500 mr-3 mt-0.5">security</span>
+                    <div>
+                        <p class="text-sm text-slate-700 font-medium">Conexión Segura</p>
+                        <p class="text-xs text-slate-500 mt-1">Todos los intentos de acceso son registrados y monitoreados</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-modern {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-error{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %}">
+                    <div class="flex">
+                        <span class="material-icons mr-2 text-sm">
+                            {% if message.tags == 'success' %}check_circle{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}
+                        </span>
+                        <span class="text-sm">{{ message }}</span>
+                    </div>
+                </div>
+                {% endfor %}
             {% endif %}
-            
-            <button type="submit" class="btn btn-primary btn-login">
-                <i class="fa fa-sign-in-alt me-2"></i>
-                Iniciar Sesión
-            </button>
-        </form>
-        
-        <div class="text-center mt-3">
-            <a href="{% url 'core:password_reset_request' %}" class="text-muted text-decoration-none">
-                <i class="fa fa-key me-1"></i>
-                ¿Olvidaste tu contraseña?
-            </a>
+
+            <!-- Login Form -->
+            <form method="post" novalidate class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Username Field -->
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        Usuario o ID de Empleado
+                    </label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg">person</span>
+                        <input type="text" 
+                               name="{{ form.username.name }}" 
+                               id="{{ form.username.id_for_label }}"
+                               class="input-modern pl-10 {% if form.username.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                               placeholder="Ingresa tu usuario"
+                               value="{{ form.username.value|default:'' }}"
+                               required>
+                    </div>
+                    {% if form.username.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                        Contraseña
+                    </label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg">lock</span>
+                        <input type="password" 
+                               name="{{ form.password.name }}" 
+                               id="{{ form.password.id_for_label }}"
+                               class="input-modern pl-10 {% if form.password.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                               placeholder="Ingresa tu contraseña"
+                               required>
+                    </div>
+                    {% if form.password.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.password.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Form Errors -->
+                {% if form.non_field_errors %}
+                    <div class="alert-modern alert-error">
+                        <div class="flex">
+                            <span class="material-icons mr-2 text-sm">error</span>
+                            <span class="text-sm">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-login">
+                    <span class="material-icons mr-2">login</span>
+                    Iniciar Sesión
+                </button>
+            </form>
+
+            <!-- Forgot Password -->
+            <div class="text-center mt-6">
+                <a href="{% url 'core:password_reset_request' %}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium transition-colors duration-200">
+                    <span class="material-icons text-sm mr-1 align-text-bottom">key</span>
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-8 pt-6 border-t border-slate-200">
+                <div class="flex items-center justify-center space-x-4 text-xs text-slate-500">
+                    <div class="flex items-center">
+                        <span class="material-icons text-sm mr-1">lock</span>
+                        <span>Conexión segura</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="material-icons text-sm mr-1">verified</span>
+                        <span>SSL activo</span>
+                    </div>
+                </div>
+                <p class="text-center text-xs text-slate-400 mt-3">
+                    ¿Tienes problemas para iniciar sesión? Contacta al administrador del sistema.
+                </p>
+            </div>
         </div>
-        
-        <div class="login-footer">
-            <p>
-                <i class="fa fa-lock me-1"></i>
-                Conexión segura establecida
-            </p>
-            <p class="mt-2">
-                ¿Tienes problemas para iniciar sesión? Contacta al administrador del sistema.
-            </p>
+
+        <!-- Additional Info -->
+        <div class="text-center mt-6">
+            <div class="flex items-center justify-center space-x-2 text-xs text-slate-400">
+                <span class="security-badge">
+                    <span class="material-icons text-xs mr-1">security</span>
+                    Sistema Seguro
+                </span>
+                <span class="security-badge">
+                    <span class="material-icons text-xs mr-1">monitoring</span>
+                    Monitoreado 24/7
+                </span>
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Focus on username field
@@ -168,20 +204,26 @@ document.addEventListener('DOMContentLoaded', function() {
     inputs.forEach(input => {
         input.addEventListener('blur', function() {
             if (this.value.trim() === '') {
-                this.classList.add('is-invalid');
+                this.classList.add('border-red-300');
+                this.classList.remove('border-green-300');
             } else {
-                this.classList.remove('is-invalid');
-                this.classList.add('is-valid');
+                this.classList.remove('border-red-300');
+                this.classList.add('border-green-300');
             }
+        });
+        
+        input.addEventListener('input', function() {
+            this.classList.remove('border-red-300', 'border-green-300');
         });
     });
     
-    // Clear validation on input
-    inputs.forEach(input => {
-        input.addEventListener('input', function() {
-            this.classList.remove('is-invalid', 'is-valid');
-        });
+    // Add loading state to submit button
+    form.addEventListener('submit', function() {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<span class="material-icons animate-spin mr-2">hourglass_empty</span>Iniciando sesión...';
+        submitBtn.disabled = true;
     });
 });
 </script>
-{% endblock %}
+</body>
+</html>

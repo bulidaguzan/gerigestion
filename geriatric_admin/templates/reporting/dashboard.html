@@ -1,218 +1,171 @@
-{% extends 'base.html' %}
+{% extends 'base_modern.html' %}
 {% load static %}
-{% load i18n %}
 
-{% block title %}{% trans 'Dashboard de Reportes' %}{% endblock %}
+{% block title %}Dashboard de Reportes{% endblock %}
+{% block page_title %}Dashboard de Reportes{% endblock %}
+{% block page_subtitle %}Generación y gestión de reportes{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">{% trans 'Dashboard de Reportes' %}</h1>
-        <div class="btn-group" role="group">
-            <a href="{% url 'reporting_web:quick_report' %}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>{% trans 'Reporte Rápido' %}
-            </a>
-            <a href="{% url 'reporting_web:report_create' %}" class="btn btn-outline-primary">
-                <i class="fas fa-file-alt me-2"></i>{% trans 'Nuevo Reporte' %}
-            </a>
-        </div>
-    </div>
-
-    <!-- Estadísticas Principales -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card">
-                <div class="d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <h3>{{ total_reports }}</h3>
-                        <p>{% trans 'Total de Reportes' %}</p>
-                    </div>
-                    <div class="icon-large">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card" style="border-left-color: var(--success-color);">
-                <div class="d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <h3 style="color: var(--success-color);">{{ completed_reports }}</h3>
-                        <p>{% trans 'Completados' %}</p>
-                    </div>
-                    <div class="icon-large" style="color: var(--success-color);">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card" style="border-left-color: var(--warning-color);">
-                <div class="d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <h3 style="color: var(--warning-color);">{{ pending_reports }}</h3>
-                        <p>{% trans 'Pendientes' %}</p>
-                    </div>
-                    <div class="icon-large" style="color: var(--warning-color);">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="stats-card" style="border-left-color: var(--danger-color);">
-                <div class="d-flex align-items-center">
-                    <div class="flex-grow-1">
-                        <h3 style="color: var(--danger-color);">{{ failed_reports }}</h3>
-                        <p>{% trans 'Fallidos' %}</p>
-                    </div>
-                    <div class="icon-large" style="color: var(--danger-color);">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <!-- Reportes Recientes -->
-        <div class="col-xl-8 col-lg-7">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-history me-2"></i>{% trans 'Reportes Recientes' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    {% if recent_reports %}
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>{% trans 'Título' %}</th>
-                                        <th>{% trans 'Tipo' %}</th>
-                                        <th>{% trans 'Estado' %}</th>
-                                        <th>{% trans 'Creado' %}</th>
-                                        <th>{% trans 'Acciones' %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for report in recent_reports %}
-                                    <tr>
-                                        <td>
-                                            <strong>{{ report.title }}</strong>
-                                            {% if report.description %}
-                                            <br><small class="text-muted">{{ report.description|truncatechars:50 }}</small>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-secondary">{{ report.get_report_type_display }}</span>
-                                        </td>
-                                        <td>
-                                            {% if report.status == 'completed' %}
-                                                <span class="badge bg-success">{% trans 'Completado' %}</span>
-                                            {% elif report.status == 'pending' %}
-                                                <span class="badge bg-warning">{% trans 'Pendiente' %}</span>
-                                            {% elif report.status == 'processing' %}
-                                                <span class="badge bg-info">{% trans 'Procesando' %}</span>
-                                            {% else %}
-                                                <span class="badge bg-danger">{% trans 'Fallido' %}</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ report.created_at|date:"d/m/Y H:i" }}</td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{% url 'reporting_web:report_detail' report.id %}" 
-                                                   class="btn btn-outline-primary" title="{% trans 'Ver detalles' %}">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                {% if report.is_completed %}
-                                                <a href="#" class="btn btn-outline-success" title="{% trans 'Descargar' %}">
-                                                    <i class="fas fa-download"></i>
-                                                </a>
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="text-center mt-3">
-                            <a href="{% url 'reporting_web:report_list' %}" class="btn btn-outline-primary">
-                                {% trans 'Ver Todos los Reportes' %}
-                            </a>
-                        </div>
-                    {% else %}
-                        <div class="text-center py-4">
-                            <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">{% trans 'No hay reportes recientes.' %}</p>
-                            <a href="{% url 'reporting_web:report_create' %}" class="btn btn-primary">
-                                <i class="fas fa-plus me-2"></i>{% trans 'Crear Primer Reporte' %}
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="col-xl-4 col-lg-5">
-            <!-- Información del Sistema -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-info-circle me-2"></i>{% trans 'Información del Sistema' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="text-center py-3">
-                        <i class="fas fa-chart-bar fa-2x text-muted mb-2"></i>
-                        <p class="text-muted mb-2">{% trans 'Sistema de Reportes Simplificado' %}</p>
-                        <p class="small text-muted">{% trans 'Genera reportes de residentes, personal e instalaciones en múltiples formatos.' %}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Acciones Rápidas -->
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">{% trans 'Acciones Rápidas' %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'reporting_web:resident_report' %}" class="btn btn-outline-primary">
-                            <i class="fas fa-users me-2"></i>{% trans 'Reporte de Residentes' %}
-                        </a>
-                        <a href="{% url 'reporting_web:staff_report' %}" class="btn btn-outline-primary">
-                            <i class="fas fa-user-tie me-2"></i>{% trans 'Reporte de Personal' %}
-                        </a>
-                        <a href="{% url 'reporting_web:quick_report' %}" class="btn btn-outline-success">
-                            <i class="fas fa-bolt me-2"></i>{% trans 'Reporte Rápido' %}
-                        </a>
-                        <a href="{% url 'reporting_web:report_list' %}" class="btn btn-outline-info">
-                            <i class="fas fa-list me-2"></i>{% trans 'Ver Todos los Reportes' %}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sección de Widgets eliminada para simplificar -->
-</div>
+{% block header_actions %}
+<a href="{% url 'reporting_web:report_list' %}" class="flex items-center bg-white hover:bg-slate-100 text-slate-600 font-semibold py-2 px-3 sm:px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+    <span class="material-icons mr-2 text-base sm:text-lg">visibility</span>
+    <span class="text-sm sm:text-base">Ver Todos</span>
+</a>
+<a href="{% url 'reporting_web:report_create' %}" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-3 sm:px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+    <span class="material-icons mr-2 text-base sm:text-lg">add</span>
+    <span class="text-sm sm:text-base">Nuevo Reporte</span>
+</a>
 {% endblock %}
 
-{% block extra_js %}
-<script>
-    // Auto-refresh para widgets
-    setInterval(function() {
-        // Aquí se podría implementar la actualización automática de widgets
-        console.log('Actualizando widgets...');
-    }, 60000); // Cada minuto
-</script>
+{% block content %}
+<!-- Estadísticas principales -->
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4 sm:gap-6 mb-8">
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">TOTAL REPORTES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ total_reports|default:"0" }}</p>
+        </div>
+        <div class="bg-indigo-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-indigo-600 text-2xl sm:text-3xl">assessment</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-emerald-600">COMPLETADOS</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ completed_reports|default:"0" }}</p>
+        </div>
+        <div class="bg-emerald-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-emerald-600 text-2xl sm:text-3xl">check_circle</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-amber-600">EN PROCESO</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ in_progress_reports|default:"0" }}</p>
+        </div>
+        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">schedule</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-rose-600">PENDIENTES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ pending_reports|default:"0" }}</p>
+        </div>
+        <div class="bg-rose-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-rose-600 text-2xl sm:text-3xl">pending</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">REPORTES MENSUALES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ monthly_reports|default:"0" }}</p>
+        </div>
+        <div class="bg-sky-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-sky-600 text-2xl sm:text-3xl">calendar_month</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-blue-600">DESCARGAS</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ total_downloads|default:"0" }}</p>
+        </div>
+        <div class="bg-blue-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-blue-600 text-2xl sm:text-3xl">download</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-emerald-600">AUTOMÁTICOS</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ automatic_reports|default:"0" }}</p>
+        </div>
+        <div class="bg-emerald-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-emerald-600 text-2xl sm:text-3xl">auto_awesome</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-amber-600">MANUALES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ manual_reports|default:"0" }}</p>
+        </div>
+        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">edit</span>
+        </div>
+    </div>
+</div>
+
+<!-- Contenido principal -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <!-- Reportes recientes -->
+    <div class="lg:col-span-2 content-card">
+        <h2 class="text-lg font-semibold text-slate-700 mb-4">Reportes Recientes</h2>
+        {% if recent_reports %}
+        <div class="overflow-x-auto">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in recent_reports %}
+                    <tr>
+                        <td class="text-sm font-medium text-slate-900">{{ report.title|truncatechars:30 }}</td>
+                        <td>{{ report.get_report_type_display }}</td>
+                        <td>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {% if report.status == 'completed' %}bg-green-100 text-green-800{% elif report.status == 'in_progress' %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ report.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ report.created_at|date:"d/m/Y" }}</td>
+                        <td>
+                            <a href="{% url 'reporting_web:report_detail' report.id %}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                                Ver detalles
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="flex flex-col items-center justify-center text-center text-slate-500 h-64">
+            <span class="material-icons text-5xl sm:text-6xl text-slate-300">assessment</span>
+            <p class="mt-4 font-semibold">No hay reportes recientes</p>
+            <p class="text-sm">Los reportes aparecerán aquí cuando se generen.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Estado del sistema -->
+    <div class="content-card flex flex-col items-center justify-center text-center">
+        <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+            <span class="material-icons text-4xl sm:text-5xl text-emerald-600">analytics</span>
+            <span class="absolute h-full w-full bg-emerald-200 rounded-full animate-ping opacity-75"></span>
+        </div>
+        <h2 class="text-lg font-semibold text-slate-800">Sistema de Reportes</h2>
+        <p class="text-slate-500 mt-2 text-sm sm:text-base">Funcionando correctamente</p>
+        <div class="mt-4 space-y-2 text-xs text-slate-500">
+            <div class="flex items-center justify-between">
+                <span>Generación automática</span>
+                <span class="text-emerald-600">✓</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Exportación PDF</span>
+                <span class="text-emerald-600">✓</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Exportación Excel</span>
+                <span class="text-emerald-600">✓</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Programación</span>
+                <span class="text-emerald-600">✓</span>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %} 

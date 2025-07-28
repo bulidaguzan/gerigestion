@@ -1,349 +1,181 @@
-{% extends 'base.html' %}
+{% extends 'base_modern.html' %}
 {% load static %}
-{% load i18n %}
-{% load humanize %}
 
-{% block title %}{% trans 'Dashboard Financiero' %}{% endblock %}
+{% block title %}Dashboard Financiero{% endblock %}
+{% block page_title %}Dashboard Financiero{% endblock %}
+{% block page_subtitle %}Gestión y análisis financiero{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'financial_web:expense_list' %}" class="flex items-center bg-white hover:bg-slate-100 text-slate-600 font-semibold py-2 px-3 sm:px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+    <span class="material-icons mr-2 text-base sm:text-lg">visibility</span>
+    <span class="text-sm sm:text-base">Ver Gastos</span>
+</a>
+<a href="{% url 'financial_web:income_create' %}" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-3 sm:px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+    <span class="material-icons mr-2 text-base sm:text-lg">add</span>
+    <span class="text-sm sm:text-base">Nuevo Ingreso</span>
+</a>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-chart-line me-2"></i>{% trans 'Dashboard Financiero' %}
-        </h1>
-        <div class="btn-group" role="group">
-                                            <a href="{% url 'financial:expense_create' %}" class="btn btn-danger btn-sm">
-                    <i class="fas fa-plus me-1"></i>{% trans 'Nuevo Gasto' %}
-                </a>
-                                            <a href="{% url 'financial:income_create' %}" class="btn btn-success btn-sm">
-                    <i class="fas fa-plus me-1"></i>{% trans 'Nuevo Ingreso' %}
-                </a>
-                            <a href="{% url 'financial:investment_create' %}" class="btn btn-info btn-sm">
-                <i class="fas fa-plus me-1"></i>{% trans 'Nueva Inversión' %}
-            </a>
+<!-- Estadísticas principales -->
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4 sm:gap-6 mb-8">
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">INGRESOS MENSUALES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ monthly_income|default:"0" }}</p>
+        </div>
+        <div class="bg-emerald-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-emerald-600 text-2xl sm:text-3xl">trending_up</span>
         </div>
     </div>
-
-    <!-- Estadísticas Principales -->
-    <div class="row">
-        <!-- Gastos del Mes -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                {% trans 'Gastos del Mes' %}
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                ${{ monthly_expenses|floatformat:0|intcomma }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-rose-600">GASTOS MENSUALES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ monthly_expenses|default:"0" }}</p>
         </div>
-
-        <!-- Ingresos del Mes -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                {% trans 'Ingresos del Mes' %}
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                ${{ monthly_income|floatformat:0|intcomma }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Balance del Mes -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-{% if monthly_balance >= 0 %}success{% else %}danger{% endif %} shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-{% if monthly_balance >= 0 %}success{% else %}danger{% endif %} text-uppercase mb-1">
-                                {% trans 'Balance del Mes' %}
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                ${{ monthly_balance|floatformat:0|intcomma }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-balance-scale fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Inversiones Activas -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                {% trans 'Inversiones Activas' %}
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ active_investments }}
-                            </div>
-                            <div class="text-xs text-muted">
-                                ${{ total_investment_amount|floatformat:0|intcomma }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="bg-rose-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-rose-600 text-2xl sm:text-3xl">trending_down</span>
         </div>
     </div>
-
-    <!-- Alertas y Pendientes -->
-    <div class="row">
-        <!-- Gastos Pendientes -->
-        <div class="col-xl-6 col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>{% trans 'Gastos Pendientes' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="text-center">
-                                <div class="h4 text-danger">{{ pending_expenses }}</div>
-                                <div class="text-xs text-muted">{% trans 'Pendientes' %}</div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-center">
-                                <div class="h4 text-warning">{{ overdue_expenses }}</div>
-                                <div class="text-xs text-muted">{% trans 'Vencidos' %}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center mt-3">
-                                                    <a href="{% url 'financial:expense_list' %}?status=pending" class="btn btn-outline-danger btn-sm">
-                            {% trans 'Ver Gastos Pendientes' %}
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-indigo-600">BALANCE NETO</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ net_balance|default:"0" }}</p>
         </div>
-
-        <!-- Ingresos Pendientes -->
-        <div class="col-xl-6 col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-success">
-                        <i class="fas fa-clock me-2"></i>{% trans 'Ingresos Pendientes' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="text-center">
-                                <div class="h4 text-success">{{ pending_income }}</div>
-                                <div class="text-xs text-muted">{% trans 'Pendientes' %}</div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-center">
-                                <div class="h4 text-warning">{{ overdue_income }}</div>
-                                <div class="text-xs text-muted">{% trans 'Vencidos' %}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center mt-3">
-                                                    <a href="{% url 'financial:income_list' %}?status=pending" class="btn btn-outline-success btn-sm">
-                            {% trans 'Ver Ingresos Pendientes' %}
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <div class="bg-indigo-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-indigo-600 text-2xl sm:text-3xl">account_balance</span>
         </div>
     </div>
-
-    <!-- Contenido Principal -->
-    <div class="row">
-        <!-- Gastos Recientes -->
-        <div class="col-xl-6 col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-danger">
-                        <i class="fas fa-list me-2"></i>{% trans 'Gastos Recientes' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    {% if recent_expenses %}
-                        <div class="list-group list-group-flush">
-                            {% for expense in recent_expenses %}
-                            <div class="list-group-item border-0 px-0">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">{{ expense.title }}</h6>
-                                        <small class="text-muted">
-                                            {{ expense.category.name }} • {{ expense.expense_date|date:"d/m/Y" }}
-                                        </small>
-                                    </div>
-                                    <div class="text-end">
-                                        <div class="font-weight-bold text-danger">${{ expense.amount|floatformat:0|intcomma }}</div>
-                                        <small class="badge bg-{% if expense.status == 'paid' %}success{% elif expense.status == 'pending' %}warning{% else %}secondary{% endif %}">
-                                            {{ expense.get_status_display }}
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <div class="text-center mt-3">
-                            <a href="{% url 'financial:expense_list' %}" class="btn btn-danger btn-lg">
-                                <i class="fas fa-list me-2"></i>{% trans 'Ver Todos los Gastos' %}
-                            </a>
-                        </div>
-                    {% else %}
-                        <div class="text-center py-3">
-                            <i class="fas fa-receipt fa-2x text-muted mb-2"></i>
-                            <p class="text-muted">{% trans 'No hay gastos recientes.' %}</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-amber-600">MARGEN</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ profit_margin|default:"0" }}%</p>
         </div>
-
-        <!-- Ingresos Recientes -->
-        <div class="col-xl-6 col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-success">
-                        <i class="fas fa-list me-2"></i>{% trans 'Ingresos Recientes' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    {% if recent_income %}
-                        <div class="list-group list-group-flush">
-                            {% for income in recent_income %}
-                            <div class="list-group-item border-0 px-0">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">{{ income.title }}</h6>
-                                        <small class="text-muted">
-                                            {{ income.category.name }} • {{ income.income_date|date:"d/m/Y" }}
-                                        </small>
-                                    </div>
-                                    <div class="text-end">
-                                        <div class="font-weight-bold text-success">${{ income.amount|floatformat:0|intcomma }}</div>
-                                        <small class="badge bg-{% if income.status == 'received' %}success{% elif income.status == 'pending' %}warning{% else %}secondary{% endif %}">
-                                            {{ income.get_status_display }}
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <div class="text-center mt-3">
-                            <a href="{% url 'financial:income_list' %}" class="btn btn-success btn-lg">
-                                <i class="fas fa-list me-2"></i>{% trans 'Ver Todos los Ingresos' %}
-                            </a>
-                        </div>
-                    {% else %}
-                        <div class="text-center py-3">
-                            <i class="fas fa-dollar-sign fa-2x text-muted mb-2"></i>
-                            <p class="text-muted">{% trans 'No hay ingresos recientes.' %}</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">percent</span>
         </div>
     </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">TOTAL INGRESOS</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ total_income|default:"0" }}</p>
+        </div>
+        <div class="bg-sky-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-sky-600 text-2xl sm:text-3xl">account_balance_wallet</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-blue-600">TOTAL GASTOS</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ total_expenses|default:"0" }}</p>
+        </div>
+        <div class="bg-blue-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-blue-600 text-2xl sm:text-3xl">receipt_long</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-emerald-600">INVERSIONES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ total_investments|default:"0" }}</p>
+        </div>
+        <div class="bg-emerald-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-emerald-600 text-2xl sm:text-3xl">savings</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-amber-600">PENDIENTES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ pending_amount|default:"0" }}</p>
+        </div>
+        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">schedule</span>
+        </div>
+    </div>
+</div>
 
-    <!-- Acciones Rápidas -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-bolt me-2"></i>{% trans 'Acciones Rápidas' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-2 mb-3">
-                            <a href="{% url 'financial:expense_list' %}" class="btn btn-danger w-100 h-100 d-flex flex-column justify-content-center align-items-center">
-                                <i class="fas fa-receipt fa-2x mb-2"></i>
-                                <span>{% trans 'Gastos' %}</span>
+<!-- Contenido principal -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <!-- Transacciones recientes -->
+    <div class="lg:col-span-2 content-card">
+        <h2 class="text-lg font-semibold text-slate-700 mb-4">Transacciones Recientes</h2>
+        {% if recent_transactions %}
+        <div class="overflow-x-auto">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Tipo</th>
+                        <th>Categoría</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in recent_transactions %}
+                    <tr>
+                        <td class="text-sm font-medium text-slate-900">{{ transaction.description|truncatechars:30 }}</td>
+                        <td>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {% if transaction.type == 'income' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ transaction.get_type_display }}
+                            </span>
+                        </td>
+                        <td>{{ transaction.category.name|default:"--" }}</td>
+                        <td class="font-medium {% if transaction.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
+                            ${{ transaction.amount }}
+                        </td>
+                        <td>{{ transaction.date|date:"d/m/Y" }}</td>
+                        <td>
+                            <a href="{% if transaction.type == 'income' %}{% url 'financial_web:income_detail' transaction.id %}{% else %}{% url 'financial_web:expense_detail' transaction.id %}{% endif %}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                                Ver detalles
                             </a>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <a href="{% url 'financial:income_list' %}" class="btn btn-success w-100 h-100 d-flex flex-column justify-content-center align-items-center">
-                                <i class="fas fa-dollar-sign fa-2x mb-2"></i>
-                                <span>{% trans 'Ingresos' %}</span>
-                            </a>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <a href="{% url 'financial:category_list' %}" class="btn btn-outline-primary w-100 h-100 d-flex flex-column justify-content-center align-items-center">
-                                <i class="fas fa-tags fa-2x mb-2"></i>
-                                <span>{% trans 'Categorías' %}</span>
-                            </a>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <a href="{% url 'financial:investment_list' %}" class="btn btn-outline-warning w-100 h-100 d-flex flex-column justify-content-center align-items-center">
-                                <i class="fas fa-chart-line fa-2x mb-2"></i>
-                                <span>{% trans 'Inversiones' %}</span>
-                            </a>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <a href="{% url 'financial:budget_list' %}" class="btn btn-outline-info w-100 h-100 d-flex flex-column justify-content-center align-items-center">
-                                <i class="fas fa-chart-pie fa-2x mb-2"></i>
-                                <span>{% trans 'Presupuestos' %}</span>
-                            </a>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <a href="{% url 'financial:reports' %}" class="btn btn-outline-secondary w-100 h-100 d-flex flex-column justify-content-center align-items-center">
-                                <i class="fas fa-file-alt fa-2x mb-2"></i>
-                                <span>{% trans 'Reportes' %}</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="flex flex-col items-center justify-center text-center text-slate-500 h-64">
+            <span class="material-icons text-5xl sm:text-6xl text-slate-300">account_balance_wallet</span>
+            <p class="mt-4 font-semibold">No hay transacciones recientes</p>
+            <p class="text-sm">Las transacciones aparecerán aquí cuando se registren.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Resumen financiero -->
+    <div class="content-card flex flex-col items-center justify-center text-center">
+        <div class="relative w-16 h-16 sm:w-20 sm:h-20 {% if net_balance >= 0 %}bg-emerald-100{% else %}bg-red-100{% endif %} rounded-full flex items-center justify-center mb-4">
+            <span class="material-icons text-4xl sm:text-5xl {% if net_balance >= 0 %}text-emerald-600{% else %}text-red-600{% endif %}">
+                {% if net_balance >= 0 %}trending_up{% else %}trending_down{% endif %}
+            </span>
+            <span class="absolute h-full w-full {% if net_balance >= 0 %}bg-emerald-200{% else %}bg-red-200{% endif %} rounded-full animate-ping opacity-75"></span>
+        </div>
+        <h2 class="text-lg font-semibold text-slate-800">
+            {% if net_balance >= 0 %}¡Excelente!{% else %}Atención{% endif %}
+        </h2>
+        <p class="text-slate-500 mt-2 text-sm sm:text-base">
+            {% if net_balance >= 0 %}
+            El balance financiero es positivo este mes.
+            {% else %}
+            El balance financiero es negativo este mes.
+            {% endif %}
+        </p>
+        <div class="mt-4 space-y-2 text-xs text-slate-500">
+            <div class="flex items-center justify-between">
+                <span>Ingresos</span>
+                <span class="text-emerald-600">${{ monthly_income|default:"0" }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Gastos</span>
+                <span class="text-red-600">${{ monthly_expenses|default:"0" }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Balance</span>
+                <span class="{% if net_balance >= 0 %}text-emerald-600{% else %}text-red-600{% endif %}">${{ net_balance|default:"0" }}</span>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-// Actualizar estadísticas en tiempo real
-function updateStats() {
-                fetch('{% url "financial:financial_stats" %}')
-        .then(response => response.json())
-        .then(data => {
-            // Actualizar estadísticas aquí si es necesario
-            console.log('Estadísticas actualizadas:', data);
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-// Actualizar cada 5 minutos
-setInterval(updateStats, 300000);
-</script>
 {% endblock %} 

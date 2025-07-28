@@ -1,214 +1,138 @@
-{% extends "base.html" %}
+{% extends 'base_modern.html' %}
+{% load static %}
 
-{% block title %}Panel Principal - Sistema de Administración Geriátrica{% endblock %}
+{% block title %}Dashboard Principal{% endblock %}
+{% block page_title %}Dashboard Principal{% endblock %}
+{% block page_subtitle %}Vista general del sistema{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1>Panel Principal</h1>
-                <div class="d-flex align-items-center">
-                    {% if request.current_center %}
-                        <span class="badge bg-primary me-3">{{ request.current_center.name }}</span>
-                    {% endif %}
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="fa fa-user me-2"></i>{{ user.get_full_name|default:user.username }}
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">
-                                <i class="fa fa-shield-alt me-2"></i>Seguridad
-                            </a></li>
-                            {% if user.get_accessible_centers.count > 1 %}
-                                <li><a class="dropdown-item" href="#">
-                                    <i class="fa fa-building me-2"></i>Cambiar Centro
-                                </a></li>
-                            {% endif %}
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form method="post" action="/api/v1/auth/logout/" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="dropdown-item">
-                                        <i class="fa fa-sign-out-alt me-2"></i>Cerrar Sesión
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+<!-- Estadísticas principales -->
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4 sm:gap-6 mb-8">
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">TOTAL RESIDENTES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ total_residents|default:"0" }}</p>
+        </div>
+        <div class="bg-indigo-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-indigo-600 text-2xl sm:text-3xl">elderly</span>
         </div>
     </div>
-    
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fa fa-building text-primary me-2"></i>
-                        Instalaciones
-                    </h5>
-                    <p class="card-text">Gestionar habitaciones, camas y equipamiento</p>
-                    <a href="#" class="btn btn-primary btn-sm">Gestionar Instalaciones</a>
-                </div>
-            </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-emerald-600">HABITACIONES DISPONIBLES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ available_rooms|default:"0" }}</p>
         </div>
-        
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fa fa-users text-success me-2"></i>
-                        Residentes
-                    </h5>
-                    <p class="card-text">Perfiles de residentes y gestión de cuidados</p>
-                    <a href="#" class="btn btn-success btn-sm">Gestionar Residentes</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fa fa-user-md text-info me-2"></i>
-                        Personal
-                    </h5>
-                    <p class="card-text">Programación del personal y gestión de tareas</p>
-                    <a href="#" class="btn btn-info btn-sm">Gestionar Personal</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fa fa-heartbeat text-danger me-2"></i>
-                        Médico
-                    </h5>
-                    <p class="card-text">Historiales médicos y medicamentos</p>
-                    <a href="#" class="btn btn-danger btn-sm">Gestionar Médico</a>
-                </div>
-            </div>
+        <div class="bg-emerald-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-emerald-600 text-2xl sm:text-3xl">hotel</span>
         </div>
     </div>
-    
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fa fa-calendar me-2"></i>
-                        Agenda de Hoy
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">La gestión de agenda estará disponible en tareas posteriores.</p>
-                </div>
-            </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-amber-600">PERSONAL ACTIVO</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ active_staff|default:"0" }}</p>
         </div>
-        
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fa fa-bell me-2"></i>
-                        Notificaciones Recientes
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">El sistema de notificaciones estará disponible en tareas posteriores.</p>
-                </div>
-            </div>
+        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">badge</span>
         </div>
     </div>
-    
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fa fa-chart-bar me-2"></i>
-                        Resumen del Sistema
-                    </h5>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-rose-600">OCUPACIÓN</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ occupancy_rate|default:"0" }}%</p>
+        </div>
+        <div class="bg-rose-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-rose-600 text-2xl sm:text-3xl">percent</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">INGRESOS MENSUALES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ monthly_income|default:"0" }}</p>
+        </div>
+        <div class="bg-sky-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-sky-600 text-2xl sm:text-3xl">account_balance_wallet</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-blue-600">GASTOS MENSUALES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ monthly_expenses|default:"0" }}</p>
+        </div>
+        <div class="bg-blue-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-blue-600 text-2xl sm:text-3xl">trending_down</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-emerald-600">BALANCE</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ balance|default:"0" }}</p>
+        </div>
+        <div class="bg-emerald-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-emerald-600 text-2xl sm:text-3xl">account_balance</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-amber-600">REPORTES PENDIENTES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ pending_reports|default:"0" }}</p>
+        </div>
+        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">assessment</span>
+        </div>
+    </div>
+</div>
+
+<!-- Contenido principal -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <!-- Actividad reciente -->
+    <div class="lg:col-span-2 content-card">
+        <h2 class="text-lg font-semibold text-slate-700 mb-4">Actividad Reciente</h2>
+        {% if recent_activities %}
+        <div class="space-y-4">
+            {% for activity in recent_activities %}
+            <div class="flex items-start space-x-3 p-3 bg-slate-50 rounded-lg">
+                <div class="flex-shrink-0">
+                    <span class="material-icons text-indigo-600">{{ activity.icon }}</span>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3 text-center">
-                            <h3 class="text-primary">--</h3>
-                            <p class="text-muted">Total de Residentes</p>
-                        </div>
-                        <div class="col-md-3 text-center">
-                            <h3 class="text-success">--</h3>
-                            <p class="text-muted">Camas Disponibles</p>
-                        </div>
-                        <div class="col-md-3 text-center">
-                            <h3 class="text-info">--</h3>
-                            <p class="text-muted">Personal de Guardia</p>
-                        </div>
-                        <div class="col-md-3 text-center">
-                            <h3 class="text-warning">--</h3>
-                            <p class="text-muted">Tareas Pendientes</p>
-                        </div>
-                    </div>
-                    <p class="text-muted mt-3">
-                        <i class="fa fa-info-circle me-1"></i>
-                        Los análisis detallados y reportes estarán disponibles en tareas posteriores.
-                    </p>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-slate-900">{{ activity.title }}</p>
+                    <p class="text-sm text-slate-500">{{ activity.description }}</p>
+                    <p class="text-xs text-slate-400 mt-1">{{ activity.timestamp }}</p>
                 </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="flex flex-col items-center justify-center text-center text-slate-500 h-64">
+            <span class="material-icons text-5xl sm:text-6xl text-slate-300">timeline</span>
+            <p class="mt-4 font-semibold">No hay actividad reciente</p>
+            <p class="text-sm">Las actividades aparecerán aquí cuando se realicen acciones en el sistema.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Estado del sistema -->
+    <div class="content-card flex flex-col items-center justify-center text-center">
+        <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+            <span class="material-icons text-4xl sm:text-5xl text-emerald-600">check_circle</span>
+            <span class="absolute h-full w-full bg-emerald-200 rounded-full animate-ping opacity-75"></span>
+        </div>
+        <h2 class="text-lg font-semibold text-slate-800">¡Sistema Operativo!</h2>
+        <p class="text-slate-500 mt-2 text-sm sm:text-base">Todos los servicios funcionando correctamente.</p>
+        <div class="mt-4 space-y-2 text-xs text-slate-500">
+            <div class="flex items-center justify-between">
+                <span>Base de datos</span>
+                <span class="text-emerald-600">✓</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Servidor web</span>
+                <span class="text-emerald-600">✓</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Backup</span>
+                <span class="text-emerald-600">✓</span>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-refresh dashboard every 5 minutes
-    setInterval(function() {
-        // Only refresh if user is still active
-        if (document.hasFocus()) {
-            location.reload();
-        }
-    }, 5 * 60 * 1000);
-    
-    // Show welcome message for new sessions
-    const loginTimestamp = '{{ request.session.login_timestamp|default:"" }}';
-    if (loginTimestamp) {
-        const loginTime = new Date(loginTimestamp);
-        const now = new Date();
-        const timeDiff = (now - loginTime) / 1000; // seconds
-        
-        // Show welcome message if logged in within last 30 seconds
-        if (timeDiff < 30) {
-            setTimeout(function() {
-                const toast = document.createElement('div');
-                toast.className = 'toast position-fixed top-0 end-0 m-3';
-                toast.innerHTML = `
-                    <div class="toast-header">
-                        <i class="fa fa-check-circle text-success me-2"></i>
-                        <strong class="me-auto">Bienvenido</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-                    </div>
-                    <div class="toast-body">
-                        Sesión iniciada exitosamente en {{ request.current_center.name|default:"el sistema" }}
-                    </div>
-                `;
-                document.body.appendChild(toast);
-                
-                const bsToast = new bootstrap.Toast(toast);
-                bsToast.show();
-                
-                // Remove toast element after it's hidden
-                toast.addEventListener('hidden.bs.toast', function() {
-                    document.body.removeChild(toast);
-                });
-            }, 1000);
-        }
-    }
-});
-</script>
 {% endblock %}

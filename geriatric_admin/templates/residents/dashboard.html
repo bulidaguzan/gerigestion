@@ -1,216 +1,169 @@
-{% extends "base.html" %}
+{% extends 'base_modern.html' %}
+{% load static %}
 
-{% block title %}Dashboard de Residentes - Sistema de Administración Geriátrica{% endblock %}
+{% block title %}Dashboard de Residentes{% endblock %}
+{% block page_title %}Dashboard de Residentes{% endblock %}
+{% block page_subtitle %}Gestión y seguimiento de residentes{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'residents_web:resident_list' %}" class="flex items-center bg-white hover:bg-slate-100 text-slate-600 font-semibold py-2 px-3 sm:px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+    <span class="material-icons mr-2 text-base sm:text-lg">visibility</span>
+    <span class="text-sm sm:text-base">Ver Todos</span>
+</a>
+<a href="{% url 'residents_web:resident_create' %}" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-3 sm:px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+    <span class="material-icons mr-2 text-base sm:text-lg">add</span>
+    <span class="text-sm sm:text-base">Nuevo Residente</span>
+</a>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h3 mb-0">Dashboard de Residentes</h1>
-                <div>
-                    <a href="{% url 'residents_web:resident_create' %}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Nuevo Residente
-                    </a>
-                    <a href="{% url 'residents_web:resident_list' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-list"></i> Ver Todos
-                    </a>
-                </div>
-            </div>
+<!-- Estadísticas principales -->
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4 sm:gap-6 mb-8">
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">TOTAL RESIDENTES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ total_residents|default:"0" }}</p>
+        </div>
+        <div class="bg-indigo-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-indigo-600 text-2xl sm:text-3xl">elderly</span>
         </div>
     </div>
-
-    <!-- Estadísticas principales -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total de Residentes
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_residents }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-emerald-600">ACTIVOS</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ active_residents|default:"0" }}</p>
         </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Admisiones Recientes (30 días)
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ recent_admissions }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user-plus fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Sin Habitación Asignada
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ unassigned_residents }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-bed fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Residentes de Largo Plazo
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ long_term_residents }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="bg-emerald-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-emerald-600 text-2xl sm:text-3xl">check_circle</span>
         </div>
     </div>
-
-    <!-- Gráficos y estadísticas detalladas -->
-    <div class="row">
-        <!-- Distribución por género -->
-        <div class="col-xl-6 col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Distribución por Género</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            <div class="text-primary font-weight-bold">{{ male_residents }}</div>
-                            <div class="text-muted">Hombres</div>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <div class="text-success font-weight-bold">{{ female_residents }}</div>
-                            <div class="text-muted">Mujeres</div>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <div class="text-info font-weight-bold">{{ other_residents }}</div>
-                            <div class="text-muted">Otros</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-amber-600">EN TRATAMIENTO</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ in_treatment|default:"0" }}</p>
         </div>
-
-        <!-- Distribución por edad -->
-        <div class="col-xl-6 col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Distribución por Edad</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            <div class="text-warning font-weight-bold">{{ young_residents }}</div>
-                            <div class="text-muted">65-80 años</div>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <div class="text-info font-weight-bold">{{ elderly_residents }}</div>
-                            <div class="text-muted">80-95 años</div>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <div class="text-danger font-weight-bold">{{ very_elderly_residents }}</div>
-                            <div class="text-muted">95+ años</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">medical_services</span>
         </div>
     </div>
-
-    <!-- Estado civil -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Distribución por Estado Civil</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-2 text-center">
-                            <div class="text-primary font-weight-bold">{{ single_residents }}</div>
-                            <div class="text-muted">Solteros</div>
-                        </div>
-                        <div class="col-md-2 text-center">
-                            <div class="text-success font-weight-bold">{{ married_residents }}</div>
-                            <div class="text-muted">Casados</div>
-                        </div>
-                        <div class="col-md-2 text-center">
-                            <div class="text-warning font-weight-bold">{{ widowed_residents }}</div>
-                            <div class="text-muted">Viudos</div>
-                        </div>
-                        <div class="col-md-2 text-center">
-                            <div class="text-info font-weight-bold">{{ divorced_residents }}</div>
-                            <div class="text-muted">Divorciados</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-rose-600">ALTA RECIENTE</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ recent_discharges|default:"0" }}</p>
+        </div>
+        <div class="bg-rose-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-rose-600 text-2xl sm:text-3xl">exit_to_app</span>
         </div>
     </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">PROMEDIO EDAD</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ avg_age|default:"0" }} años</p>
+        </div>
+        <div class="bg-sky-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-sky-600 text-2xl sm:text-3xl">cake</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-blue-600">MUJERES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ female_count|default:"0" }}</p>
+        </div>
+        <div class="bg-blue-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-blue-600 text-2xl sm:text-3xl">female</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-emerald-600">HOMBRES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ male_count|default:"0" }}</p>
+        </div>
+        <div class="bg-emerald-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-emerald-600 text-2xl sm:text-3xl">male</span>
+        </div>
+    </div>
+    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-amber-600">OCUPACIÓN</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ occupancy_rate|default:"0" }}%</p>
+        </div>
+        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">percent</span>
+        </div>
+    </div>
+</div>
 
-    <!-- Acciones rápidas -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Acciones Rápidas</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'residents_web:resident_create' %}" class="btn btn-primary btn-block">
-                                <i class="fas fa-user-plus"></i> Nuevo Residente
+<!-- Contenido principal -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <!-- Residentes recientes -->
+    <div class="lg:col-span-2 content-card">
+        <h2 class="text-lg font-semibold text-slate-700 mb-4">Residentes Recientes</h2>
+        {% if recent_residents %}
+        <div class="overflow-x-auto">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Edad</th>
+                        <th>Habitación</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for resident in recent_residents %}
+                    <tr>
+                        <td class="text-sm font-medium text-slate-900">{{ resident.full_name }}</td>
+                        <td>{{ resident.age }} años</td>
+                        <td>{{ resident.room_number|default:"--" }}</td>
+                        <td>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {% if resident.status == 'active' %}bg-green-100 text-green-800{% elif resident.status == 'treatment' %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ resident.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'residents_web:resident_detail' resident.id %}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                                Ver detalles
                             </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'residents_web:resident_list' %}" class="btn btn-outline-secondary btn-block">
-                                <i class="fas fa-list"></i> Ver Todos
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'residents_web:resident_search' %}" class="btn btn-outline-info btn-block">
-                                <i class="fas fa-search"></i> Búsqueda Rápida
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'facilities_web:index' %}" class="btn btn-outline-success btn-block">
-                                <i class="fas fa-bed"></i> Gestionar Habitaciones
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="flex flex-col items-center justify-center text-center text-slate-500 h-64">
+            <span class="material-icons text-5xl sm:text-6xl text-slate-300">elderly</span>
+            <p class="mt-4 font-semibold">No hay residentes registrados</p>
+            <p class="text-sm">Agrega residentes para ver la información aquí.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Estado de salud -->
+    <div class="content-card flex flex-col items-center justify-center text-center">
+        <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+            <span class="material-icons text-4xl sm:text-5xl text-emerald-600">health_and_safety</span>
+            <span class="absolute h-full w-full bg-emerald-200 rounded-full animate-ping opacity-75"></span>
+        </div>
+        <h2 class="text-lg font-semibold text-slate-800">Salud General</h2>
+        <p class="text-slate-500 mt-2 text-sm sm:text-base">Estado general de los residentes</p>
+        <div class="mt-4 space-y-2 text-xs text-slate-500">
+            <div class="flex items-center justify-between">
+                <span>Excelente</span>
+                <span class="text-emerald-600">{{ excellent_health|default:"0" }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Buena</span>
+                <span class="text-blue-600">{{ good_health|default:"0" }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Regular</span>
+                <span class="text-yellow-600">{{ fair_health|default:"0" }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Requiere atención</span>
+                <span class="text-red-600">{{ poor_health|default:"0" }}</span>
             </div>
         </div>
     </div>

@@ -1,284 +1,255 @@
-{% extends "base.html" %}
+{% extends "base_modern.html" %}
+{% load static %}
 
-{% block title %}Lista de Residentes - Sistema de Administración Geriátrica{% endblock %}
+{% block title %}Lista de Residentes{% endblock %}
+{% block page_title %}Lista de Residentes{% endblock %}
+{% block page_subtitle %}Gestión y búsqueda de residentes{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'residents_web:resident_create' %}" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-3 sm:px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+    <span class="material-icons mr-2 text-base sm:text-lg">add</span>
+    <span class="text-sm sm:text-base">Nuevo Residente</span>
+</a>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h3 mb-0">Lista de Residentes</h1>
-                <div>
-                    <a href="{% url 'residents_web:resident_create' %}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Nuevo Residente
-                    </a>
-                    <a href="{% url 'residents_web:index' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-chart-bar"></i> Dashboard
-                    </a>
-                </div>
-            </div>
+<!-- Filtros de búsqueda -->
+<div class="content-card mb-8">
+    <h2 class="text-lg font-semibold text-slate-700 mb-4">Filtros de Búsqueda</h2>
+    <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+            <label for="search" class="block text-sm font-medium text-slate-700 mb-2">Buscar</label>
+            <input type="text" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}" 
+                   placeholder="Nombre, apellido, teléfono o email"
+                   class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+        </div>
+        <div>
+            <label for="gender" class="block text-sm font-medium text-slate-700 mb-2">Género</label>
+            <select id="gender" name="gender" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                <option value="">Todos</option>
+                {% for value, label in gender_choices %}
+                <option value="{{ value }}" {% if gender_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="marital_status" class="block text-sm font-medium text-slate-700 mb-2">Estado Civil</label>
+            <select id="marital_status" name="marital_status" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300">
+                <option value="">Todos</option>
+                {% for value, label in marital_status_choices %}
+                <option value="{{ value }}" {% if marital_status_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex items-end space-x-2">
+            <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105">
+                <span class="material-icons mr-2 text-sm">search</span>
+                Buscar
+            </button>
+            <a href="{% url 'residents_web:resident_list' %}" class="bg-slate-600 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105">
+                <span class="material-icons text-sm">clear</span>
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Estadísticas de filtros -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-8">
+    <div class="stat-card">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">TOTAL MOSTRADO</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ total_residents|default:"0" }}</p>
+        </div>
+        <div class="bg-indigo-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-indigo-600 text-2xl sm:text-3xl">elderly</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-blue-600">HOMBRES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ male_residents|default:"0" }}</p>
+        </div>
+        <div class="bg-blue-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-blue-600 text-2xl sm:text-3xl">male</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-pink-600">MUJERES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ female_residents|default:"0" }}</p>
+        </div>
+        <div class="bg-pink-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-pink-600 text-2xl sm:text-3xl">female</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div>
+            <p class="text-xs sm:text-sm font-medium text-amber-600">OTROS</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ other_residents|default:"0" }}</p>
+        </div>
+        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">person</span>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de residentes -->
+<div class="content-card">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-lg font-semibold text-slate-700">Residentes</h2>
+        <div class="text-sm text-slate-500">
+            Mostrando {{ page_obj.start_index|default:"0" }} - {{ page_obj.end_index|default:"0" }} de {{ page_obj.paginator.count|default:"0" }} residentes
         </div>
     </div>
 
-    <!-- Filtros -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Filtros de Búsqueda</h6>
-                </div>
-                <div class="card-body">
-                    <form method="get" class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="search" class="form-label">Buscar</label>
-                            <input type="text" class="form-control" id="search" name="search" 
-                                   value="{{ search }}" placeholder="Nombre, apellido, teléfono o email">
+    {% if page_obj %}
+    <div class="overflow-x-auto">
+        <table class="table-modern">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Género</th>
+                    <th>Habitación</th>
+                    <th>Teléfono</th>
+                    <th>Fecha de Admisión</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resident in page_obj %}
+                <tr>
+                    <td>
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                    <span class="material-icons text-indigo-600 text-lg">elderly</span>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-slate-900">{{ resident.full_name }}</div>
+                                {% if resident.email %}
+                                <div class="text-sm text-slate-500">{{ resident.email }}</div>
+                                {% endif %}
+                            </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="gender" class="form-label">Género</label>
-                            <select class="form-control" id="gender" name="gender">
-                                <option value="">Todos</option>
-                                {% for value, label in gender_choices %}
-                                <option value="{{ value }}" {% if gender_filter == value %}selected{% endif %}>
-                                    {{ label }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="marital_status" class="form-label">Estado Civil</label>
-                            <select class="form-control" id="marital_status" name="marital_status">
-                                <option value="">Todos</option>
-                                {% for value, label in marital_status_choices %}
-                                <option value="{{ value }}" {% if marital_status_filter == value %}selected{% endif %}>
-                                    {{ label }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-3 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary me-2">
-                                <i class="fas fa-search"></i> Buscar
-                            </button>
-                            <a href="{% url 'residents_web:resident_list' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times"></i> Limpiar
+                    </td>
+                    <td class="text-sm text-slate-900">{{ resident.age }} años</td>
+                    <td>
+                        {% if resident.gender == 'M' %}
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                            Masculino
+                        </span>
+                        {% elif resident.gender == 'F' %}
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-pink-100 text-pink-800">
+                            Femenino
+                        </span>
+                        {% else %}
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-800">
+                            Otro
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if resident.room %}
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                            {{ resident.room.room_number }}
+                        </span>
+                        {% else %}
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">
+                            Sin asignar
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if resident.phone %}
+                        <div class="text-sm text-slate-900">{{ resident.phone }}</div>
+                        {% else %}
+                        <span class="text-sm text-slate-400">No disponible</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-sm text-slate-500">{{ resident.admission_date|date:"d/m/Y" }}</td>
+                    <td>
+                        <div class="flex items-center space-x-2">
+                            <a href="{% url 'residents_web:resident_detail' resident.id %}" 
+                               class="text-indigo-600 hover:text-indigo-900 transition-colors duration-200"
+                               title="Ver detalles">
+                                <span class="material-icons text-sm">visibility</span>
+                            </a>
+                            <a href="{% url 'residents_web:resident_update' resident.id %}" 
+                               class="text-amber-600 hover:text-amber-900 transition-colors duration-200"
+                               title="Editar">
+                                <span class="material-icons text-sm">edit</span>
+                            </a>
+                            <a href="{% url 'residents_web:resident_delete' resident.id %}" 
+                               class="text-red-600 hover:text-red-900 transition-colors duration-200"
+                               title="Eliminar">
+                                <span class="material-icons text-sm">delete</span>
                             </a>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
-    <!-- Estadísticas de filtros -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Mostrado
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_residents }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Paginación -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-6 flex items-center justify-between">
+        <div class="text-sm text-slate-500">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
         </div>
-        <div class="col-md-3">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Hombres
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ male_residents }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-male fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Mujeres
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ female_residents }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-female fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Otros
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ other_residents }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <nav class="flex items-center space-x-2">
+            {% if page_obj.has_previous %}
+            <a href="?page=1{% if search %}&search={{ search }}{% endif %}{% if gender_filter %}&gender={{ gender_filter }}{% endif %}{% if marital_status_filter %}&marital_status={{ marital_status_filter }}{% endif %}" 
+               class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors duration-200">
+                <span class="material-icons text-sm">first_page</span>
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if gender_filter %}&gender={{ gender_filter }}{% endif %}{% if marital_status_filter %}&marital_status={{ marital_status_filter }}{% endif %}" 
+               class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors duration-200">
+                <span class="material-icons text-sm">chevron_left</span>
+            </a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <span class="px-3 py-2 text-sm font-medium text-white bg-indigo-600 border border-indigo-600 rounded-md">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if gender_filter %}&gender={{ gender_filter }}{% endif %}{% if marital_status_filter %}&marital_status={{ marital_status_filter }}{% endif %}" 
+                   class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors duration-200">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if gender_filter %}&gender={{ gender_filter }}{% endif %}{% if marital_status_filter %}&marital_status={{ marital_status_filter }}{% endif %}" 
+               class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors duration-200">
+                <span class="material-icons text-sm">chevron_right</span>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if gender_filter %}&gender={{ gender_filter }}{% endif %}{% if marital_status_filter %}&marital_status={{ marital_status_filter }}{% endif %}" 
+               class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors duration-200">
+                <span class="material-icons text-sm">last_page</span>
+            </a>
+            {% endif %}
+        </nav>
     </div>
+    {% endif %}
 
-    <!-- Lista de residentes -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Residentes</h6>
-                </div>
-                <div class="card-body">
-                    {% if page_obj %}
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="residentsTable" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Edad</th>
-                                    <th>Género</th>
-                                    <th>Habitación</th>
-                                    <th>Teléfono</th>
-                                    <th>Fecha de Admisión</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for resident in page_obj %}
-                                <tr>
-                                    <td>
-                                        <strong>{{ resident.full_name }}</strong>
-                                        {% if resident.email %}
-                                        <br><small class="text-muted">{{ resident.email }}</small>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ resident.age }} años</td>
-                                    <td>
-                                        {% if resident.gender == 'M' %}
-                                        <span class="badge badge-primary">Masculino</span>
-                                        {% elif resident.gender == 'F' %}
-                                        <span class="badge badge-info">Femenino</span>
-                                        {% else %}
-                                        <span class="badge badge-secondary">Otro</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if resident.room %}
-                                        <span class="badge badge-success">{{ resident.room.room_number }}</span>
-                                        {% else %}
-                                        <span class="badge badge-warning">Sin asignar</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if resident.phone %}
-                                        {{ resident.phone }}
-                                        {% else %}
-                                        <span class="text-muted">No disponible</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ resident.admission_date|date:"d/m/Y" }}</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a href="{% url 'residents_web:resident_detail' resident.id %}" 
-                                               class="btn btn-sm btn-outline-primary" title="Ver detalles">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{% url 'residents_web:resident_update' resident.id %}" 
-                                               class="btn btn-sm btn-outline-warning" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{% url 'residents_web:resident_delete' resident.id %}" 
-                                               class="btn btn-sm btn-outline-danger" title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Paginación -->
-                    {% if page_obj.has_other_pages %}
-                    <nav aria-label="Paginación de residentes">
-                        <ul class="pagination justify-content-center">
-                            {% if page_obj.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if gender_filter %}&gender={{ gender_filter }}{% endif %}{% if marital_status_filter %}&marital_status={{ marital_status_filter }}{% endif %}">
-                                    <i class="fas fa-angle-double-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if gender_filter %}&gender={{ gender_filter }}{% endif %}{% if marital_status_filter %}&marital_status={{ marital_status_filter }}{% endif %}">
-                                    <i class="fas fa-angle-left"></i>
-                                </a>
-                            </li>
-                            {% endif %}
-
-                            {% for num in page_obj.paginator.page_range %}
-                                {% if page_obj.number == num %}
-                                <li class="page-item active">
-                                    <span class="page-link">{{ num }}</span>
-                                </li>
-                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if gender_filter %}&gender={{ gender_filter }}{% endif %}{% if marital_status_filter %}&marital_status={{ marital_status_filter }}{% endif %}">{{ num }}</a>
-                                </li>
-                                {% endif %}
-                            {% endfor %}
-
-                            {% if page_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if gender_filter %}&gender={{ gender_filter }}{% endif %}{% if marital_status_filter %}&marital_status={{ marital_status_filter }}{% endif %}">
-                                    <i class="fas fa-angle-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if gender_filter %}&gender={{ gender_filter }}{% endif %}{% if marital_status_filter %}&marital_status={{ marital_status_filter }}{% endif %}">
-                                    <i class="fas fa-angle-double-right"></i>
-                                </a>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                    {% endif %}
-
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-users fa-3x text-gray-300 mb-3"></i>
-                        <h5 class="text-gray-500">No se encontraron residentes</h5>
-                        <p class="text-muted">Intenta ajustar los filtros de búsqueda o crear un nuevo residente.</p>
-                        <a href="{% url 'residents_web:resident_create' %}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Crear Primer Residente
-                        </a>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
+    {% else %}
+    <div class="flex flex-col items-center justify-center text-center text-slate-500 py-12">
+        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+            <span class="material-icons text-3xl text-slate-400">elderly</span>
         </div>
+        <h3 class="text-lg font-semibold text-slate-700 mb-2">No se encontraron residentes</h3>
+        <p class="text-slate-500 mb-6">Intenta ajustar los filtros de búsqueda o crear un nuevo residente.</p>
+        <a href="{% url 'residents_web:resident_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105">
+            <span class="material-icons mr-2 text-sm">add</span>
+            Crear Primer Residente
+        </a>
     </div>
+    {% endif %}
 </div>
 {% endblock %} 
