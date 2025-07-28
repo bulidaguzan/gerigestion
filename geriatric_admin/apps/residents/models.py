@@ -127,6 +127,33 @@ class Resident(models.Model):
         help_text=_('Medicamentos que toma regularmente')
     )
     
+    # Estado de tratamiento
+    is_in_treatment = models.BooleanField(
+        default=False,
+        verbose_name=_('En Tratamiento'),
+        help_text=_('Indica si el residente está actualmente en tratamiento médico')
+    )
+    
+    treatment_type = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_('Tipo de Tratamiento'),
+        help_text=_('Tipo de tratamiento que está recibiendo (ej: fisioterapia, terapia ocupacional, etc.)')
+    )
+    
+    treatment_start_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Fecha de Inicio del Tratamiento'),
+        help_text=_('Fecha en que comenzó el tratamiento actual')
+    )
+    
+    treatment_notes = models.TextField(
+        blank=True,
+        verbose_name=_('Notas del Tratamiento'),
+        help_text=_('Notas adicionales sobre el tratamiento actual')
+    )
+    
     # Información de emergencia
     emergency_contact_name = models.CharField(
         max_length=100,

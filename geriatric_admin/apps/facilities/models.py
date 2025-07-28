@@ -31,11 +31,7 @@ class Room(models.Model):
         help_text=_('Número total de camas en la habitación')
     )
     
-    occupied_beds = models.PositiveIntegerField(
-        default=0,
-        verbose_name=_('Camas Ocupadas'),
-        help_text=_('Número de camas actualmente ocupadas')
-    )
+    # El campo occupied_beds ahora es una propiedad calculada basada en residentes asignados
     
     status = models.CharField(
         max_length=20,
@@ -68,6 +64,11 @@ class Room(models.Model):
     
     def __str__(self):
         return f"Habitación {self.room_number} - Piso {self.floor}"
+    
+    @property
+    def occupied_beds(self):
+        """Retorna el número de camas ocupadas basado en residentes asignados"""
+        return self.residents.count()
     
     @property
     def available_beds(self):
@@ -106,9 +107,10 @@ class Room(models.Model):
         """Validación personalizada del modelo"""
         from django.core.exceptions import ValidationError
         
-        if self.occupied_beds > self.total_beds:
+        # Validar que no haya más residentes que camas totales
+        if self.residents.count() > self.total_beds:
             raise ValidationError({
-                'occupied_beds': _('El número de camas ocupadas no puede ser mayor al total de camas.')
+                'total_beds': _('No puede haber más residentes que camas totales en la habitación.')
             })
     
     def save(self, *args, **kwargs):

@@ -149,39 +149,19 @@ def room_delete(request, room_id):
 @require_http_methods(["POST"])
 @csrf_exempt
 def room_update_occupancy(request, room_id):
-    """Vista AJAX para actualizar ocupación de camas"""
+    """Vista AJAX para actualizar ocupación de camas (ahora solo retorna información)"""
     try:
         room = get_object_or_404(Room, id=room_id)
-        occupied_beds = int(request.POST.get('occupied_beds', 0))
-        
-        if occupied_beds < 0:
-            return JsonResponse({
-                'success': False,
-                'error': _('El número de camas ocupadas no puede ser negativo.')
-            })
-        
-        if occupied_beds > room.total_beds:
-            return JsonResponse({
-                'success': False,
-                'error': _('El número de camas ocupadas no puede ser mayor al total de camas.')
-            })
-        
-        room.occupied_beds = occupied_beds
-        room.save()
         
         return JsonResponse({
             'success': True,
+            'occupied_beds': room.occupied_beds,
             'available_beds': room.available_beds,
             'occupancy_rate': room.occupancy_rate,
             'is_full': room.is_full,
             'is_available': room.is_available,
         })
         
-    except ValueError:
-        return JsonResponse({
-            'success': False,
-            'error': _('Valor inválido para el número de camas ocupadas.')
-        })
     except Exception as e:
         return JsonResponse({
             'success': False,

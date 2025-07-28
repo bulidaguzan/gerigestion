@@ -12,7 +12,6 @@ class RoomForm(forms.ModelForm):
             'room_number',
             'floor',
             'total_beds',
-            'occupied_beds',
             'status',
             'description'
         ]
@@ -31,11 +30,7 @@ class RoomForm(forms.ModelForm):
                 'min': '1',
                 'placeholder': _('Total de camas')
             }),
-            'occupied_beds': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': '0',
-                'placeholder': _('Camas ocupadas')
-            }),
+
             'status': forms.Select(attrs={
                 'class': 'form-control'
             }),
@@ -53,7 +48,6 @@ class RoomForm(forms.ModelForm):
         self.fields['room_number'].label = _('Número de Habitación')
         self.fields['floor'].label = _('Piso')
         self.fields['total_beds'].label = _('Total de Camas')
-        self.fields['occupied_beds'].label = _('Camas Ocupadas')
         self.fields['status'].label = _('Estado')
         self.fields['description'].label = _('Descripción')
         
@@ -61,22 +55,13 @@ class RoomForm(forms.ModelForm):
         self.fields['room_number'].help_text = _('Número único de la habitación')
         self.fields['floor'].help_text = _('Piso donde se encuentra la habitación')
         self.fields['total_beds'].help_text = _('Número total de camas en la habitación')
-        self.fields['occupied_beds'].help_text = _('Número de camas actualmente ocupadas')
         self.fields['status'].help_text = _('Estado actual de la habitación')
         self.fields['description'].help_text = _('Descripción adicional de la habitación')
     
     def clean(self):
         """Validación personalizada del formulario"""
         cleaned_data = super().clean()
-        total_beds = cleaned_data.get('total_beds')
-        occupied_beds = cleaned_data.get('occupied_beds')
-        
-        if total_beds and occupied_beds:
-            if occupied_beds > total_beds:
-                raise forms.ValidationError({
-                    'occupied_beds': _('El número de camas ocupadas no puede ser mayor al total de camas.')
-                })
-        
+        # La validación de ocupación ahora se maneja en el modelo
         return cleaned_data
 
 

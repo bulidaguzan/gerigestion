@@ -11,9 +11,8 @@ class RoomAdmin(admin.ModelAdmin):
         'room_number', 
         'floor', 
         'total_beds', 
-        'occupied_beds', 
-        'available_beds_display',
         'residents_count_display',
+        'available_beds_display',
         'occupancy_rate_display',
         'status_display',
         'is_available_display'
@@ -23,7 +22,6 @@ class RoomAdmin(admin.ModelAdmin):
         'floor',
         'status',
         'total_beds',
-        'occupied_beds',
     ]
     
     search_fields = [
@@ -31,9 +29,7 @@ class RoomAdmin(admin.ModelAdmin):
         'description'
     ]
     
-    list_editable = [
-        'occupied_beds'
-    ]
+    list_editable = []
     
     readonly_fields = [
         'available_beds',
@@ -49,7 +45,7 @@ class RoomAdmin(admin.ModelAdmin):
             'fields': ('room_number', 'floor', 'description')
         }),
         (_('Capacidad'), {
-            'fields': ('total_beds', 'occupied_beds', 'available_beds', 'occupancy_rate')
+            'fields': ('total_beds', 'available_beds', 'occupancy_rate')
         }),
         (_('Estado'), {
             'fields': ('status', 'is_full', 'is_available')
@@ -72,7 +68,7 @@ class RoomAdmin(admin.ModelAdmin):
         else:
             return format_html('<span style="color: green; font-weight: bold;">{}</span>', available)
     available_beds_display.short_description = _('Camas Disponibles')
-    available_beds_display.admin_order_field = 'occupied_beds'
+    available_beds_display.admin_order_field = 'total_beds'
     
     def residents_count_display(self, obj):
         """Muestra el número de residentes asignados"""
@@ -99,7 +95,7 @@ class RoomAdmin(admin.ModelAdmin):
             color = 'green'
         return format_html('<span style="color: {}; font-weight: bold;">{}%</span>', color, rate)
     occupancy_rate_display.short_description = _('Ocupación')
-    occupancy_rate_display.admin_order_field = 'occupied_beds'
+    occupancy_rate_display.admin_order_field = 'total_beds'
     
     def status_display(self, obj):
         """Muestra el estado con color"""

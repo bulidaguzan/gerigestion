@@ -21,6 +21,19 @@ def staff_dashboard(request):
     inactive_staff = Staff.objects.filter(employment_status='inactive').count()
     suspended_staff = Staff.objects.filter(employment_status='suspended').count()
     
+    # Personal en turno (simulado - todos los activos)
+    on_duty = active_staff
+    absent_staff = inactive_staff + suspended_staff
+    
+    # Estadísticas por departamento específico
+    nurses = Staff.objects.filter(department='Enfermería').count()
+    doctors = Staff.objects.filter(department='Médico').count()
+    administrative = Staff.objects.filter(department='Administración').count()
+    assistants = Staff.objects.filter(department='Rehabilitación').count()  # Usar Rehabilitación como auxiliares
+    
+    # Personal en turno (lista de empleados activos)
+    on_duty_staff = Staff.objects.filter(employment_status='active')[:10]
+    
     # Estadísticas por departamento
     department_stats = Staff.objects.values('department').annotate(
         count=Count('id')
@@ -53,6 +66,13 @@ def staff_dashboard(request):
         'active_staff': active_staff,
         'inactive_staff': inactive_staff,
         'suspended_staff': suspended_staff,
+        'on_duty': on_duty,
+        'absent_staff': absent_staff,
+        'nurses': nurses,
+        'doctors': doctors,
+        'administrative': administrative,
+        'assistants': assistants,
+        'on_duty_staff': on_duty_staff,
         'department_stats': department_stats,
         'position_stats': position_stats,
         'recent_hires': recent_hires,
