@@ -84,10 +84,64 @@ def financial_dashboard(request):
         count=Count('id')
     ).order_by('-total')
     
+    # Cálculos adicionales para el template
+    net_balance = monthly_income - monthly_expenses
+    
+    # Total de ingresos y gastos (histórico)
+    total_income = Income.objects.aggregate(total=Sum('amount'))['total'] or 0
+    total_expenses = Expense.objects.aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Total de inversiones
+    total_investments = Investment.objects.aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Cálculo del margen de beneficio
+    profit_margin = 0
+    if total_income > 0:
+        profit_margin = round(((total_income - total_expenses) / total_income) * 100, 1)
+    
+    # Montos pendientes
+    pending_amount = (Expense.objects.filter(status='pending').aggregate(total=Sum('amount'))['total'] or 0) + \
+                    (Income.objects.filter(status='pending').aggregate(total=Sum('amount'))['total'] or 0)
+    
+    # Transacciones recientes combinadas
+    recent_transactions = []
+    
+    # Agregar ingresos recientes
+    for income in recent_income:
+        recent_transactions.append({
+            'id': income.id,
+            'description': income.description,
+            'type': 'income',
+            'amount': income.amount,
+            'date': income.income_date,
+            'category': income.category
+        })
+    
+    # Agregar gastos recientes
+    for expense in recent_expenses:
+        recent_transactions.append({
+            'id': expense.id,
+            'description': expense.description,
+            'type': 'expense',
+            'amount': expense.amount,
+            'date': expense.expense_date,
+            'category': expense.category
+        })
+    
+    # Ordenar por fecha (más recientes primero)
+    recent_transactions.sort(key=lambda x: x['date'], reverse=True)
+    recent_transactions = recent_transactions[:10]  # Limitar a 10 transacciones
+    
     context = {
         'monthly_expenses': monthly_expenses,
         'monthly_income': monthly_income,
-        'monthly_balance': monthly_balance,
+        'net_balance': net_balance,
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'total_investments': total_investments,
+        'profit_margin': profit_margin,
+        'pending_amount': pending_amount,
+        'recent_transactions': recent_transactions,
         'pending_expenses': pending_expenses,
         'overdue_expenses': overdue_expenses,
         'pending_income': pending_income,
