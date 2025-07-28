@@ -19,6 +19,7 @@
 {% block content %}
 <!-- Estadísticas principales -->
 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4 sm:gap-6 mb-8">
+    <!-- TOTAL EMPLEADOS -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
             <p class="text-xs sm:text-sm font-medium text-slate-500">TOTAL EMPLEADOS</p>
@@ -28,6 +29,8 @@
             <span class="material-icons text-indigo-600 text-2xl sm:text-3xl">badge</span>
         </div>
     </div>
+    
+    <!-- ACTIVOS -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
             <p class="text-xs sm:text-sm font-medium text-emerald-600">ACTIVOS</p>
@@ -37,6 +40,8 @@
             <span class="material-icons text-emerald-600 text-2xl sm:text-3xl">check_circle</span>
         </div>
     </div>
+    
+    <!-- EN TURNO -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
             <p class="text-xs sm:text-sm font-medium text-amber-600">EN TURNO</p>
@@ -46,6 +51,8 @@
             <span class="material-icons text-amber-600 text-2xl sm:text-3xl">schedule</span>
         </div>
     </div>
+    
+    <!-- AUSENTES -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
             <p class="text-xs sm:text-sm font-medium text-rose-600">AUSENTES</p>
@@ -55,6 +62,8 @@
             <span class="material-icons text-rose-600 text-2xl sm:text-3xl">person_off</span>
         </div>
     </div>
+    
+    <!-- ENFERMEROS -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
             <p class="text-xs sm:text-sm font-medium text-slate-500">ENFERMEROS</p>
@@ -64,15 +73,19 @@
             <span class="material-icons text-sky-600 text-2xl sm:text-3xl">medical_services</span>
         </div>
     </div>
+    
+    <!-- DOCTORES -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
             <p class="text-xs sm:text-sm font-medium text-blue-600">DOCTORES</p>
             <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ doctors|default:"0" }}</p>
         </div>
         <div class="bg-blue-100 p-2 sm:p-3 rounded-full">
-            <span class="material-icons text-blue-600 text-2xl sm:text-3xl">stethoscope</span>
+            <span class="material-icons text-blue-600 text-2xl sm:text-3xl">medical_services</span>
         </div>
     </div>
+    
+    <!-- ADMINISTRATIVOS -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
             <p class="text-xs sm:text-sm font-medium text-emerald-600">ADMINISTRATIVOS</p>
@@ -82,6 +95,8 @@
             <span class="material-icons text-emerald-600 text-2xl sm:text-3xl">admin_panel_settings</span>
         </div>
     </div>
+    
+    <!-- AUXILIARES -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
             <p class="text-xs sm:text-sm font-medium text-amber-600">AUXILIARES</p>
