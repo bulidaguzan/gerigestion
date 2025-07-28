@@ -115,10 +115,18 @@
                     <tr>
                         <td class="text-sm font-medium text-slate-900">{{ resident.full_name }}</td>
                         <td>{{ resident.age }} años</td>
-                        <td>{{ resident.room_number|default:"--" }}</td>
                         <td>
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {% if resident.status == 'active' %}bg-green-100 text-green-800{% elif resident.status == 'treatment' %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}">
-                                {{ resident.get_status_display }}
+                            {% if resident.room %}
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                                {{ resident.room.room_number }}
+                            </span>
+                            {% else %}
+                            <span class="text-slate-400">--</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                                Activo
                             </span>
                         </td>
                         <td>

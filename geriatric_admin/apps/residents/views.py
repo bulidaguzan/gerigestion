@@ -147,50 +147,83 @@ def resident_dashboard(request):
     
     # Estadísticas generales
     total_residents = residents.count()
-    male_residents = residents.filter(gender='M').count()
-    female_residents = residents.filter(gender='F').count()
-    other_residents = residents.filter(gender='O').count()
+    male_count = residents.filter(gender='M').count()
+    female_count = residents.filter(gender='F').count()
     
-    # Estadísticas por edad
-    young_residents = residents.filter(date_of_birth__year__gte=date.today().year - 65).count()
-    elderly_residents = residents.filter(
-        date_of_birth__year__lt=date.today().year - 65,
-        date_of_birth__year__gte=date.today().year - 80
+    # Residentes activos (todos los residentes están activos por defecto)
+    active_residents = total_residents
+    
+    # Residentes en tratamiento (aquellos con alergias o condiciones médicas)
+    in_treatment = residents.filter(
+        Q(allergies__isnull=False) & ~Q(allergies='') |
+        Q(medical_conditions__isnull=False) & ~Q(medical_conditions='')
     ).count()
-    very_elderly_residents = residents.filter(date_of_birth__year__lt=date.today().year - 80).count()
     
-    # Estadísticas por estado civil
-    single_residents = residents.filter(marital_status='single').count()
-    married_residents = residents.filter(marital_status='married').count()
-    widowed_residents = residents.filter(marital_status='widowed').count()
-    divorced_residents = residents.filter(marital_status='divorced').count()
-    
-    # Residentes por tiempo de estancia
-    recent_admissions = residents.filter(
+    # Altas recientes (residentes admitidos en los últimos 30 días)
+    recent_discharges = residents.filter(
         admission_date__gte=date.today() - timedelta(days=30)
     ).count()
-    long_term_residents = residents.filter(
-        admission_date__lt=date.today() - timedelta(days=365)
+    
+    # Promedio de edad
+    if total_residents > 0:
+        # Calcular edad para cada residente
+        total_age = 0
+        for resident in residents:
+            total_age += resident.age
+        avg_age = round(total_age / total_residents, 1)
+    else:
+        avg_age = 0
+    
+    # Tasa de ocupación (residentes con habitación asignada)
+    residents_with_room = residents.filter(room__isnull=False).count()
+    if total_residents > 0:
+        occupancy_rate = round((residents_with_room / total_residents) * 100, 1)
+    else:
+        occupancy_rate = 0
+    
+    # Residentes recientes (últimos 5 residentes)
+    recent_residents = residents.order_by('-admission_date')[:5]
+    
+    # Estadísticas de salud (simuladas basadas en edad)
+    # Calcular edad basada en date_of_birth
+    today = date.today()
+    
+    # Residentes menores de 70 años
+    excellent_health = residents.filter(
+        date_of_birth__year__gt=today.year - 70
     ).count()
     
-    # Residentes sin habitación asignada
-    unassigned_residents = residents.filter(room__isnull=True).count()
+    # Residentes entre 70 y 79 años
+    good_health = residents.filter(
+        date_of_birth__year__lte=today.year - 70,
+        date_of_birth__year__gt=today.year - 80
+    ).count()
+    
+    # Residentes entre 80 y 89 años
+    fair_health = residents.filter(
+        date_of_birth__year__lte=today.year - 80,
+        date_of_birth__year__gt=today.year - 90
+    ).count()
+    
+    # Residentes de 90 años o más
+    poor_health = residents.filter(
+        date_of_birth__year__lte=today.year - 90
+    ).count()
     
     context = {
         'total_residents': total_residents,
-        'male_residents': male_residents,
-        'female_residents': female_residents,
-        'other_residents': other_residents,
-        'young_residents': young_residents,
-        'elderly_residents': elderly_residents,
-        'very_elderly_residents': very_elderly_residents,
-        'single_residents': single_residents,
-        'married_residents': married_residents,
-        'widowed_residents': widowed_residents,
-        'divorced_residents': divorced_residents,
-        'recent_admissions': recent_admissions,
-        'long_term_residents': long_term_residents,
-        'unassigned_residents': unassigned_residents,
+        'active_residents': active_residents,
+        'in_treatment': in_treatment,
+        'recent_discharges': recent_discharges,
+        'avg_age': avg_age,
+        'female_count': female_count,
+        'male_count': male_count,
+        'occupancy_rate': occupancy_rate,
+        'recent_residents': recent_residents,
+        'excellent_health': excellent_health,
+        'good_health': good_health,
+        'fair_health': fair_health,
+        'poor_health': poor_health,
     }
     
     return render(request, 'residents/dashboard.html', context)
