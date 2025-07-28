@@ -177,6 +177,33 @@
             <div class="content-card mb-8">
                 <h2 class="text-lg font-semibold text-slate-700 mb-4">Acciones Rápidas</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {% if request.resolver_match.url_name == 'resident_detail' %}
+                    <!-- Acciones específicas para vista de detalle -->
+                    <a href="{% url 'residents_web:resident_update' resident.id %}" class="action-button bg-amber-600 hover:bg-amber-700 text-white">
+                        <span class="material-icons mr-2">edit</span>
+                        Editar Residente
+                    </a>
+                    {% if resident.room %}
+                    <a href="{% url 'facilities_web:room_detail' resident.room.id %}" class="action-button bg-emerald-600 hover:bg-emerald-700 text-white">
+                        <span class="material-icons mr-2">hotel</span>
+                        Ver Habitación
+                    </a>
+                    {% else %}
+                    <a href="{% url 'facilities_web:room_list' %}" class="action-button bg-slate-600 hover:bg-slate-700 text-white">
+                        <span class="material-icons mr-2">hotel</span>
+                        Asignar Habitación
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'residents_web:resident_list' %}" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white">
+                        <span class="material-icons mr-2">list</span>
+                        Ver Todos
+                    </a>
+                    <a href="{% url 'residents_web:resident_delete' resident.id %}" class="action-button bg-red-600 hover:bg-red-700 text-white">
+                        <span class="material-icons mr-2">delete</span>
+                        Eliminar
+                    </a>
+                    {% else %}
+                    <!-- Acciones generales para otras vistas -->
                     <a href="{% url 'residents_web:resident_create' %}" class="action-button bg-indigo-600 hover:bg-indigo-700 text-white">
                         <span class="material-icons mr-2">add</span>
                         Nuevo Residente
@@ -185,14 +212,11 @@
                         <span class="material-icons mr-2">visibility</span>
                         Ver Todos
                     </a>
-                    <a href="{% url 'residents_web:resident_search' %}" class="action-button bg-emerald-600 hover:bg-emerald-700 text-white">
-                        <span class="material-icons mr-2">search</span>
-                        Buscar
-                    </a>
                     <a href="{% url 'residents_web:resident_list' %}?status=active" class="action-button bg-amber-600 hover:bg-amber-700 text-white">
                         <span class="material-icons mr-2">check_circle</span>
                         Activos
                     </a>
+                    {% endif %}
                 </div>
             </div>
             {% elif request.resolver_match.namespace == 'staff_web' %}

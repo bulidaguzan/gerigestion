@@ -3,272 +3,339 @@
 {% load i18n %}
 
 {% block title %}
-    {% if action == 'create' %}
-        {% trans 'Nueva Habitación' %}
-    {% else %}
-        {% trans 'Editar Habitación' %}
-    {% endif %}
+{% if action == 'create' %}Nueva Habitación{% else %}Editar Habitación{% endif %}
+{% endblock %}
+
+{% block page_title %}
+{% if action == 'create' %}Nueva Habitación{% else %}Editar Habitación{% endif %}
+{% endblock %}
+
+{% block page_subtitle %}
+{% if action == 'create' %}Crear una nueva habitación en el geriátrico{% else %}Modificar información de la habitación{% endif %}
+{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'facilities_web:room_list' %}" class="flex items-center bg-white hover:bg-slate-100 text-slate-600 font-semibold py-2 px-3 sm:px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+    <span class="material-icons mr-2 text-base sm:text-lg">arrow_back</span>
+    <span class="text-sm sm:text-base">Volver</span>
+</a>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">
-                {% if action == 'create' %}
-                    {% trans 'Nueva Habitación' %}
-                {% else %}
-                    {% trans 'Editar Habitación' %}
-                {% endif %}
-            </h1>
-            <p class="text-muted">
-                {% if action == 'create' %}
-                    {% trans 'Crear una nueva habitación en el geriátrico' %}
-                {% else %}
-                    {% trans 'Modificar información de la habitación' %}
-                {% endif %}
-            </p>
-        </div>
-        <a href="{% url 'facilities_web:room_list' %}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> {% trans 'Volver al listado' %}
-        </a>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- Formulario -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        {% if action == 'create' %}
-                            {% trans 'Información de la Habitación' %}
-                        {% else %}
-                            {% trans 'Modificar Habitación' %}
-                        {% endif %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <form method="post" id="roomForm">
-                        {% csrf_token %}
-                        
-                        <div class="row">
-                            <!-- Número de Habitación -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.room_number.id_for_label }}" class="form-label">
-                                    {{ form.room_number.label }}
-                                </label>
-                                {{ form.room_number }}
-                                {% if form.room_number.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.room_number.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                                {% if form.room_number.help_text %}
-                                <div class="form-text">{{ form.room_number.help_text }}</div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Piso -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.floor.id_for_label }}" class="form-label">
-                                    {{ form.floor.label }}
-                                </label>
-                                {{ form.floor }}
-                                {% if form.floor.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.floor.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                                {% if form.floor.help_text %}
-                                <div class="form-text">{{ form.floor.help_text }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <!-- Total de Camas -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.total_beds.id_for_label }}" class="form-label">
-                                    {{ form.total_beds.label }}
-                                </label>
-                                {{ form.total_beds }}
-                                {% if form.total_beds.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.total_beds.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                                {% if form.total_beds.help_text %}
-                                <div class="form-text">{{ form.total_beds.help_text }}</div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Camas Ocupadas -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.occupied_beds.id_for_label }}" class="form-label">
-                                    {{ form.occupied_beds.label }}
-                                </label>
-                                {{ form.occupied_beds }}
-                                {% if form.occupied_beds.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.occupied_beds.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                                {% if form.occupied_beds.help_text %}
-                                <div class="form-text">{{ form.occupied_beds.help_text }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <!-- Estado -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.status.id_for_label }}" class="form-label">
-                                    {{ form.status.label }}
-                                </label>
-                                {{ form.status }}
-                                {% if form.status.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.status.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                                {% if form.status.help_text %}
-                                <div class="form-text">{{ form.status.help_text }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Descripción -->
-                        <div class="mb-3">
-                            <label for="{{ form.description.id_for_label }}" class="form-label">
-                                {{ form.description.label }}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Formulario Principal -->
+    <div class="lg:col-span-2">
+        <div class="content-card">
+            <form method="post" id="roomForm" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Información Básica -->
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-700 mb-6 flex items-center">
+                        <span class="material-icons mr-2 text-indigo-600">hotel</span>
+                        Información Básica
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.room_number.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                                {{ form.room_number.label }} *
                             </label>
-                            {{ form.description }}
-                            {% if form.description.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.description.errors %}
-                                    {{ error }}
+                            <input type="text" 
+                                   name="{{ form.room_number.name }}" 
+                                   id="{{ form.room_number.id_for_label }}"
+                                   value="{{ form.room_number.value|default:'' }}"
+                                   class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.room_number.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                                   placeholder="Ej: 101, A-12, Suite-1">
+                            {% if form.room_number.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.room_number.errors.0 }}</p>
+                            {% endif %}
+                            {% if form.room_number.help_text %}
+                            <p class="mt-1 text-sm text-slate-500">{{ form.room_number.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="{{ form.floor.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                                {{ form.floor.label }} *
+                            </label>
+                            <input type="number" 
+                                   name="{{ form.floor.name }}" 
+                                   id="{{ form.floor.id_for_label }}"
+                                   value="{{ form.floor.value|default:'' }}"
+                                   min="1"
+                                   class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.floor.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                                   placeholder="Número de piso">
+                            {% if form.floor.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.floor.errors.0 }}</p>
+                            {% endif %}
+                            {% if form.floor.help_text %}
+                            <p class="mt-1 text-sm text-slate-500">{{ form.floor.help_text }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capacidad y Ocupación -->
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-700 mb-6 flex items-center">
+                        <span class="material-icons mr-2 text-indigo-600">bed</span>
+                        Capacidad y Ocupación
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.total_beds.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                                {{ form.total_beds.label }} *
+                            </label>
+                            <input type="number" 
+                                   name="{{ form.total_beds.name }}" 
+                                   id="{{ form.total_beds.id_for_label }}"
+                                   value="{{ form.total_beds.value|default:'' }}"
+                                   min="1"
+                                   max="10"
+                                   class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.total_beds.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                                   placeholder="Número total de camas">
+                            {% if form.total_beds.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.total_beds.errors.0 }}</p>
+                            {% endif %}
+                            {% if form.total_beds.help_text %}
+                            <p class="mt-1 text-sm text-slate-500">{{ form.total_beds.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="{{ form.occupied_beds.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                                {{ form.occupied_beds.label }}
+                            </label>
+                            <input type="number" 
+                                   name="{{ form.occupied_beds.name }}" 
+                                   id="{{ form.occupied_beds.id_for_label }}"
+                                   value="{{ form.occupied_beds.value|default:'0' }}"
+                                   min="0"
+                                   class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.occupied_beds.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                                   placeholder="Camas ocupadas">
+                            {% if form.occupied_beds.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.occupied_beds.errors.0 }}</p>
+                            {% endif %}
+                            {% if form.occupied_beds.help_text %}
+                            <p class="mt-1 text-sm text-slate-500">{{ form.occupied_beds.help_text }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado de la Habitación -->
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-700 mb-6 flex items-center">
+                        <span class="material-icons mr-2 text-indigo-600">build</span>
+                        Estado de la Habitación
+                    </h3>
+                    
+                    <div>
+                        <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            {{ form.status.label }} *
+                        </label>
+                        <select name="{{ form.status.name }}" 
+                                id="{{ form.status.id_for_label }}"
+                                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.status.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}">
+                            <option value="">Seleccionar estado</option>
+                            {% for value, label in form.status.field.choices %}
+                            <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if form.status.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.status.errors.0 }}</p>
+                        {% endif %}
+                        {% if form.status.help_text %}
+                        <p class="mt-1 text-sm text-slate-500">{{ form.status.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-700 mb-6 flex items-center">
+                        <span class="material-icons mr-2 text-indigo-600">description</span>
+                        Información Adicional
+                    </h3>
+                    
+                    <div>
+                        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            {{ form.description.label }}
+                        </label>
+                        <textarea name="{{ form.description.name }}" 
+                                  id="{{ form.description.id_for_label }}"
+                                  rows="4"
+                                  class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.description.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                                  placeholder="Descripción de la habitación, características especiales, equipamiento, etc.">{{ form.description.value|default:'' }}</textarea>
+                        {% if form.description.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</p>
+                        {% endif %}
+                        {% if form.description.help_text %}
+                        <p class="mt-1 text-sm text-slate-500">{{ form.description.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Errores generales del formulario -->
+                {% if form.non_field_errors %}
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex">
+                        <span class="material-icons text-red-500 mr-2">error</span>
+                        <div>
+                            <h3 class="text-sm font-medium text-red-800">Errores en el formulario</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                {% for error in form.non_field_errors %}
+                                <p>{{ error }}</p>
                                 {% endfor %}
                             </div>
-                            {% endif %}
-                            {% if form.description.help_text %}
-                            <div class="form-text">{{ form.description.help_text }}</div>
-                            {% endif %}
                         </div>
+                    </div>
+                </div>
+                {% endif %}
 
-                        <!-- Botones -->
-                        <div class="d-flex justify-content-between">
-                                        <a href="{% url 'facilities_web:room_list' %}" class="btn btn-secondary">
-                <i class="fas fa-times"></i> {% trans 'Cancelar' %}
-            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                {% if action == 'create' %}
-                                    {% trans 'Crear Habitación' %}
-                                {% else %}
-                                    {% trans 'Guardar Cambios' %}
-                                {% endif %}
-                            </button>
+                <!-- Botones de acción -->
+                <div class="flex justify-end space-x-4 pt-6 border-t border-slate-200">
+                    <a href="{% url 'facilities_web:room_list' %}" 
+                       class="bg-slate-600 hover:bg-slate-700 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2 text-sm">{% if action == 'create' %}add{% else %}save{% endif %}</span>
+                        {% if action == 'create' %}Crear Habitación{% else %}Guardar Cambios{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Panel Lateral -->
+    <div class="lg:col-span-1 space-y-6">
+        <!-- Información de Ayuda -->
+        <div class="content-card">
+            <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center">
+                <span class="material-icons mr-2 text-amber-600">help</span>
+                Guía de Ayuda
+            </h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-700 mb-2">Número de Habitación</h4>
+                    <p class="text-sm text-slate-600">Ingresa un número único para identificar la habitación. Puede ser alfanumérico.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-700 mb-2">Piso</h4>
+                    <p class="text-sm text-slate-600">Especifica en qué piso se encuentra la habitación.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-700 mb-2">Total de Camas</h4>
+                    <p class="text-sm text-slate-600">Número total de camas disponibles en la habitación.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-700 mb-2">Camas Ocupadas</h4>
+                    <p class="text-sm text-slate-600">Número de camas actualmente ocupadas. No puede ser mayor al total.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-700 mb-2">Estados Disponibles</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 mr-2">Disponible</span>
+                            <span class="text-sm text-slate-600">Habitación lista para uso</span>
                         </div>
-                    </form>
+                        <div class="flex items-center">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 mr-2">Mantenimiento</span>
+                            <span class="text-sm text-slate-600">Habitación en reparación</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 mr-2">Cuarentena</span>
+                            <span class="text-sm text-slate-600">Habitación aislada por protocolo</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
-            <!-- Información de Ayuda -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Información de Ayuda' %}</h6>
+        <!-- Vista Previa (solo en edición) -->
+        {% if action == 'update' and room %}
+        <div class="content-card">
+            <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center">
+                <span class="material-icons mr-2 text-indigo-600">preview</span>
+                Vista Previa
+            </h3>
+            
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-slate-600">Habitación:</span>
+                    <span class="text-sm font-semibold text-slate-800">{{ room.room_number }}</span>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <h6 class="font-weight-bold">{% trans 'Número de Habitación' %}</h6>
-                        <p class="text-muted small">
-                            {% trans 'Ingresa un número único para identificar la habitación. Puede ser alfanumérico.' %}
-                        </p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6 class="font-weight-bold">{% trans 'Piso' %}</h6>
-                        <p class="text-muted small">
-                            {% trans 'Especifica en qué piso se encuentra la habitación.' %}
-                        </p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6 class="font-weight-bold">{% trans 'Total de Camas' %}</h6>
-                        <p class="text-muted small">
-                            {% trans 'Número total de camas disponibles en la habitación.' %}
-                        </p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6 class="font-weight-bold">{% trans 'Camas Ocupadas' %}</h6>
-                        <p class="text-muted small">
-                            {% trans 'Número de camas actualmente ocupadas. No puede ser mayor al total.' %}
-                        </p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h6 class="font-weight-bold">{% trans 'Estado' %}</h6>
-                        <ul class="text-muted small">
-                            <li><strong>{% trans 'Disponible' %}:</strong> {% trans 'Habitación lista para uso' %}</li>
-                            <li><strong>{% trans 'Mantenimiento' %}:</strong> {% trans 'Habitación en reparación' %}</li>
-                            <li><strong>{% trans 'Cuarentena' %}:</strong> {% trans 'Habitación aislada por protocolo' %}</li>
-                        </ul>
-                    </div>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-slate-600">Piso:</span>
+                    <span class="text-sm font-semibold text-slate-800">{{ room.floor }}</span>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-slate-600">Camas Disponibles:</span>
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {% if room.available_beds == 0 %}bg-red-100 text-red-800{% elif room.available_beds <= 2 %}bg-amber-100 text-amber-800{% else %}bg-emerald-100 text-emerald-800{% endif %}">
+                        {{ room.available_beds }}
+                    </span>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-slate-600">Ocupación:</span>
+                    <span class="text-sm font-semibold {% if room.occupancy_rate >= 90 %}text-red-600{% elif room.occupancy_rate >= 70 %}text-amber-600{% else %}text-emerald-600{% endif %}">
+                        {{ room.occupancy_rate }}%
+                    </span>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-slate-600">Estado:</span>
+                    {% if room.status == 'available' %}
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">Disponible</span>
+                    {% elif room.status == 'maintenance' %}
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">Mantenimiento</span>
+                    {% elif room.status == 'quarantine' %}
+                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Cuarentena</span>
+                    {% endif %}
                 </div>
             </div>
+        </div>
+        {% endif %}
 
-            <!-- Vista Previa -->
-            {% if action == 'update' and room %}
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Vista Previa' %}</h6>
+        <!-- Estadísticas Rápidas -->
+        <div class="content-card">
+            <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center">
+                <span class="material-icons mr-2 text-indigo-600">analytics</span>
+                Estadísticas Rápidas
+            </h3>
+            
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                    <span class="text-sm font-medium text-slate-600">Total Habitaciones:</span>
+                    <span class="text-sm font-semibold text-slate-800">{{ total_rooms|default:"0" }}</span>
                 </div>
-                <div class="card-body">
-                    <div class="mb-2">
-                        <strong>{% trans 'Habitación' %}:</strong> {{ room.room_number }}
-                    </div>
-                    <div class="mb-2">
-                        <strong>{% trans 'Piso' %}:</strong> {{ room.floor }}
-                    </div>
-                    <div class="mb-2">
-                        <strong>{% trans 'Camas Disponibles' %}:</strong> 
-                        <span class="badge bg-{% if room.available_beds == 0 %}danger{% elif room.available_beds <= 2 %}warning{% else %}success{% endif %}">
-                            {{ room.available_beds }}
-                        </span>
-                    </div>
-                    <div class="mb-2">
-                        <strong>{% trans 'Ocupación' %}:</strong> 
-                        <span class="text-{% if room.occupancy_rate >= 90 %}danger{% elif room.occupancy_rate >= 70 %}warning{% else %}success{% endif %} fw-bold">
-                            {{ room.occupancy_rate }}%
-                        </span>
-                    </div>
-                    <div class="mb-2">
-                        <strong>{% trans 'Estado' %}:</strong> 
-                        {% if room.status == 'available' %}
-                        <span class="badge bg-success">{% trans 'Disponible' %}</span>
-                        {% elif room.status == 'maintenance' %}
-                        <span class="badge bg-warning">{% trans 'Mantenimiento' %}</span>
-                        {% elif room.status == 'quarantine' %}
-                        <span class="badge bg-danger">{% trans 'Cuarentena' %}</span>
-                        {% endif %}
-                    </div>
+                
+                <div class="flex justify-between items-center p-3 bg-emerald-50 rounded-lg">
+                    <span class="text-sm font-medium text-slate-600">Disponibles:</span>
+                    <span class="text-sm font-semibold text-emerald-600">{{ available_rooms|default:"0" }}</span>
+                </div>
+                
+                <div class="flex justify-between items-center p-3 bg-amber-50 rounded-lg">
+                    <span class="text-sm font-medium text-slate-600">Mantenimiento:</span>
+                    <span class="text-sm font-semibold text-amber-600">{{ maintenance_rooms|default:"0" }}</span>
+                </div>
+                
+                <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                    <span class="text-sm font-medium text-slate-600">Cuarentena:</span>
+                    <span class="text-sm font-semibold text-red-600">{{ quarantine_rooms|default:"0" }}</span>
                 </div>
             </div>
-            {% endif %}
         </div>
     </div>
 </div>
@@ -276,30 +343,59 @@
 
 {% block extra_js %}
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
+    const totalBedsInput = document.getElementById('{{ form.total_beds.id_for_label }}');
+    const occupiedBedsInput = document.getElementById('{{ form.occupied_beds.id_for_label }}');
+    const form = document.getElementById('roomForm');
+
     // Validación en tiempo real
-    $('#roomForm').on('submit', function(e) {
-        var totalBeds = parseInt($('#id_total_beds').val()) || 0;
-        var occupiedBeds = parseInt($('#id_occupied_beds').val()) || 0;
+    function validateBeds() {
+        const totalBeds = parseInt(totalBedsInput.value) || 0;
+        const occupiedBeds = parseInt(occupiedBedsInput.value) || 0;
         
         if (occupiedBeds > totalBeds) {
-            e.preventDefault();
-            alert('{% trans "El número de camas ocupadas no puede ser mayor al total de camas." %}');
-            return false;
-        }
-    });
-    
-    // Actualizar validación cuando cambien los campos
-    $('#id_total_beds, #id_occupied_beds').on('change', function() {
-        var totalBeds = parseInt($('#id_total_beds').val()) || 0;
-        var occupiedBeds = parseInt($('#id_occupied_beds').val()) || 0;
-        
-        if (occupiedBeds > totalBeds) {
-            $('#id_occupied_beds').addClass('is-invalid');
+            occupiedBedsInput.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-500');
+            occupiedBedsInput.classList.remove('border-slate-300', 'focus:border-indigo-500', 'focus:ring-indigo-500');
+            
+            // Agregar mensaje de error si no existe
+            let errorMsg = occupiedBedsInput.parentNode.querySelector('.error-message');
+            if (!errorMsg) {
+                errorMsg = document.createElement('p');
+                errorMsg.className = 'mt-1 text-sm text-red-600 error-message';
+                errorMsg.textContent = 'El número de camas ocupadas no puede ser mayor al total de camas.';
+                occupiedBedsInput.parentNode.appendChild(errorMsg);
+            }
         } else {
-            $('#id_occupied_beds').removeClass('is-invalid');
+            occupiedBedsInput.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-500');
+            occupiedBedsInput.classList.add('border-slate-300', 'focus:border-indigo-500', 'focus:ring-indigo-500');
+            
+            // Remover mensaje de error si existe
+            const errorMsg = occupiedBedsInput.parentNode.querySelector('.error-message');
+            if (errorMsg) {
+                errorMsg.remove();
+            }
         }
-    });
+    }
+
+    // Event listeners
+    if (totalBedsInput && occupiedBedsInput) {
+        totalBedsInput.addEventListener('input', validateBeds);
+        occupiedBedsInput.addEventListener('input', validateBeds);
+    }
+
+    // Validación al enviar el formulario
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const totalBeds = parseInt(totalBedsInput.value) || 0;
+            const occupiedBeds = parseInt(occupiedBedsInput.value) || 0;
+            
+            if (occupiedBeds > totalBeds) {
+                e.preventDefault();
+                alert('El número de camas ocupadas no puede ser mayor al total de camas.');
+                return false;
+            }
+        });
+    }
 });
 </script>
 {% endblock %} 
