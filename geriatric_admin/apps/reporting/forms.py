@@ -69,17 +69,18 @@ class QuickReportForm(forms.Form):
     """Formulario para reportes rápidos"""
     
     REPORT_TYPES = [
-        ('residents_summary', _('Resumen de Residentes')),
-        ('staff_summary', _('Resumen del Personal')),
-        ('facilities_occupancy', _('Ocupación de Instalaciones')),
-        ('recent_admissions', _('Admisiones Recientes')),
-        ('staff_attendance', _('Asistencia del Personal')),
-        ('financial_summary', _('Resumen Financiero')),
+        ('residents', _('Residentes')),
+        ('staff', _('Personal')),
+        ('facilities', _('Instalaciones')),
+        ('financial', _('Financiero')),
+        ('medical', _('Médico')),
+        ('occupancy', _('Ocupación')),
+        ('custom', _('Personalizado')),
     ]
     
     FORMAT_CHOICES = [
         ('pdf', 'PDF'),
-        ('excel', 'Excel'),
+        ('json', 'JSON'),
         ('csv', 'CSV'),
     ]
     
@@ -146,6 +147,15 @@ class QuickReportForm(forms.Form):
                 )
         
         return cleaned_data
+    
+    def get_report_type_display(self):
+        """Retorna el nombre legible del tipo de reporte seleccionado"""
+        report_type = self.cleaned_data.get('report_type')
+        if report_type:
+            for choice_value, choice_label in self.REPORT_TYPES:
+                if choice_value == report_type:
+                    return choice_label
+        return report_type or ''
     
     def get_date_range(self):
         """Retorna el rango de fechas basado en el período seleccionado"""
@@ -268,6 +278,17 @@ class ResidentReportForm(forms.Form):
         initial=True,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
+    
+    format = forms.ChoiceField(
+        choices=[
+            ('pdf', 'PDF'),
+            ('json', 'JSON'),
+            ('csv', 'CSV'),
+        ],
+        label=_('Formato'),
+        initial='pdf',
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
 
 
 class StaffReportForm(forms.Form):
@@ -356,6 +377,17 @@ class StaffReportForm(forms.Form):
         required=False,
         initial=True,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    
+    format = forms.ChoiceField(
+        choices=[
+            ('pdf', 'PDF'),
+            ('json', 'JSON'),
+            ('csv', 'CSV'),
+        ],
+        label=_('Formato'),
+        initial='pdf',
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
 
 

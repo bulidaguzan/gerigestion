@@ -168,8 +168,26 @@ def category_list(request):
     if category_type:
         categories = categories.filter(category_type=category_type)
     
+    # Estadísticas por tipo
+    expense_categories = Category.objects.filter(category_type='expense')
+    income_categories = Category.objects.filter(category_type='income')
+    investment_categories = Category.objects.filter(category_type='investment')
+    
+    # Contadores
+    expense_categories_count = expense_categories.count()
+    income_categories_count = income_categories.count()
+    investment_categories_count = investment_categories.count()
+    total_categories_count = categories.count()
+    
     context = {
         'categories': categories,
+        'expense_categories': expense_categories,
+        'income_categories': income_categories,
+        'investment_categories': investment_categories,
+        'expense_categories_count': expense_categories_count,
+        'income_categories_count': income_categories_count,
+        'investment_categories_count': investment_categories_count,
+        'total_categories_count': total_categories_count,
         'category_types': Category.CATEGORY_TYPES
     }
     

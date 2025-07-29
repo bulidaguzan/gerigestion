@@ -6,207 +6,364 @@
     {% if action == 'create' %}{% trans 'Nuevo Reporte' %}{% else %}{% trans 'Editar Reporte' %}{% endif %}
 {% endblock %}
 
+{% block page_title %}
+    {% if action == 'create' %}
+        {% trans 'Nuevo Reporte' %}
+    {% else %}
+        {% trans 'Editar Reporte' %}
+    {% endif %}
+{% endblock %}
+
+{% block page_subtitle %}
+    {% if action == 'create' %}
+        {% trans 'Crea un nuevo reporte personalizado' %}
+    {% else %}
+        {% trans 'Modifica la configuración del reporte' %}
+    {% endif %}
+{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'reporting_web:report_list' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">{% trans 'Volver a la Lista' %}</span>
+    </a>
+    {% if action != 'create' %}
+    <a href="{% url 'reporting_web:report_detail' report.id %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">visibility</span>
+        <span class="text-sm">{% trans 'Ver Detalles' %}</span>
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">
-            {% if action == 'create' %}
-                <i class="fas fa-plus me-2"></i>{% trans 'Nuevo Reporte' %}
-            {% else %}
-                <i class="fas fa-edit me-2"></i>{% trans 'Editar Reporte' %}
-            {% endif %}
-        </h1>
-        <a href="{% url 'reporting_web:report_list' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>{% trans 'Volver a la Lista' %}
-        </a>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        {% if action == 'create' %}
-                            <i class="fas fa-file-alt me-2"></i>{% trans 'Crear Nuevo Reporte' %}
-                        {% else %}
-                            <i class="fas fa-edit me-2"></i>{% trans 'Editar Reporte' %}
-                        {% endif %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
+<div class="max-w-4xl mx-auto">
+    <!-- Main Form -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">assessment</span>
+                {% if action == 'create' %}
+                    {% trans 'Crear Nuevo Reporte' %}
+                {% else %}
+                    {% trans 'Editar Reporte' %}
+                {% endif %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Información Básica -->
+                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 mb-6 border border-indigo-100">
+                    <h4 class="text-lg font-semibold text-indigo-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-indigo-600">info</span>
+                        {% trans 'Información Básica' %}
+                    </h4>
+                    <div class="grid grid-cols-1 gap-6">
+                        <div>
+                            <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📝 {% trans 'Título del Reporte' %} <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" 
+                                   name="{{ form.title.name }}" 
+                                   id="{{ form.title.id_for_label }}" 
+                                   value="{{ form.title.value|default:'' }}"
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.title.errors %}border-red-500{% endif %}"
+                                   placeholder="{% trans 'Ej: Reporte mensual de residentes' %}">
+                            {% if form.title.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.title.errors.0 }}</p>
+                            {% endif %}
+                        </div>
                         
-                        <div class="row">
-                            <!-- Título -->
-                            <div class="col-md-12 mb-3">
-                                <label for="{{ form.title.id_for_label }}" class="form-label">
-                                    {{ form.title.label }} <span class="text-danger">*</span>
-                                </label>
-                                {{ form.title }}
-                                {% if form.title.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.title.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                        <div>
+                            <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📄 {% trans 'Descripción' %}
+                            </label>
+                            <textarea name="{{ form.description.name }}" 
+                                      id="{{ form.description.id_for_label }}" 
+                                      rows="4"
+                                      class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 resize-none {% if form.description.errors %}border-red-500{% endif %}"
+                                      placeholder="{% trans 'Describe el propósito y contenido del reporte...' %}">{{ form.description.value|default:'' }}</textarea>
+                            {% if form.description.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.description.errors.0 }}</p>
+                            {% endif %}
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Descripción -->
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="{{ form.description.id_for_label }}" class="form-label">
-                                    {{ form.description.label }}
-                                </label>
-                                {{ form.description }}
-                                {% if form.description.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.description.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                <!-- Configuración del Reporte -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 mb-6 border border-purple-100">
+                    <h4 class="text-lg font-semibold text-purple-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-purple-600">settings</span>
+                        {% trans 'Configuración del Reporte' %}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.report_type.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📊 {% trans 'Tipo de Reporte' %} <span class="text-red-500">*</span>
+                            </label>
+                            <select name="{{ form.report_type.name }}" 
+                                    id="{{ form.report_type.id_for_label }}"
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.report_type.errors %}border-red-500{% endif %}">
+                                <option value="">{% trans 'Seleccionar tipo' %}</option>
+                                {% for value, label in form.report_type.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}" {% if form.report_type.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            {% if form.report_type.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.report_type.errors.0 }}</p>
+                            {% endif %}
                         </div>
-
-                        <div class="row">
-                            <!-- Tipo de Reporte -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.report_type.id_for_label }}" class="form-label">
-                                    {{ form.report_type.label }} <span class="text-danger">*</span>
-                                </label>
-                                {{ form.report_type }}
-                                {% if form.report_type.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.report_type.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Formato -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.format.id_for_label }}" class="form-label">
-                                    {{ form.format.label }}
-                                </label>
-                                {{ form.format }}
-                                {% if form.format.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.format.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                        
+                        <div>
+                            <label for="{{ form.format.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📁 {% trans 'Formato' %}
+                            </label>
+                            <select name="{{ form.format.name }}" 
+                                    id="{{ form.format.id_for_label }}"
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.format.errors %}border-red-500{% endif %}">
+                                {% for value, label in form.format.field.choices %}
+                                    <option value="{{ value }}" {% if form.format.value == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.format.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.format.errors.0 }}</p>
+                            {% endif %}
                         </div>
+                    </div>
+                </div>
 
-                        <div class="row">
-                            <!-- Fecha Desde -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.date_from.id_for_label }}" class="form-label">
-                                    {{ form.date_from.label }}
-                                </label>
-                                {{ form.date_from }}
-                                {% if form.date_from.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.date_from.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Fecha Hasta -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.date_to.id_for_label }}" class="form-label">
-                                    {{ form.date_to.label }}
-                                </label>
-                                {{ form.date_to }}
-                                {% if form.date_to.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.date_to.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                <!-- Rango de Fechas -->
+                <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl p-6 mb-6 border border-pink-100">
+                    <h4 class="text-lg font-semibold text-pink-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-pink-600">event</span>
+                        {% trans 'Rango de Fechas' %}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.date_from.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📅 {% trans 'Fecha Desde' %}
+                            </label>
+                            <input type="date" 
+                                   name="{{ form.date_from.name }}" 
+                                   id="{{ form.date_from.id_for_label }}" 
+                                   value="{{ form.date_from.value|date:'Y-m-d'|default:'' }}"
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-300 {% if form.date_from.errors %}border-red-500{% endif %}">
+                            {% if form.date_from.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.date_from.errors.0 }}</p>
+                            {% endif %}
                         </div>
+                        
+                        <div>
+                            <label for="{{ form.date_to.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📅 {% trans 'Fecha Hasta' %}
+                            </label>
+                            <input type="date" 
+                                   name="{{ form.date_to.name }}" 
+                                   id="{{ form.date_to.id_for_label }}" 
+                                   value="{{ form.date_to.value|date:'Y-m-d'|default:'' }}"
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-300 {% if form.date_to.errors %}border-red-500{% endif %}">
+                            {% if form.date_to.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.date_to.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
 
-                        <!-- Errores generales del formulario -->
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
+                <!-- Errores generales del formulario -->
+                {% if form.non_field_errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-center">
+                            <span class="material-icons text-red-500 mr-2">error</span>
+                            <div class="text-red-700">
                                 {% for error in form.non_field_errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Form Actions -->
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-6 border-t border-slate-200">
+                    <a href="{% url 'reporting_web:report_list' %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">cancel</span>
+                        {% trans 'Cancelar' %}
+                    </a>
+                    <button type="submit" 
+                            class="flex items-center bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">save</span>
+                        {% if action == 'create' %}
+                            {% trans 'Crear Reporte' %}
+                        {% else %}
+                            {% trans 'Guardar Cambios' %}
                         {% endif %}
-
-                        <!-- Botones -->
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'reporting_web:report_list' %}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>{% trans 'Cancelar' %}
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                {% if action == 'create' %}
-                                    <i class="fas fa-save me-2"></i>{% trans 'Crear Reporte' %}
-                                {% else %}
-                                    <i class="fas fa-save me-2"></i>{% trans 'Guardar Cambios' %}
-                                {% endif %}
-                            </button>
-                        </div>
-                    </form>
+                    </button>
                 </div>
-            </div>
+            </form>
+        </div>
+    </div>
 
-            <!-- Información adicional -->
-            <div class="card shadow mt-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-info-circle me-2"></i>{% trans 'Información sobre Tipos de Reportes' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>{% trans 'Tipos de Reportes:' %}</h6>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-users text-primary me-2"></i>{% trans 'Residentes - Información de residentes' %}</li>
-                                <li><i class="fas fa-user-tie text-primary me-2"></i>{% trans 'Personal - Información del staff' %}</li>
-                                <li><i class="fas fa-building text-primary me-2"></i>{% trans 'Instalaciones - Estado de las instalaciones' %}</li>
-                                <li><i class="fas fa-euro-sign text-primary me-2"></i>{% trans 'Financiero - Reportes financieros' %}</li>
-                                <li><i class="fas fa-heartbeat text-primary me-2"></i>{% trans 'Médico - Información médica' %}</li>
-                                <li><i class="fas fa-bed text-primary me-2"></i>{% trans 'Ocupación - Estado de ocupación' %}</li>
-                                <li><i class="fas fa-cog text-primary me-2"></i>{% trans 'Personalizado - Reporte a medida' %}</li>
-                            </ul>
+    <!-- Información adicional -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">info</span>
+                {% trans 'Información sobre Tipos de Reportes' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons text-indigo-500 mr-2">category</span>
+                        {% trans 'Tipos de Reportes:' %}
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <span class="material-icons text-blue-500 mr-3 mt-0.5">people</span>
+                            <div>
+                                <strong>{% trans 'Residentes' %}</strong> - {% trans 'Información de residentes' %}
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h6>{% trans 'Formatos Disponibles:' %}</h6>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-file-pdf text-danger me-2"></i>PDF - {% trans 'Para impresión y archivo' %}</li>
-                                <li><i class="fas fa-file-excel text-success me-2"></i>Excel - {% trans 'Para análisis y edición' %}</li>
-                                <li><i class="fas fa-file-csv text-info me-2"></i>CSV - {% trans 'Para importar en otros sistemas' %}</li>
-                                <li><i class="fas fa-file-code text-warning me-2"></i>JSON - {% trans 'Para integración con APIs' %}</li>
-                            </ul>
+                        <div class="flex items-start">
+                            <span class="material-icons text-emerald-500 mr-3 mt-0.5">person</span>
+                            <div>
+                                <strong>{% trans 'Personal' %}</strong> - {% trans 'Información del staff' %}
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-amber-500 mr-3 mt-0.5">business</span>
+                            <div>
+                                <strong>{% trans 'Instalaciones' %}</strong> - {% trans 'Estado de las instalaciones' %}
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-green-500 mr-3 mt-0.5">account_balance</span>
+                            <div>
+                                <strong>{% trans 'Financiero' %}</strong> - {% trans 'Reportes financieros' %}
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-red-500 mr-3 mt-0.5">favorite</span>
+                            <div>
+                                <strong>{% trans 'Médico' %}</strong> - {% trans 'Información médica' %}
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-purple-500 mr-3 mt-0.5">bed</span>
+                            <div>
+                                <strong>{% trans 'Ocupación' %}</strong> - {% trans 'Estado de ocupación' %}
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-slate-500 mr-3 mt-0.5">settings</span>
+                            <div>
+                                <strong>{% trans 'Personalizado' %}</strong> - {% trans 'Reporte a medida' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons text-purple-500 mr-2">folder</span>
+                        {% trans 'Formatos Disponibles:' %}
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <span class="material-icons text-red-500 mr-3 mt-0.5">picture_as_pdf</span>
+                            <div>
+                                <strong>PDF</strong> - {% trans 'Para impresión y archivo' %}
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-green-500 mr-3 mt-0.5">table_chart</span>
+                            <div>
+                                <strong>Excel</strong> - {% trans 'Para análisis y edición' %}
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-blue-500 mr-3 mt-0.5">table_view</span>
+                            <div>
+                                <strong>CSV</strong> - {% trans 'Para importar en otros sistemas' %}
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-amber-500 mr-3 mt-0.5">code</span>
+                            <div>
+                                <strong>JSON</strong> - {% trans 'Para integración con APIs' %}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
 
-{% block extra_js %}
+    <!-- Información del Formulario -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mt-8">
+        <div class="bg-gradient-to-r from-slate-400 to-slate-500 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">info</span>
+                {% trans 'Información del Formulario' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="flex items-center">
+                    <span class="material-icons text-indigo-500 mr-3">schedule</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Tiempo estimado' %}</div>
+                        <div class="text-sm text-slate-600">{% trans '2-3 minutos para completar' %}</div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="material-icons text-emerald-500 mr-3">security</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Datos seguros' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Toda la información se guarda de forma segura' %}</div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="material-icons text-purple-500 mr-3">support_agent</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Soporte disponible' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Contacta al administrador si necesitas ayuda' %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Validación de fechas
-        const dateFrom = document.getElementById('{{ form.date_from.id_for_label }}');
-        const dateTo = document.getElementById('{{ form.date_to.id_for_label }}');
-        
-        function validateDates() {
-            if (dateFrom.value && dateTo.value) {
-                if (dateFrom.value > dateTo.value) {
-                    dateTo.setCustomValidity('La fecha de fin debe ser posterior a la fecha de inicio');
-                } else {
-                    dateTo.setCustomValidity('');
-                }
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación de fechas
+    const dateFrom = document.getElementById('{{ form.date_from.id_for_label }}');
+    const dateTo = document.getElementById('{{ form.date_to.id_for_label }}');
+    
+    function validateDates() {
+        if (dateFrom.value && dateTo.value) {
+            if (dateFrom.value > dateTo.value) {
+                dateTo.setCustomValidity('{% trans "La fecha de fin debe ser posterior a la fecha de inicio" %}');
+            } else {
+                dateTo.setCustomValidity('');
             }
         }
-        
-        dateFrom.addEventListener('change', validateDates);
-        dateTo.addEventListener('change', validateDates);
-    });
+    }
+    
+    dateFrom.addEventListener('change', validateDates);
+    dateTo.addEventListener('change', validateDates);
+});
 </script>
 {% endblock %} 

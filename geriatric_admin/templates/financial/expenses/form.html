@@ -6,342 +6,486 @@
     {% if expense %}Editar Gasto{% else %}Nuevo Gasto{% endif %}
 {% endblock %}
 
-{% block extra_css %}
-<style>
-    .form-section {
-        background-color: #f8f9fa;
-        border-radius: 0.375rem;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    .form-section h5 {
-        color: #495057;
-        margin-bottom: 1rem;
-    }
-    .required-field::after {
-        content: " *";
-        color: #dc3545;
-    }
-</style>
+{% block page_title %}
+    {% if expense %}
+        {% trans 'Editar Gasto' %}
+    {% else %}
+        {% trans 'Nuevo Gasto' %}
+    {% endif %}
+{% endblock %}
+
+{% block page_subtitle %}
+    {% if expense %}
+        {% trans 'Modifica la información del gasto' %}
+    {% else %}
+        {% trans 'Registra un nuevo gasto en el sistema' %}
+    {% endif %}
+{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'financial_web:expense_list' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">{% trans 'Volver' %}</span>
+    </a>
+    {% if expense %}
+    <a href="{% url 'financial_web:expense_detail' expense.id %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">visibility</span>
+        <span class="text-sm">{% trans 'Ver Detalles' %}</span>
+    </a>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">
-                {% if expense %}
-                    {% trans 'Editar Gasto' %}
-                {% else %}
-                    {% trans 'Nuevo Gasto' %}
-                {% endif %}
-            </h1>
-            <p class="text-muted">
-                {% if expense %}
-                    {% trans 'Modifica la información del gasto' %}
-                {% else %}
-                    {% trans 'Registra un nuevo gasto en el sistema' %}
-                {% endif %}
-            </p>
+<!-- Header con gradiente -->
+<div class="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-red-500 via-pink-500 to-orange-600 shadow-2xl">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative p-8">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white border-opacity-30">
+                        <span class="material-icons text-white text-3xl">receipt_long</span>
+                    </div>
+                </div>
+                <div class="text-white">
+                    <h2 class="text-3xl font-bold mb-2">
+                        {% if expense %}
+                            {% trans 'Editar Gasto' %}
+                        {% else %}
+                            {% trans 'Nuevo Gasto' %}
+                        {% endif %}
+                    </h2>
+                    <p class="text-white text-opacity-90 text-lg">
+                        {% if expense %}
+                            {% trans 'Modifica la información del gasto' %}
+                        {% else %}
+                            {% trans 'Registra un nuevo gasto en el sistema' %}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="text-white text-right">
+                <div class="text-2xl font-bold">
+                    {% if expense %}
+                        {{ expense.title|truncatechars:30 }}
+                    {% else %}
+                        {% trans 'Formulario' %}
+                    {% endif %}
+                </div>
+                <div class="text-white text-opacity-80">
+                    {% if expense %}
+                        {% trans 'Modificando' %}
+                    {% else %}
+                        {% trans 'Creando' %}
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        <div>
-            <a href="{% url 'financial:expense_list' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> {% trans 'Volver' %}
-            </a>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Formulario Principal -->
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">edit_note</span>
+                    {% if expense %}
+                        {% trans 'Información del Gasto' %}
+                    {% else %}
+                        {% trans 'Datos del Gasto' %}
+                    {% endif %}
+                </h3>
+            </div>
+            
+            <div class="p-6">
+                <form method="post" enctype="multipart/form-data" id="expenseForm">
+                    {% csrf_token %}
+                    
+                    <!-- Información Básica -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-100">
+                        <h4 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+                            <span class="material-icons mr-2 text-blue-600">info</span>
+                            {% trans 'Información Básica' %}
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="md:col-span-2">
+                                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    📝 {{ form.title.label }} <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" 
+                                       name="{{ form.title.name }}" 
+                                       id="{{ form.title.id_for_label }}" 
+                                       value="{{ form.title.value|default:'' }}"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.title.errors %}border-red-500{% endif %}"
+                                       placeholder="{% trans 'Ej: Compra de medicamentos' %}">
+                                {% if form.title.errors %}
+                                    <div class="text-red-500 text-sm mt-2">{{ form.title.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="{{ form.category.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    📁 {{ form.category.label }} <span class="text-red-500">*</span>
+                                </label>
+                                <select name="{{ form.category.name }}" 
+                                        id="{{ form.category.id_for_label }}"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.category.errors %}border-red-500{% endif %}">
+                                    <option value="">{% trans 'Seleccionar categoría' %}</option>
+                                    {% for choice in form.category.field.choices %}
+                                        <option value="{{ choice.0 }}" {% if form.category.value == choice.0 %}selected{% endif %}>
+                                            {{ choice.1 }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.category.errors %}
+                                    <div class="text-red-500 text-sm mt-2">{{ form.category.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📄 {{ form.description.label }}
+                            </label>
+                            <textarea name="{{ form.description.name }}" 
+                                      id="{{ form.description.id_for_label }}" 
+                                      rows="3"
+                                      class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 resize-none {% if form.description.errors %}border-red-500{% endif %}"
+                                      placeholder="{% trans 'Descripción detallada del gasto...' %}">{{ form.description.value|default:'' }}</textarea>
+                            {% if form.description.errors %}
+                                <div class="text-red-500 text-sm mt-2">{{ form.description.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Información Financiera -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-6 border border-emerald-100">
+                        <h4 class="text-lg font-semibold text-emerald-800 mb-4 flex items-center">
+                            <span class="material-icons mr-2 text-emerald-600">payments</span>
+                            {% trans 'Información Financiera' %}
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.amount.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    💰 {{ form.amount.label }} <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                                    <input type="number" 
+                                           name="{{ form.amount.name }}" 
+                                           id="{{ form.amount.id_for_label }}" 
+                                           value="{{ form.amount.value|default:'' }}"
+                                           step="0.01"
+                                           class="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.amount.errors %}border-red-500{% endif %}"
+                                           placeholder="0.00">
+                                </div>
+                                {% if form.amount.errors %}
+                                    <div class="text-red-500 text-sm mt-2">{{ form.amount.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="{{ form.payment_method.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    💳 {{ form.payment_method.label }}
+                                </label>
+                                <select name="{{ form.payment_method.name }}" 
+                                        id="{{ form.payment_method.id_for_label }}"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.payment_method.errors %}border-red-500{% endif %}">
+                                    <option value="">{% trans 'Seleccionar método' %}</option>
+                                    {% for choice in form.payment_method.field.choices %}
+                                        <option value="{{ choice.0 }}" {% if form.payment_method.value == choice.0 %}selected{% endif %}>
+                                            {{ choice.1 }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.payment_method.errors %}
+                                    <div class="text-red-500 text-sm mt-2">{{ form.payment_method.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            <div>
+                                <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    ✅ {{ form.status.label }}
+                                </label>
+                                <select name="{{ form.status.name }}" 
+                                        id="{{ form.status.id_for_label }}"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.status.errors %}border-red-500{% endif %}">
+                                    {% for choice in form.status.field.choices %}
+                                        <option value="{{ choice.0 }}" {% if form.status.value == choice.0 %}selected{% endif %}>
+                                            {{ choice.1 }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.status.errors %}
+                                    <div class="text-red-500 text-sm mt-2">{{ form.status.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="{{ form.payment_date.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    📅 {{ form.payment_date.label }}
+                                </label>
+                                <input type="date" 
+                                       name="{{ form.payment_date.name }}" 
+                                       id="{{ form.payment_date.id_for_label }}" 
+                                       value="{{ form.payment_date.value|date:'Y-m-d'|default:'' }}"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.payment_date.errors %}border-red-500{% endif %}">
+                                {% if form.payment_date.errors %}
+                                    <div class="text-red-500 text-sm mt-2">{{ form.payment_date.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fechas -->
+                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 mb-6 border border-amber-100">
+                        <h4 class="text-lg font-semibold text-amber-800 mb-4 flex items-center">
+                            <span class="material-icons mr-2 text-amber-600">event</span>
+                            {% trans 'Fechas' %}
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.expense_date.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    📅 {{ form.expense_date.label }} <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" 
+                                       name="{{ form.expense_date.name }}" 
+                                       id="{{ form.expense_date.id_for_label }}" 
+                                       value="{{ form.expense_date.value|date:'Y-m-d'|default:'' }}"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.expense_date.errors %}border-red-500{% endif %}">
+                                {% if form.expense_date.errors %}
+                                    <div class="text-red-500 text-sm mt-2">{{ form.expense_date.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="{{ form.due_date.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    ⏰ {{ form.due_date.label }}
+                                </label>
+                                <input type="date" 
+                                       name="{{ form.due_date.name }}" 
+                                       id="{{ form.due_date.id_for_label }}" 
+                                       value="{{ form.due_date.value|date:'Y-m-d'|default:'' }}"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.due_date.errors %}border-red-500{% endif %}">
+                                {% if form.due_date.errors %}
+                                    <div class="text-red-500 text-sm mt-2">{{ form.due_date.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información del Proveedor -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6 border border-purple-100">
+                        <h4 class="text-lg font-semibold text-purple-800 mb-4 flex items-center">
+                            <span class="material-icons mr-2 text-purple-600">business</span>
+                            {% trans 'Información del Proveedor' %}
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.supplier.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    🏢 {{ form.supplier.label }}
+                                </label>
+                                <input type="text" 
+                                       name="{{ form.supplier.name }}" 
+                                       id="{{ form.supplier.id_for_label }}" 
+                                       value="{{ form.supplier.value|default:'' }}"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.supplier.errors %}border-red-500{% endif %}"
+                                       placeholder="{% trans 'Nombre del proveedor' %}">
+                                {% if form.supplier.errors %}
+                                    <div class="text-red-500 text-sm mt-2">{{ form.supplier.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="{{ form.invoice_number.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    🧾 {{ form.invoice_number.label }}
+                                </label>
+                                <input type="text" 
+                                       name="{{ form.invoice_number.name }}" 
+                                       id="{{ form.invoice_number.id_for_label }}" 
+                                       value="{{ form.invoice_number.value|default:'' }}"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.invoice_number.errors %}border-red-500{% endif %}"
+                                       placeholder="{% trans 'Número de factura' %}">
+                                {% if form.invoice_number.errors %}
+                                    <div class="text-red-500 text-sm mt-2">{{ form.invoice_number.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comprobante -->
+                    <div class="bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl p-6 mb-6 border border-slate-100">
+                        <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                            <span class="material-icons mr-2 text-slate-600">file_present</span>
+                            {% trans 'Comprobante' %}
+                        </h4>
+                        <div>
+                            <label for="{{ form.receipt_file.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📎 {{ form.receipt_file.label }}
+                            </label>
+                            <input type="file" 
+                                   name="{{ form.receipt_file.name }}" 
+                                   id="{{ form.receipt_file.id_for_label }}" 
+                                   accept=".pdf,.jpg,.jpeg,.png"
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 {% if form.receipt_file.errors %}border-red-500{% endif %}">
+                            {% if form.receipt_file.errors %}
+                                <div class="text-red-500 text-sm mt-2">{{ form.receipt_file.errors.0 }}</div>
+                            {% endif %}
+                            <div class="text-slate-500 text-sm mt-2">
+                                {% trans 'Formatos permitidos: PDF, JPG, PNG. Tamaño máximo: 5MB' %}
+                            </div>
+                        </div>
+                        {% if expense and expense.receipt_file %}
+                        <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <div class="flex items-center text-blue-800">
+                                <span class="material-icons mr-2 text-sm">info</span>
+                                <span class="text-sm font-medium">{% trans 'Comprobante actual:' %}</span>
+                            </div>
+                            <a href="{{ expense.receipt_file.url }}" target="_blank" 
+                               class="text-blue-600 hover:text-blue-800 text-sm mt-1 block">
+                                {{ expense.receipt_file.name|slice:"-50:" }}
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Acciones del Formulario -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-6 border-t border-slate-200">
+                        <a href="{% url 'financial_web:expense_list' %}" 
+                           class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-xl border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                            <span class="material-icons mr-2">cancel</span>
+                            {% trans 'Cancelar' %}
+                        </a>
+                        <button type="submit" 
+                                class="flex items-center bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+                            <span class="material-icons mr-2">check_circle</span>
+                            {% if expense %}
+                                {% trans 'Actualizar Gasto' %}
+                            {% else %}
+                                {% trans 'Crear Gasto' %}
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- Main Form -->
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        {% if expense %}
-                            {% trans 'Información del Gasto' %}
-                        {% else %}
-                            {% trans 'Datos del Gasto' %}
-                        {% endif %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data" id="expenseForm">
-                        {% csrf_token %}
-                        
-                        <!-- Basic Information -->
-                        <div class="form-section">
-                            <h5><i class="bi bi-info-circle"></i> {% trans 'Información Básica' %}</h5>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="mb-3">
-                                        <label for="{{ form.title.id_for_label }}" class="form-label required-field">
-                                            {{ form.title.label }}
-                                        </label>
-                                        {{ form.title }}
-                                        {% if form.title.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.title.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="{{ form.category.id_for_label }}" class="form-label required-field">
-                                            {{ form.category.label }}
-                                        </label>
-                                        {{ form.category }}
-                                        {% if form.category.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.category.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="{{ form.description.id_for_label }}" class="form-label">
-                                    {{ form.description.label }}
-                                </label>
-                                {{ form.description }}
-                                {% if form.description.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.description.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Financial Information -->
-                        <div class="form-section">
-                            <h5><i class="bi bi-cash-stack"></i> {% trans 'Información Financiera' %}</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.amount.id_for_label }}" class="form-label required-field">
-                                            {{ form.amount.label }}
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">$</span>
-                                            {{ form.amount }}
-                                        </div>
-                                        {% if form.amount.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.amount.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.payment_method.id_for_label }}" class="form-label">
-                                            {{ form.payment_method.label }}
-                                        </label>
-                                        {{ form.payment_method }}
-                                        {% if form.payment_method.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.payment_method.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.status.id_for_label }}" class="form-label">
-                                            {{ form.status.label }}
-                                        </label>
-                                        {{ form.status }}
-                                        {% if form.status.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.status.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.payment_date.id_for_label }}" class="form-label">
-                                            {{ form.payment_date.label }}
-                                        </label>
-                                        {{ form.payment_date }}
-                                        {% if form.payment_date.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.payment_date.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Dates -->
-                        <div class="form-section">
-                            <h5><i class="bi bi-calendar"></i> {% trans 'Fechas' %}</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.expense_date.id_for_label }}" class="form-label required-field">
-                                            {{ form.expense_date.label }}
-                                        </label>
-                                        {{ form.expense_date }}
-                                        {% if form.expense_date.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.expense_date.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.due_date.id_for_label }}" class="form-label">
-                                            {{ form.due_date.label }}
-                                        </label>
-                                        {{ form.due_date }}
-                                        {% if form.due_date.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.due_date.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Supplier Information -->
-                        <div class="form-section">
-                            <h5><i class="bi bi-building"></i> {% trans 'Información del Proveedor' %}</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.supplier.id_for_label }}" class="form-label">
-                                            {{ form.supplier.label }}
-                                        </label>
-                                        {{ form.supplier }}
-                                        {% if form.supplier.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.supplier.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.invoice_number.id_for_label }}" class="form-label">
-                                            {{ form.invoice_number.label }}
-                                        </label>
-                                        {{ form.invoice_number }}
-                                        {% if form.invoice_number.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.invoice_number.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- File Upload -->
-                        <div class="form-section">
-                            <h5><i class="bi bi-file-earmark"></i> {% trans 'Comprobante' %}</h5>
-                            <div class="mb-3">
-                                <label for="{{ form.receipt_file.id_for_label }}" class="form-label">
-                                    {{ form.receipt_file.label }}
-                                </label>
-                                {{ form.receipt_file }}
-                                {% if form.receipt_file.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.receipt_file.errors.0 }}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text">
-                                    {% trans 'Formatos permitidos: PDF, JPG, PNG. Tamaño máximo: 5MB' %}
-                                </div>
-                            </div>
-                            {% if expense and expense.receipt_file %}
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i>
-                                {% trans 'Comprobante actual:' %} 
-                                <a href="{{ expense.receipt_file.url }}" target="_blank">
-                                    {{ expense.receipt_file.name|slice:"-50:" }}
-                                </a>
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Form Actions -->
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'financial:expense_list' %}" class="btn btn-outline-secondary">
-                                <i class="bi bi-x-circle"></i> {% trans 'Cancelar' %}
-                            </a>
-                            <div>
-                                {% if expense %}
-                                    <a href="{% url 'financial:expense_detail' expense.id %}" class="btn btn-outline-info me-2">
-                                        <i class="bi bi-eye"></i> {% trans 'Ver Detalles' %}
-                                    </a>
-                                {% endif %}
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-circle"></i>
-                                    {% if expense %}
-                                        {% trans 'Actualizar Gasto' %}
-                                    {% else %}
-                                        {% trans 'Crear Gasto' %}
-                                    {% endif %}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+    <!-- Sidebar -->
+    <div class="space-y-6">
+        <!-- Acciones Rápidas -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">flash_on</span>
+                    {% trans 'Acciones Rápidas' %}
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-3">
+                    <a href="{% url 'financial_web:expense_create' %}" 
+                       class="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">add</span>
+                        {% trans 'Nuevo Gasto' %}
+                    </a>
+                    <a href="{% url 'financial_web:category_create' %}" 
+                       class="flex items-center justify-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-xl border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">category</span>
+                        {% trans 'Nueva Categoría' %}
+                    </a>
+                    <a href="{% url 'financial_web:expense_list' %}" 
+                       class="flex items-center justify-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-xl border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">list</span>
+                        {% trans 'Ver Todos' %}
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar -->
-        <div class="col-lg-4">
-            <!-- Quick Actions -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Acciones Rápidas' %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'financial:expense_create' %}" class="btn btn-outline-primary">
-                            <i class="bi bi-plus-circle"></i> {% trans 'Nuevo Gasto' %}
-                        </a>
-                        <a href="{% url 'financial:category_create' %}" class="btn btn-outline-secondary">
-                            <i class="bi bi-tags"></i> {% trans 'Nueva Categoría' %}
-                        </a>
-                        <a href="{% url 'financial:expense_list' %}" class="btn btn-outline-info">
-                            <i class="bi bi-list"></i> {% trans 'Ver Todos' %}
-                        </a>
+        <!-- Ayuda -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">help</span>
+                    {% trans 'Ayuda' %}
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Campos obligatorios:' %}</h4>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li class="flex items-center">
+                                <span class="material-icons text-red-500 text-sm mr-2">*</span>
+                                {% trans 'Título del gasto' %}
+                            </li>
+                            <li class="flex items-center">
+                                <span class="material-icons text-red-500 text-sm mr-2">*</span>
+                                {% trans 'Categoría' %}
+                            </li>
+                            <li class="flex items-center">
+                                <span class="material-icons text-red-500 text-sm mr-2">*</span>
+                                {% trans 'Monto' %}
+                            </li>
+                            <li class="flex items-center">
+                                <span class="material-icons text-red-500 text-sm mr-2">*</span>
+                                {% trans 'Fecha del gasto' %}
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Consejos:' %}</h4>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li class="flex items-start">
+                                <span class="material-icons text-emerald-500 text-sm mr-2 mt-0.5">lightbulb</span>
+                                {% trans 'Usa categorías específicas para mejor organización' %}
+                            </li>
+                            <li class="flex items-start">
+                                <span class="material-icons text-emerald-500 text-sm mr-2 mt-0.5">lightbulb</span>
+                                {% trans 'Incluye comprobantes cuando sea posible' %}
+                            </li>
+                            <li class="flex items-start">
+                                <span class="material-icons text-emerald-500 text-sm mr-2 mt-0.5">lightbulb</span>
+                                {% trans 'Establece fechas de vencimiento para seguimiento' %}
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <!-- Help -->
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Ayuda' %}</h6>
+<!-- Información adicional -->
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mt-8">
+    <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+        <h3 class="text-lg font-semibold text-white flex items-center">
+            <span class="material-icons mr-2">info</span>
+            {% trans 'Información del Formulario' %}
+        </h3>
+    </div>
+    <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons text-red-600 text-2xl">edit_note</span>
                 </div>
-                <div class="card-body">
-                    <div class="small text-muted">
-                        <p><strong>{% trans 'Campos obligatorios:' %}</strong></p>
-                        <ul class="mb-3">
-                            <li>{% trans 'Título del gasto' %}</li>
-                            <li>{% trans 'Categoría' %}</li>
-                            <li>{% trans 'Monto' %}</li>
-                            <li>{% trans 'Fecha del gasto' %}</li>
-                        </ul>
-                        
-                        <p><strong>{% trans 'Consejos:' %}</strong></p>
-                        <ul>
-                            <li>{% trans 'Usa categorías específicas para mejor organización' %}</li>
-                            <li>{% trans 'Incluye comprobantes cuando sea posible' %}</li>
-                            <li>{% trans 'Establece fechas de vencimiento para seguimiento' %}</li>
-                        </ul>
-                    </div>
+                <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Formulario Intuitivo' %}</h4>
+                <p class="text-sm text-slate-600">{% trans 'Diseño moderno y fácil de usar para registrar gastos' %}</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons text-emerald-600 text-2xl">security</span>
                 </div>
+                <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Validación Automática' %}</h4>
+                <p class="text-sm text-slate-600">{% trans 'Verificación de datos y fechas en tiempo real' %}</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons text-blue-600 text-2xl">cloud_upload</span>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Subida de Archivos' %}</h4>
+                <p class="text-sm text-slate-600">{% trans 'Adjunta comprobantes y documentos importantes' %}</p>
             </div>
         </div>
     </div>
@@ -350,50 +494,59 @@
 
 {% block extra_js %}
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('expenseForm');
+    const amountInput = document.getElementById('{{ form.amount.id_for_label }}');
+    const expenseDateInput = document.getElementById('{{ form.expense_date.id_for_label }}');
+    const dueDateInput = document.getElementById('{{ form.due_date.id_for_label }}');
+    const paymentDateInput = document.getElementById('{{ form.payment_date.id_for_label }}');
+
     // Auto-save draft functionality
     let autoSaveTimer;
-    const form = $('#expenseForm');
     
-    form.on('change', function() {
+    form.addEventListener('change', function() {
         clearTimeout(autoSaveTimer);
         autoSaveTimer = setTimeout(function() {
-            // Auto-save logic here if needed
             console.log('Auto-saving...');
         }, 2000);
     });
 
     // Form validation
-    form.on('submit', function(e) {
-        const amount = $('#{{ form.amount.id_for_label }}').val();
+    form.addEventListener('submit', function(e) {
+        const amount = parseFloat(amountInput.value);
         if (amount <= 0) {
             e.preventDefault();
             alert('{% trans "El monto debe ser mayor a 0" %}');
+            amountInput.focus();
             return false;
         }
     });
 
     // Date validation
-    $('#{{ form.due_date.id_for_label }}').on('change', function() {
-        const expenseDate = $('#{{ form.expense_date.id_for_label }}').val();
-        const dueDate = $(this).val();
-        
-        if (dueDate && expenseDate && dueDate < expenseDate) {
-            alert('{% trans "La fecha de vencimiento no puede ser anterior a la fecha del gasto" %}');
-            $(this).val('');
-        }
-    });
+    if (dueDateInput) {
+        dueDateInput.addEventListener('change', function() {
+            const expenseDate = expenseDateInput.value;
+            const dueDate = this.value;
+            
+            if (dueDate && expenseDate && dueDate < expenseDate) {
+                alert('{% trans "La fecha de vencimiento no puede ser anterior a la fecha del gasto" %}');
+                this.value = '';
+            }
+        });
+    }
 
     // Payment date validation
-    $('#{{ form.payment_date.id_for_label }}').on('change', function() {
-        const expenseDate = $('#{{ form.expense_date.id_for_label }}').val();
-        const paymentDate = $(this).val();
-        
-        if (paymentDate && expenseDate && paymentDate < expenseDate) {
-            alert('{% trans "La fecha de pago no puede ser anterior a la fecha del gasto" %}');
-            $(this).val('');
-        }
-    });
+    if (paymentDateInput) {
+        paymentDateInput.addEventListener('change', function() {
+            const expenseDate = expenseDateInput.value;
+            const paymentDate = this.value;
+            
+            if (paymentDate && expenseDate && paymentDate < expenseDate) {
+                alert('{% trans "La fecha de pago no puede ser anterior a la fecha del gasto" %}');
+                this.value = '';
+            }
+        });
+    }
 });
 </script>
 {% endblock %} 

@@ -4,175 +4,328 @@
 
 {% block title %}{% trans 'Reporte Rápido' %}{% endblock %}
 
+{% block page_title %}{% trans 'Reporte Rápido' %}{% endblock %}
+
+{% block page_subtitle %}{% trans 'Genera reportes instantáneos con configuración predefinida' %}{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'reporting_web:index' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">{% trans 'Volver al Dashboard' %}</span>
+    </a>
+    <a href="{% url 'reporting_web:report_list' %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">list</span>
+        <span class="text-sm">{% trans 'Lista de Reportes' %}</span>
+    </a>
+</div>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">{% trans 'Reporte Rápido' %}</h1>
-        <a href="{% url 'reporting_web:index' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>{% trans 'Volver al Dashboard' %}
-        </a>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-bolt me-2"></i>{% trans 'Generar Reporte Rápido' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
+<div class="max-w-4xl mx-auto">
+    <!-- Main Form Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">flash_on</span>
+                {% trans 'Generar Reporte Rápido' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Configuración Principal -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 mb-6 border border-purple-100">
+                    <h4 class="text-lg font-semibold text-purple-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-purple-600">settings</span>
+                        {% trans 'Configuración Principal' %}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.report_type.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📊 {% trans 'Tipo de Reporte' %}
+                            </label>
+                            <select name="{{ form.report_type.name }}" 
+                                    id="{{ form.report_type.id_for_label }}"
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.report_type.errors %}border-red-500{% endif %}">
+                                <option value="">{% trans 'Seleccionar tipo' %}</option>
+                                {% for value, label in form.report_type.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}" {% if form.report_type.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            {% if form.report_type.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.report_type.errors.0 }}</p>
+                            {% endif %}
+                        </div>
                         
-                        <div class="row">
-                            <!-- Tipo de Reporte -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.report_type.id_for_label }}" class="form-label">
-                                    {{ form.report_type.label }}
-                                </label>
-                                {{ form.report_type }}
-                                {% if form.report_type.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.report_type.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Período -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.period.id_for_label }}" class="form-label">
-                                    {{ form.period.label }}
-                                </label>
-                                {{ form.period }}
-                                {% if form.period.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.period.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                        <div>
+                            <label for="{{ form.period.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📅 {% trans 'Período' %}
+                            </label>
+                            <select name="{{ form.period.name }}" 
+                                    id="{{ form.period.id_for_label }}"
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.period.errors %}border-red-500{% endif %}">
+                                {% for value, label in form.period.field.choices %}
+                                    <option value="{{ value }}" {% if form.period.value == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.period.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.period.errors.0 }}</p>
+                            {% endif %}
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Fechas personalizadas (se muestran solo si se selecciona "Personalizado") -->
-                        <div id="custom-dates" class="row" style="display: none;">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.date_from.id_for_label }}" class="form-label">
-                                    {{ form.date_from.label }}
-                                </label>
-                                {{ form.date_from }}
-                                {% if form.date_from.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.date_from.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.date_to.id_for_label }}" class="form-label">
-                                    {{ form.date_to.label }}
-                                </label>
-                                {{ form.date_to }}
-                                {% if form.date_to.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.date_to.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                <!-- Fechas Personalizadas -->
+                <div id="custom-dates" class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-100" style="display: none;">
+                    <h4 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-blue-600">event</span>
+                        {% trans 'Fechas Personalizadas' %}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.date_from.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📅 {% trans 'Fecha Desde' %}
+                            </label>
+                            <input type="date" 
+                                   name="{{ form.date_from.name }}" 
+                                   id="{{ form.date_from.id_for_label }}" 
+                                   value="{{ form.date_from.value|date:'Y-m-d'|default:'' }}"
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.date_from.errors %}border-red-500{% endif %}">
+                            {% if form.date_from.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.date_from.errors.0 }}</p>
+                            {% endif %}
                         </div>
-
-                        <!-- Formato -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.format.id_for_label }}" class="form-label">
-                                    {{ form.format.label }}
-                                </label>
-                                {{ form.format }}
-                                {% if form.format.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.format.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                        
+                        <div>
+                            <label for="{{ form.date_to.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📅 {% trans 'Fecha Hasta' %}
+                            </label>
+                            <input type="date" 
+                                   name="{{ form.date_to.name }}" 
+                                   id="{{ form.date_to.id_for_label }}" 
+                                   value="{{ form.date_to.value|date:'Y-m-d'|default:'' }}"
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.date_to.errors %}border-red-500{% endif %}">
+                            {% if form.date_to.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.date_to.errors.0 }}</p>
+                            {% endif %}
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Errores generales del formulario -->
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
+                <!-- Formato -->
+                <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6 mb-6 border border-emerald-100">
+                    <h4 class="text-lg font-semibold text-emerald-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-emerald-600">folder</span>
+                        {% trans 'Formato del Reporte' %}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.format.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📁 {% trans 'Formato' %}
+                            </label>
+                            <select name="{{ form.format.name }}" 
+                                    id="{{ form.format.id_for_label }}"
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.format.errors %}border-red-500{% endif %}">
+                                {% for value, label in form.format.field.choices %}
+                                    <option value="{{ value }}" {% if form.format.value == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.format.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.format.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Errores generales del formulario -->
+                {% if form.non_field_errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-center">
+                            <span class="material-icons text-red-500 mr-2">error</span>
+                            <div class="text-red-700">
                                 {% for error in form.non_field_errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
-                        {% endif %}
-
-                        <!-- Botones -->
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'reporting_web:index' %}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>{% trans 'Cancelar' %}
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-play me-2"></i>{% trans 'Generar Reporte' %}
-                            </button>
                         </div>
-                    </form>
-                </div>
-            </div>
+                    </div>
+                {% endif %}
 
-            <!-- Información adicional -->
-            <div class="card shadow mt-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-info-circle me-2"></i>{% trans 'Información' %}
-                    </h6>
+                <!-- Form Actions -->
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-6 border-t border-slate-200">
+                    <a href="{% url 'reporting_web:index' %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">cancel</span>
+                        {% trans 'Cancelar' %}
+                    </a>
+                    <button type="submit" 
+                            class="flex items-center bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">play_arrow</span>
+                        {% trans 'Generar Reporte' %}
+                    </button>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>{% trans 'Tipos de Reportes Disponibles:' %}</h6>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-users text-primary me-2"></i>{% trans 'Resumen de Residentes' %}</li>
-                                <li><i class="fas fa-user-tie text-primary me-2"></i>{% trans 'Resumen del Personal' %}</li>
-                                <li><i class="fas fa-building text-primary me-2"></i>{% trans 'Ocupación de Instalaciones' %}</li>
-                                <li><i class="fas fa-user-plus text-primary me-2"></i>{% trans 'Admisiones Recientes' %}</li>
-                                <li><i class="fas fa-calendar-check text-primary me-2"></i>{% trans 'Asistencia del Personal' %}</li>
-                                <li><i class="fas fa-euro-sign text-primary me-2"></i>{% trans 'Resumen Financiero' %}</li>
-                            </ul>
+            </form>
+        </div>
+    </div>
+
+    <!-- Información Adicional -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">info</span>
+                {% trans 'Información' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons text-purple-500 mr-2">category</span>
+                        {% trans 'Tipos de Reportes Disponibles:' %}
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <span class="material-icons text-blue-500 mr-3 mt-0.5">people</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Residentes' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Información general de residentes' %}</div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h6>{% trans 'Formatos Disponibles:' %}</h6>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-file-pdf text-danger me-2"></i>PDF - {% trans 'Para impresión y archivo' %}</li>
-                                <li><i class="fas fa-file-excel text-success me-2"></i>Excel - {% trans 'Para análisis y edición' %}</li>
-                                <li><i class="fas fa-file-csv text-info me-2"></i>CSV - {% trans 'Para importar en otros sistemas' %}</li>
-                            </ul>
+                        <div class="flex items-start">
+                            <span class="material-icons text-emerald-500 mr-3 mt-0.5">person</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Personal' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Información del staff' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-amber-500 mr-3 mt-0.5">business</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Instalaciones' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Estado de las instalaciones' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-green-500 mr-3 mt-0.5">account_balance</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Financiero' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Información financiera' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-red-500 mr-3 mt-0.5">medical_services</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Médico' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Información médica' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-purple-500 mr-3 mt-0.5">hotel</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Ocupación' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Estado de ocupación' %}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons text-emerald-500 mr-2">folder</span>
+                        {% trans 'Formatos Disponibles:' %}
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <span class="material-icons text-red-500 mr-3 mt-0.5">picture_as_pdf</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">PDF</div>
+                                <div class="text-sm text-slate-600">{% trans 'Para impresión y archivo' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-green-500 mr-3 mt-0.5">table_chart</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">JSON</div>
+                                <div class="text-sm text-slate-600">{% trans 'Para análisis y edición' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-blue-500 mr-3 mt-0.5">table_view</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">CSV</div>
+                                <div class="text-sm text-slate-600">{% trans 'Para importar en otros sistemas' %}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
 
-{% block extra_js %}
+    <!-- Información del Formulario -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-slate-400 to-slate-500 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">info</span>
+                {% trans 'Información del Formulario' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="flex items-center">
+                    <span class="material-icons text-purple-500 mr-3">flash_on</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Generación rápida' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Reportes en segundos' %}</div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="material-icons text-emerald-500 mr-3">security</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Datos seguros' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Información protegida' %}</div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="material-icons text-blue-500 mr-3">support_agent</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Soporte disponible' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Ayuda si la necesitas' %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const periodSelect = document.getElementById('{{ form.period.id_for_label }}');
-        const customDatesDiv = document.getElementById('custom-dates');
-        
-        function toggleCustomDates() {
-            if (periodSelect.value === 'custom') {
-                customDatesDiv.style.display = 'block';
-            } else {
-                customDatesDiv.style.display = 'none';
-            }
+document.addEventListener('DOMContentLoaded', function() {
+    const periodSelect = document.getElementById('{{ form.period.id_for_label }}');
+    const customDatesDiv = document.getElementById('custom-dates');
+    
+    function toggleCustomDates() {
+        if (periodSelect.value === 'custom') {
+            customDatesDiv.style.display = 'block';
+        } else {
+            customDatesDiv.style.display = 'none';
         }
-        
-        // Ejecutar al cargar la página
-        toggleCustomDates();
-        
-        // Ejecutar cuando cambie el valor
-        periodSelect.addEventListener('change', toggleCustomDates);
-    });
+    }
+    
+    // Ejecutar al cargar la página
+    toggleCustomDates();
+    
+    // Ejecutar cuando cambie el valor
+    periodSelect.addEventListener('change', toggleCustomDates);
+});
 </script>
 {% endblock %} 

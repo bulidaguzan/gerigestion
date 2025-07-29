@@ -4,220 +4,290 @@
 
 {% block title %}{% trans 'Gestionar Residentes' %} - {% trans 'Habitación' %} {{ room.room_number }}{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">{% trans 'Gestionar Residentes' %}</h1>
-            <p class="text-muted">{% trans 'Habitación' %} {{ room.room_number }} - {% trans 'Piso' %} {{ room.floor }}</p>
-        </div>
-        <div class="btn-group" role="group">
-            <a href="{% url 'facilities_web:room_detail' room.id %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> {% trans 'Volver a Habitación' %}
-            </a>
-            <a href="{% url 'facilities_web:room_list' %}" class="btn btn-outline-secondary">
-                <i class="fas fa-list"></i> {% trans 'Lista de Habitaciones' %}
-            </a>
-        </div>
-    </div>
+{% block page_title %}{% trans 'Gestionar Residentes' %}{% endblock %}
 
+{% block page_subtitle %}{% trans 'Habitación' %} {{ room.room_number }} - {% trans 'Piso' %} {{ room.floor }}{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'facilities_web:room_detail' room.id %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">{% trans 'Volver a Habitación' %}</span>
+    </a>
+    <a href="{% url 'facilities_web:room_list' %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">list</span>
+        <span class="text-sm">{% trans 'Lista de Habitaciones' %}</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
     <!-- Información de la Habitación -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Información de la Habitación' %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <h4 class="text-primary">{{ room.room_number }}</h4>
-                                <p class="text-muted">{% trans 'Número de Habitación' %}</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <h4 class="text-info">{{ room.floor }}</h4>
-                                <p class="text-muted">{% trans 'Piso' %}</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <h4 class="text-success">{{ room.available_beds }}</h4>
-                                <p class="text-muted">{% trans 'Camas Disponibles' %}</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <h4 class="text-warning">{{ room.occupied_beds }}</h4>
-                                <p class="text-muted">{% trans 'Camas Ocupadas' %}</p>
-                            </div>
-                        </div>
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">hotel</span>
+                {% trans 'Información de la Habitación' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="material-icons text-2xl text-blue-600">meeting_room</span>
                     </div>
+                    <h4 class="text-2xl font-bold text-blue-600">{{ room.room_number }}</h4>
+                    <p class="text-sm text-slate-600">{% trans 'Número de Habitación' %}</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-sky-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="material-icons text-2xl text-sky-600">layers</span>
+                    </div>
+                    <h4 class="text-2xl font-bold text-sky-600">{{ room.floor }}</h4>
+                    <p class="text-sm text-slate-600">{% trans 'Piso' %}</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="material-icons text-2xl text-emerald-600">bed</span>
+                    </div>
+                    <h4 class="text-2xl font-bold text-emerald-600">{{ room.available_beds }}</h4>
+                    <p class="text-sm text-slate-600">{% trans 'Camas Disponibles' %}</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="material-icons text-2xl text-amber-600">person</span>
+                    </div>
+                    <h4 class="text-2xl font-bold text-amber-600">{{ room.occupied_beds }}</h4>
+                    <p class="text-sm text-slate-600">{% trans 'Camas Ocupadas' %}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Residentes Asignados -->
-        <div class="col-lg-6">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-users"></i> {% trans 'Residentes Asignados' %} 
-                        <span class="badge bg-primary">{{ assigned_residents.count }}</span>
-                    </h6>
-                </div>
-                <div class="card-body">
-                    {% if assigned_residents %}
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>{% trans 'Nombre' %}</th>
-                                        <th>{% trans 'Edad' %}</th>
-                                        <th>{% trans 'Acciones' %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for resident in assigned_residents %}
-                                    <tr>
-                                        <td>
-                                            <strong>{{ resident.full_name }}</strong>
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">people</span>
+                    {% trans 'Residentes Asignados' %}
+                    <span class="ml-auto bg-white bg-opacity-20 text-white text-sm font-semibold px-2 py-1 rounded-full">
+                        {{ assigned_residents.count }}
+                    </span>
+                </h3>
+            </div>
+            <div class="p-6">
+                {% if assigned_residents %}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                        {% trans 'Nombre' %}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                        {% trans 'Edad' %}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                        {% trans 'Acciones' %}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-slate-200">
+                                {% for resident in assigned_residents %}
+                                <tr class="hover:bg-slate-50 transition-colors duration-200">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div>
+                                            <div class="text-sm font-semibold text-slate-900">{{ resident.full_name }}</div>
                                             {% if resident.phone %}
-                                            <br><small class="text-muted">{{ resident.phone }}</small>
+                                            <div class="text-sm text-slate-500">{{ resident.phone }}</div>
                                             {% endif %}
-                                        </td>
-                                        <td>{{ resident.age }} {% trans 'años' %}</td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{% url 'residents_web:resident_detail' resident.id %}" 
-                                                   class="btn btn-outline-primary" title="{% trans 'Ver detalles' %}">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <form method="post" style="display: inline;">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="action" value="unassign">
-                                                    <input type="hidden" name="resident_id" value="{{ resident.id }}">
-                                                    <button type="submit" class="btn btn-outline-danger" 
-                                                            title="{% trans 'Desasignar' %}"
-                                                            onclick="return confirm('{% trans '¿Estás seguro de desasignar a este residente?' %}')">
-                                                        <i class="fas fa-user-minus"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                        {{ resident.age }} {% trans 'años' %}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex items-center space-x-2">
+                                            <a href="{% url 'residents_web:resident_detail' resident.id %}" 
+                                               class="text-blue-600 hover:text-blue-900 transition-colors duration-200" 
+                                               title="{% trans 'Ver detalles' %}">
+                                                <span class="material-icons text-lg">visibility</span>
+                                            </a>
+                                            <form method="post" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="unassign">
+                                                <input type="hidden" name="resident_id" value="{{ resident.id }}">
+                                                <button type="submit" 
+                                                        class="text-red-600 hover:text-red-900 transition-colors duration-200" 
+                                                        title="{% trans 'Desasignar' %}"
+                                                        onclick="return confirm('{% trans '¿Estás seguro de desasignar a este residente?' %}')">
+                                                    <span class="material-icons text-lg">person_remove</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-12">
+                        <div class="relative w-24 h-24 mx-auto mb-6">
+                            <div class="absolute inset-0 bg-slate-200 rounded-full animate-pulse"></div>
+                            <div class="relative w-full h-full bg-slate-300 rounded-full flex items-center justify-center">
+                                <span class="material-icons text-4xl text-slate-400">people</span>
+                            </div>
                         </div>
-                    {% else %}
-                        <div class="text-center py-4">
-                            <i class="fas fa-users fa-2x text-muted mb-3"></i>
-                            <p class="text-muted">{% trans 'No hay residentes asignados a esta habitación.' %}</p>
-                        </div>
-                    {% endif %}
-                </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">{% trans 'No hay residentes asignados' %}</h3>
+                        <p class="text-slate-600">{% trans 'No hay residentes asignados a esta habitación.' %}</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
 
         <!-- Residentes Disponibles -->
-        <div class="col-lg-6">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-success">
-                        <i class="fas fa-user-plus"></i> {% trans 'Residentes Disponibles' %}
-                        <span class="badge bg-success">{{ available_residents.count }}</span>
-                    </h6>
-                </div>
-                <div class="card-body">
-                    {% if available_residents %}
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>{% trans 'Nombre' %}</th>
-                                        <th>{% trans 'Edad' %}</th>
-                                        <th>{% trans 'Acciones' %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for resident in available_residents %}
-                                    <tr>
-                                        <td>
-                                            <strong>{{ resident.full_name }}</strong>
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">person_add</span>
+                    {% trans 'Residentes Disponibles' %}
+                    <span class="ml-auto bg-white bg-opacity-20 text-white text-sm font-semibold px-2 py-1 rounded-full">
+                        {{ available_residents.count }}
+                    </span>
+                </h3>
+            </div>
+            <div class="p-6">
+                {% if available_residents %}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                        {% trans 'Nombre' %}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                        {% trans 'Edad' %}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                        {% trans 'Acciones' %}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-slate-200">
+                                {% for resident in available_residents %}
+                                <tr class="hover:bg-slate-50 transition-colors duration-200">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div>
+                                            <div class="text-sm font-semibold text-slate-900">{{ resident.full_name }}</div>
                                             {% if resident.phone %}
-                                            <br><small class="text-muted">{{ resident.phone }}</small>
+                                            <div class="text-sm text-slate-500">{{ resident.phone }}</div>
                                             {% endif %}
-                                        </td>
-                                        <td>{{ resident.age }} {% trans 'años' %}</td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{% url 'residents_web:resident_detail' resident.id %}" 
-                                                   class="btn btn-outline-primary" title="{% trans 'Ver detalles' %}">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <form method="post" style="display: inline;">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="action" value="assign">
-                                                    <input type="hidden" name="resident_id" value="{{ resident.id }}">
-                                                    <button type="submit" class="btn btn-outline-success" 
-                                                            title="{% trans 'Asignar' %}"
-                                                            {% if room.available_beds == 0 %}disabled{% endif %}>
-                                                        <i class="fas fa-user-plus"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                        {{ resident.age }} {% trans 'años' %}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex items-center space-x-2">
+                                            <a href="{% url 'residents_web:resident_detail' resident.id %}" 
+                                               class="text-blue-600 hover:text-blue-900 transition-colors duration-200" 
+                                               title="{% trans 'Ver detalles' %}">
+                                                <span class="material-icons text-lg">visibility</span>
+                                            </a>
+                                            <form method="post" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="assign">
+                                                <input type="hidden" name="resident_id" value="{{ resident.id }}">
+                                                <button type="submit" 
+                                                        class="text-emerald-600 hover:text-emerald-900 transition-colors duration-200 {% if room.available_beds == 0 %}opacity-50 cursor-not-allowed{% endif %}" 
+                                                        title="{% trans 'Asignar' %}"
+                                                        {% if room.available_beds == 0 %}disabled{% endif %}>
+                                                    <span class="material-icons text-lg">person_add</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-12">
+                        <div class="relative w-24 h-24 mx-auto mb-6">
+                            <div class="absolute inset-0 bg-slate-200 rounded-full animate-pulse"></div>
+                            <div class="relative w-full h-full bg-slate-300 rounded-full flex items-center justify-center">
+                                <span class="material-icons text-4xl text-slate-400">person_add</span>
+                            </div>
                         </div>
-                    {% else %}
-                        <div class="text-center py-4">
-                            <i class="fas fa-user-plus fa-2x text-muted mb-3"></i>
-                            <p class="text-muted">{% trans 'No hay residentes disponibles para asignar.' %}</p>
-                            <a href="{% url 'residents_web:resident_create' %}" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> {% trans 'Crear Nuevo Residente' %}
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">{% trans 'No hay residentes disponibles' %}</h3>
+                        <p class="text-slate-600 mb-6">{% trans 'No hay residentes disponibles para asignar.' %}</p>
+                        <a href="{% url 'residents_web:resident_create' %}" 
+                           class="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                            <span class="material-icons mr-2">add</span>
+                            {% trans 'Crear Nuevo Residente' %}
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
 
-    <!-- Advertencias y Notas -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-warning">
-                        <i class="fas fa-exclamation-triangle"></i> {% trans 'Información Importante' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>{% trans 'Capacidad de la Habitación' %}</h6>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-bed text-primary"></i> {% trans 'Total de camas' %}: {{ room.total_beds }}</li>
-                                <li><i class="fas fa-user-check text-success"></i> {% trans 'Camas disponibles' %}: {{ room.available_beds }}</li>
-                                <li><i class="fas fa-user text-warning"></i> {% trans 'Camas ocupadas' %}: {{ room.occupied_beds }}</li>
-                            </ul>
+    <!-- Información Importante -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mt-8">
+        <div class="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">warning</span>
+                {% trans 'Información Importante' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons text-blue-500 mr-2">hotel</span>
+                        {% trans 'Capacidad de la Habitación' %}
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between py-2 border-b border-slate-200">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Total de camas' %}</span>
+                            <span class="text-sm font-semibold text-slate-800">{{ room.total_beds }}</span>
                         </div>
-                        <div class="col-md-6">
-                            <h6>{% trans 'Reglas de Asignación' %}</h6>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-info-circle text-info"></i> {% trans 'Solo se pueden asignar residentes sin habitación' %}</li>
-                                <li><i class="fas fa-info-circle text-info"></i> {% trans 'No se puede exceder la capacidad de la habitación' %}</li>
-                                <li><i class="fas fa-info-circle text-info"></i> {% trans 'Los cambios se aplican inmediatamente' %}</li>
-                            </ul>
+                        <div class="flex items-center justify-between py-2 border-b border-slate-200">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Camas disponibles' %}</span>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                                {{ room.available_beds }}
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between py-2 border-b border-slate-200">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Camas ocupadas' %}</span>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">
+                                {{ room.occupied_beds }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons text-emerald-500 mr-2">rule</span>
+                        {% trans 'Reglas de Asignación' %}
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <span class="material-icons text-blue-500 mr-2 mt-0.5 text-sm">info</span>
+                            <span class="text-sm text-slate-600">{% trans 'Solo se pueden asignar residentes sin habitación' %}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-blue-500 mr-2 mt-0.5 text-sm">info</span>
+                            <span class="text-sm text-slate-600">{% trans 'No se puede exceder la capacidad de la habitación' %}</span>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="material-icons text-blue-500 mr-2 mt-0.5 text-sm">info</span>
+                            <span class="text-sm text-slate-600">{% trans 'Los cambios se aplican inmediatamente' %}</span>
                         </div>
                     </div>
                 </div>

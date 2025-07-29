@@ -227,7 +227,7 @@ def quick_report(request):
             title = f"{form.get_report_type_display()} - {period.title()}"
             report = Report.objects.create(
                 title=title,
-                report_type=report_type.split('_')[0],
+                report_type=report_type,
                 format=format_type,
                 date_from=date_from,
                 date_to=date_to,
@@ -291,7 +291,7 @@ def resident_report(request):
                 title=title,
                 description=f"Reporte de residentes con filtros aplicados. Total: {Resident.objects.count()} residentes.",
                 report_type='residents',
-                format='pdf',  # Por defecto PDF para reportes específicos
+                format=form.cleaned_data.get('format', 'pdf'),
                 date_from=form.cleaned_data.get('date_from'),
                 date_to=form.cleaned_data.get('date_to'),
                 filters=filters,
@@ -353,7 +353,7 @@ def staff_report(request):
                 title=title,
                 description=f"Reporte de personal con filtros aplicados. Total: {Staff.objects.count()} empleados.",
                 report_type='staff',
-                format='pdf',  # Por defecto PDF para reportes específicos
+                format=form.cleaned_data.get('format', 'pdf'),
                 date_from=form.cleaned_data.get('date_from'),
                 date_to=form.cleaned_data.get('date_to'),
                 filters=filters,

@@ -4,63 +4,189 @@
 
 {% block title %}{% trans 'Eliminar Habitación' %} {{ room.room_number }}{% endblock %}
 
+{% block page_title %}{% trans 'Eliminar Habitación' %} {{ room.room_number }}{% endblock %}
+
+{% block page_subtitle %}{% trans 'Confirmar la eliminación de la habitación' %}{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'facilities_web:room_detail' room.id %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">{% trans 'Volver' %}</span>
+    </a>
+    <a href="{% url 'facilities_web:room_list' %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">list</span>
+        <span class="text-sm">{% trans 'Lista' %}</span>
+    </a>
+</div>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-danger">
-                        <i class="fas fa-exclamation-triangle"></i> {% trans 'Confirmar Eliminación' %}
-                    </h6>
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">warning</span>
+                {% trans 'Confirmar Eliminación' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="text-center mb-6">
+                <div class="relative w-24 h-24 mx-auto mb-4">
+                    <div class="absolute inset-0 bg-red-200 rounded-full animate-ping"></div>
+                    <div class="relative w-full h-full bg-red-100 rounded-full flex items-center justify-center">
+                        <span class="material-icons text-4xl text-red-600">delete_forever</span>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-trash fa-3x text-danger mb-3"></i>
-                        <h4 class="text-danger">{% trans '¿Estás seguro?' %}</h4>
-                        <p class="text-muted">
-                            {% trans 'Esta acción no se puede deshacer. La habitación será eliminada permanentemente.' %}
+                <h4 class="text-xl font-semibold text-red-600 mb-2">{% trans '¿Estás seguro?' %}</h4>
+                <p class="text-slate-600">
+                    {% trans 'Esta acción no se puede deshacer. La habitación será eliminada permanentemente.' %}
+                </p>
+            </div>
+
+            <!-- Información de la Habitación -->
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+                <h5 class="font-semibold text-amber-800 mb-3 flex items-center">
+                    <span class="material-icons mr-2 text-amber-600">hotel</span>
+                    {% trans 'Habitación a eliminar:' %}
+                </h5>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex justify-between items-center py-2 border-b border-amber-200">
+                        <span class="text-sm font-medium text-amber-700">{% trans 'Número' %}</span>
+                        <span class="text-sm font-semibold text-amber-800">{{ room.room_number }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-amber-200">
+                        <span class="text-sm font-medium text-amber-700">{% trans 'Piso' %}</span>
+                        <span class="text-sm font-semibold text-amber-800">{{ room.floor }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-amber-200">
+                        <span class="text-sm font-medium text-amber-700">{% trans 'Total de Camas' %}</span>
+                        <span class="text-sm font-semibold text-amber-800">{{ room.total_beds }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-amber-200">
+                        <span class="text-sm font-medium text-amber-700">{% trans 'Camas Ocupadas' %}</span>
+                        <span class="text-sm font-semibold text-amber-800">{{ room.occupied_beds }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-amber-200 md:col-span-2">
+                        <span class="text-sm font-medium text-amber-700">{% trans 'Estado' %}</span>
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
+                            {% if room.status == 'available' %}bg-green-100 text-green-800
+                            {% elif room.status == 'maintenance' %}bg-yellow-100 text-yellow-800
+                            {% elif room.status == 'quarantine' %}bg-red-100 text-red-800{% endif %}">
+                            {% if room.status == 'available' %}{% trans 'Disponible' %}
+                            {% elif room.status == 'maintenance' %}{% trans 'Mantenimiento' %}
+                            {% elif room.status == 'quarantine' %}{% trans 'Cuarentena' %}{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advertencia si hay camas ocupadas -->
+            {% if room.occupied_beds > 0 %}
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex items-start">
+                    <span class="material-icons text-red-500 mr-3 mt-0.5">error</span>
+                    <div>
+                        <h5 class="font-semibold text-red-800 mb-2">{% trans 'Advertencia' %}</h5>
+                        <p class="text-red-700 text-sm">
+                            {% trans 'Esta habitación tiene camas ocupadas. Asegúrate de que los residentes hayan sido reubicados antes de eliminar la habitación.' %}
                         </p>
                     </div>
+                </div>
+            </div>
+            {% endif %}
 
-                    <div class="alert alert-warning">
-                        <h6 class="alert-heading">{% trans 'Habitación a eliminar:' %}</h6>
-                        <ul class="mb-0">
-                            <li><strong>{% trans 'Número' %}:</strong> {{ room.room_number }}</li>
-                            <li><strong>{% trans 'Piso' %}:</strong> {{ room.floor }}</li>
-                            <li><strong>{% trans 'Total de Camas' %}:</strong> {{ room.total_beds }}</li>
-                            <li><strong>{% trans 'Camas Ocupadas' %}:</strong> {{ room.occupied_beds }}</li>
-                            <li><strong>{% trans 'Estado' %}:</strong> 
-                                {% if room.status == 'available' %}
-                                    {% trans 'Disponible' %}
-                                {% elif room.status == 'maintenance' %}
-                                    {% trans 'Mantenimiento' %}
-                                {% elif room.status == 'quarantine' %}
-                                    {% trans 'Cuarentena' %}
-                                {% endif %}
-                            </li>
-                        </ul>
+            <!-- Información adicional -->
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
+                <h5 class="font-semibold text-slate-800 mb-3 flex items-center">
+                    <span class="material-icons mr-2 text-slate-600">info</span>
+                    {% trans 'Información Adicional' %}
+                </h5>
+                <div class="space-y-2 text-sm text-slate-600">
+                    <div class="flex items-center">
+                        <span class="material-icons text-slate-500 mr-2 text-sm">schedule</span>
+                        {% trans 'Esta acción es irreversible' %}
                     </div>
-
-                    {% if room.occupied_beds > 0 %}
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <strong>{% trans 'Advertencia' %}:</strong> 
-                        {% trans 'Esta habitación tiene camas ocupadas. Asegúrate de que los residentes hayan sido reubicados antes de eliminar la habitación.' %}
+                    <div class="flex items-center">
+                        <span class="material-icons text-slate-500 mr-2 text-sm">delete</span>
+                        {% trans 'Todos los datos de la habitación se perderán' %}
                     </div>
-                    {% endif %}
+                    <div class="flex items-center">
+                        <span class="material-icons text-slate-500 mr-2 text-sm">warning</span>
+                        {% trans 'Verifica que no haya residentes asignados' %}
+                    </div>
+                </div>
+            </div>
 
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'facilities_web:room_detail' room.id %}" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> {% trans 'Cancelar' %}
-                            </a>
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash"></i> {% trans 'Eliminar Habitación' %}
-                            </button>
+            <!-- Formulario de confirmación -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-6 border-t border-slate-200">
+                    <a href="{% url 'facilities_web:room_detail' room.id %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">cancel</span>
+                        {% trans 'Cancelar' %}
+                    </a>
+                    <button type="submit" 
+                            class="flex items-center bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">delete_forever</span>
+                        {% trans 'Eliminar Habitación' %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Información de seguridad -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mt-8">
+        <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">security</span>
+                {% trans 'Medidas de Seguridad' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                        <span class="material-icons text-red-500 mr-2">warning</span>
+                        {% trans 'Antes de Eliminar' %}
+                    </h4>
+                    <div class="space-y-2 text-sm text-slate-600">
+                        <div class="flex items-center">
+                            <span class="material-icons text-red-500 mr-2 text-sm">check_circle</span>
+                            {% trans 'Verificar que no hay residentes asignados' %}
                         </div>
-                    </form>
+                        <div class="flex items-center">
+                            <span class="material-icons text-red-500 mr-2 text-sm">check_circle</span>
+                            {% trans 'Confirmar que no hay reservas activas' %}
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-red-500 mr-2 text-sm">check_circle</span>
+                            {% trans 'Revisar dependencias del sistema' %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                        <span class="material-icons text-blue-500 mr-2">info</span>
+                        {% trans 'Alternativas' %}
+                    </h4>
+                    <div class="space-y-2 text-sm text-slate-600">
+                        <div class="flex items-center">
+                            <span class="material-icons text-blue-500 mr-2 text-sm">edit</span>
+                            {% trans 'Editar en lugar de eliminar' %}
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-blue-500 mr-2 text-sm">archive</span>
+                            {% trans 'Desactivar temporalmente' %}
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-blue-500 mr-2 text-sm">backup</span>
+                            {% trans 'Crear respaldo de datos' %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

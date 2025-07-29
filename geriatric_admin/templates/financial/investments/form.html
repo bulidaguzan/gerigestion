@@ -6,378 +6,522 @@
     {% if investment %}Editar Inversión{% else %}Nueva Inversión{% endif %}
 {% endblock %}
 
-{% block extra_css %}
-<style>
-    .form-section {
-        background-color: #f8f9fa;
-        border-radius: 0.375rem;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    .form-section h5 {
-        color: #495057;
-        margin-bottom: 1rem;
-    }
-    .required-field::after {
-        content: " *";
-        color: #dc3545;
-    }
-    .progress-section {
-        background-color: #e3f2fd;
-        border-left: 4px solid #2196f3;
-    }
-</style>
+{% block page_title %}
+    {% if investment %}
+        {% trans 'Editar Inversión' %}
+    {% else %}
+        {% trans 'Nueva Inversión' %}
+    {% endif %}
+{% endblock %}
+
+{% block page_subtitle %}
+    {% if investment %}
+        {% trans 'Modifica la información de la inversión' %}
+    {% else %}
+        {% trans 'Registra una nueva inversión en el sistema' %}
+    {% endif %}
+{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'financial_web:investment_list' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">{% trans 'Volver' %}</span>
+    </a>
+    {% if investment %}
+    <a href="{% url 'financial_web:investment_detail' investment.id %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">visibility</span>
+        <span class="text-sm">{% trans 'Ver Detalles' %}</span>
+    </a>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">
-                {% if investment %}
-                    {% trans 'Editar Inversión' %}
-                {% else %}
-                    {% trans 'Nueva Inversión' %}
-                {% endif %}
-            </h1>
-            <p class="text-muted">
-                {% if investment %}
-                    {% trans 'Modifica la información de la inversión' %}
-                {% else %}
-                    {% trans 'Registra una nueva inversión en el sistema' %}
-                {% endif %}
-            </p>
-        </div>
-        <div>
-            <a href="{% url 'financial:investment_list' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> {% trans 'Volver' %}
-            </a>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Form -->
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">trending_up</span>
+                    {% if investment %}
+                        {% trans 'Información de la Inversión' %}
+                    {% else %}
+                        {% trans 'Datos de la Inversión' %}
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="p-6">
+                <form method="post" id="investmentForm">
+                    {% csrf_token %}
+                    
+                    <!-- Información Básica -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-100">
+                        <h4 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+                            <span class="material-icons mr-2 text-blue-600">info</span>
+                            {% trans 'Información Básica' %}
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    📝 {% trans 'Título de la Inversión' %} <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" 
+                                       name="{{ form.title.name }}" 
+                                       id="{{ form.title.id_for_label }}" 
+                                       value="{{ form.title.value|default:'' }}"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.title.errors %}border-red-500{% endif %}"
+                                       placeholder="{% trans 'Ej: Compra de equipos médicos' %}">
+                                {% if form.title.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.title.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <label for="{{ form.investment_type.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    🏗️ {% trans 'Tipo de Inversión' %} <span class="text-red-500">*</span>
+                                </label>
+                                <select name="{{ form.investment_type.name }}" 
+                                        id="{{ form.investment_type.id_for_label }}"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.investment_type.errors %}border-red-500{% endif %}">
+                                    <option value="">{% trans 'Seleccionar tipo' %}</option>
+                                    {% for value, label in form.investment_type.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}" {% if form.investment_type.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.investment_type.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.investment_type.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <label for="{{ form.category.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    📁 {% trans 'Categoría' %} <span class="text-red-500">*</span>
+                                </label>
+                                <select name="{{ form.category.name }}" 
+                                        id="{{ form.category.id_for_label }}"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.category.errors %}border-red-500{% endif %}">
+                                    <option value="">{% trans 'Seleccionar categoría' %}</option>
+                                    {% for value, label in form.category.field.choices %}
+                                        {% if value %}
+                                            <option value="{{ value }}" {% if form.category.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% if form.category.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.category.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <label for="{{ form.amount.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    💰 {% trans 'Monto' %} <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                                    <input type="number" 
+                                           name="{{ form.amount.name }}" 
+                                           id="{{ form.amount.id_for_label }}" 
+                                           value="{{ form.amount.value|default:'' }}"
+                                           step="0.01"
+                                           class="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.amount.errors %}border-red-500{% endif %}"
+                                           placeholder="0.00">
+                                </div>
+                                {% if form.amount.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.amount.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    📄 {% trans 'Descripción' %}
+                                </label>
+                                <textarea name="{{ form.description.name }}" 
+                                          id="{{ form.description.id_for_label }}" 
+                                          rows="4"
+                                          class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 resize-none {% if form.description.errors %}border-red-500{% endif %}"
+                                          placeholder="{% trans 'Describe los detalles de la inversión...' %}">{{ form.description.value|default:'' }}</textarea>
+                                {% if form.description.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.description.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progreso y Estado -->
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 mb-6 border border-amber-100">
+                        <h4 class="text-lg font-semibold text-amber-800 mb-4 flex items-center">
+                            <span class="material-icons mr-2 text-amber-600">sync</span>
+                            {% trans 'Progreso y Estado' %}
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    ✅ {% trans 'Estado' %}
+                                </label>
+                                <select name="{{ form.status.name }}" 
+                                        id="{{ form.status.id_for_label }}"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.status.errors %}border-red-500{% endif %}">
+                                    {% for value, label in form.status.field.choices %}
+                                        <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.status.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.status.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <label for="{{ form.progress_percentage.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    📊 {% trans 'Progreso (%)' %}
+                                </label>
+                                <div class="relative">
+                                    <input type="number" 
+                                           name="{{ form.progress_percentage.name }}" 
+                                           id="{{ form.progress_percentage.id_for_label }}" 
+                                           value="{{ form.progress_percentage.value|default:'0' }}"
+                                           min="0" max="100"
+                                           class="w-full pr-12 px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.progress_percentage.errors %}border-red-500{% endif %}">
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500">%</span>
+                                </div>
+                                {% if form.progress_percentage.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.progress_percentage.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <div class="bg-slate-100 rounded-lg p-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-sm font-medium text-slate-700">{% trans 'Progreso Visual' %}</span>
+                                        <span class="text-sm text-slate-600" id="progressText">0%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 rounded-full h-3">
+                                        <div class="bg-gradient-to-r from-amber-500 to-orange-500 h-3 rounded-full transition-all duration-300" 
+                                             id="progressBar" 
+                                             style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fechas -->
+                    <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6 mb-6 border border-emerald-100">
+                        <h4 class="text-lg font-semibold text-emerald-800 mb-4 flex items-center">
+                            <span class="material-icons mr-2 text-emerald-600">event</span>
+                            {% trans 'Fechas' %}
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="{{ form.planned_date.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    📅 {% trans 'Fecha Planificada' %} <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" 
+                                       name="{{ form.planned_date.name }}" 
+                                       id="{{ form.planned_date.id_for_label }}" 
+                                       value="{{ form.planned_date.value|date:'Y-m-d'|default:'' }}"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.planned_date.errors %}border-red-500{% endif %}">
+                                {% if form.planned_date.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.planned_date.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <label for="{{ form.start_date.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    🚀 {% trans 'Fecha de Inicio' %}
+                                </label>
+                                <input type="date" 
+                                       name="{{ form.start_date.name }}" 
+                                       id="{{ form.start_date.id_for_label }}" 
+                                       value="{{ form.start_date.value|date:'Y-m-d'|default:'' }}"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.start_date.errors %}border-red-500{% endif %}">
+                                {% if form.start_date.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.start_date.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <label for="{{ form.completion_date.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    ✅ {% trans 'Fecha de Finalización' %}
+                                </label>
+                                <input type="date" 
+                                       name="{{ form.completion_date.name }}" 
+                                       id="{{ form.completion_date.id_for_label }}" 
+                                       value="{{ form.completion_date.value|date:'Y-m-d'|default:'' }}"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.completion_date.errors %}border-red-500{% endif %}">
+                                {% if form.completion_date.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.completion_date.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Beneficios Esperados -->
+                    <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 mb-6 border border-purple-100">
+                        <h4 class="text-lg font-semibold text-purple-800 mb-4 flex items-center">
+                            <span class="material-icons mr-2 text-purple-600">lightbulb</span>
+                            {% trans 'Beneficios Esperados' %}
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="{{ form.expected_roi.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    📈 {% trans 'ROI Esperado (%)' %}
+                                </label>
+                                <div class="relative">
+                                    <input type="number" 
+                                           name="{{ form.expected_roi.name }}" 
+                                           id="{{ form.expected_roi.id_for_label }}" 
+                                           value="{{ form.expected_roi.value|default:'' }}"
+                                           step="0.01"
+                                           class="w-full pr-12 px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.expected_roi.errors %}border-red-500{% endif %}"
+                                           placeholder="0.00">
+                                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500">%</span>
+                                </div>
+                                {% if form.expected_roi.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.expected_roi.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label for="{{ form.expected_benefits.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                    🎯 {% trans 'Beneficios Esperados' %}
+                                </label>
+                                <textarea name="{{ form.expected_benefits.name }}" 
+                                          id="{{ form.expected_benefits.id_for_label }}" 
+                                          rows="3"
+                                          class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 resize-none {% if form.expected_benefits.errors %}border-red-500{% endif %}"
+                                          placeholder="{% trans 'Describe los beneficios esperados de esta inversión...' %}">{{ form.expected_benefits.value|default:'' }}</textarea>
+                                {% if form.expected_benefits.errors %}
+                                    <p class="text-red-500 text-sm mt-1">{{ form.expected_benefits.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-6 border-t border-slate-200">
+                        <a href="{% url 'financial_web:investment_list' %}" 
+                           class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                            <span class="material-icons mr-2">cancel</span>
+                            {% trans 'Cancelar' %}
+                        </a>
+                        <button type="submit" 
+                                class="flex items-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                            <span class="material-icons mr-2">check_circle</span>
+                            {% if investment %}
+                                {% trans 'Actualizar Inversión' %}
+                            {% else %}
+                                {% trans 'Crear Inversión' %}
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Main Content -->
-        <div class="col-lg-8">
-            <!-- Main Form -->
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        {% if investment %}
-                            {% trans 'Información de la Inversión' %}
-                        {% else %}
-                            {% trans 'Datos de la Inversión' %}
-                        {% endif %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <form method="post" id="investmentForm">
-                        {% csrf_token %}
-                        
-                        <!-- Basic Information -->
-                        <div class="form-section">
-                            <h5><i class="bi bi-info-circle"></i> {% trans 'Información Básica' %}</h5>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="mb-3">
-                                        <label for="{{ form.title.id_for_label }}" class="form-label required-field">
-                                            {{ form.title.label }}
-                                        </label>
-                                        {{ form.title }}
-                                        {% if form.title.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.title.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="{{ form.investment_type.id_for_label }}" class="form-label required-field">
-                                            {{ form.investment_type.label }}
-                                        </label>
-                                        {{ form.investment_type }}
-                                        {% if form.investment_type.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.investment_type.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="mb-3">
-                                        <label for="{{ form.category.id_for_label }}" class="form-label required-field">
-                                            {{ form.category.label }}
-                                        </label>
-                                        {{ form.category }}
-                                        {% if form.category.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.category.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="{{ form.amount.id_for_label }}" class="form-label required-field">
-                                            {{ form.amount.label }}
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">$</span>
-                                            {{ form.amount }}
-                                        </div>
-                                        {% if form.amount.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.amount.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="{{ form.description.id_for_label }}" class="form-label">
-                                    {{ form.description.label }}
-                                </label>
-                                {{ form.description }}
-                                {% if form.description.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.description.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Progress and Status -->
-                        <div class="form-section progress-section">
-                            <h5><i class="bi bi-graph-up"></i> {% trans 'Progreso y Estado' %}</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.status.id_for_label }}" class="form-label">
-                                            {{ form.status.label }}
-                                        </label>
-                                        {{ form.status }}
-                                        {% if form.status.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.status.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.progress_percentage.id_for_label }}" class="form-label">
-                                            {{ form.progress_percentage.label }}
-                                        </label>
-                                        <div class="input-group">
-                                            {{ form.progress_percentage }}
-                                            <span class="input-group-text">%</span>
-                                        </div>
-                                        {% if form.progress_percentage.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.progress_percentage.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" 
-                                     style="width: 0%" id="progressBar" 
-                                     aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                                    0%
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Dates -->
-                        <div class="form-section">
-                            <h5><i class="bi bi-calendar"></i> {% trans 'Fechas' %}</h5>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="{{ form.planned_date.id_for_label }}" class="form-label required-field">
-                                            {{ form.planned_date.label }}
-                                        </label>
-                                        {{ form.planned_date }}
-                                        {% if form.planned_date.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.planned_date.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="{{ form.start_date.id_for_label }}" class="form-label">
-                                            {{ form.start_date.label }}
-                                        </label>
-                                        {{ form.start_date }}
-                                        {% if form.start_date.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.start_date.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="{{ form.completion_date.id_for_label }}" class="form-label">
-                                            {{ form.completion_date.label }}
-                                        </label>
-                                        {{ form.completion_date }}
-                                        {% if form.completion_date.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.completion_date.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Expected Benefits -->
-                        <div class="form-section">
-                            <h5><i class="bi bi-lightbulb"></i> {% trans 'Beneficios Esperados' %}</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.expected_roi.id_for_label }}" class="form-label">
-                                            {{ form.expected_roi.label }}
-                                        </label>
-                                        <div class="input-group">
-                                            {{ form.expected_roi }}
-                                            <span class="input-group-text">%</span>
-                                        </div>
-                                        {% if form.expected_roi.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.expected_roi.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="{{ form.expected_benefits.id_for_label }}" class="form-label">
-                                            {{ form.expected_benefits.label }}
-                                        </label>
-                                        {{ form.expected_benefits }}
-                                        {% if form.expected_benefits.errors %}
-                                            <div class="invalid-feedback d-block">
-                                                {{ form.expected_benefits.errors.0 }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Form Actions -->
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'financial:investment_list' %}" class="btn btn-outline-secondary">
-                                <i class="bi bi-x-circle"></i> {% trans 'Cancelar' %}
-                            </a>
-                            <div>
-                                {% if investment %}
-                                    <a href="{% url 'financial:investment_detail' investment.id %}" class="btn btn-outline-info me-2">
-                                        <i class="bi bi-eye"></i> {% trans 'Ver Detalles' %}
-                                    </a>
-                                {% endif %}
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-circle"></i>
-                                    {% if investment %}
-                                        {% trans 'Actualizar Inversión' %}
-                                    {% else %}
-                                        {% trans 'Crear Inversión' %}
-                                    {% endif %}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+    <!-- Sidebar -->
+    <div class="lg:col-span-1 space-y-6">
+        <!-- Acciones Rápidas -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">flash_on</span>
+                    {% trans 'Acciones Rápidas' %}
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <a href="{% url 'financial_web:investment_create' %}" 
+                       class="flex items-center w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-3">add</span>
+                        <span class="text-sm">{% trans 'Nueva Inversión' %}</span>
+                    </a>
+                    <a href="{% url 'financial_web:category_create' %}" 
+                       class="flex items-center w-full bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-3">category</span>
+                        <span class="text-sm">{% trans 'Nueva Categoría' %}</span>
+                    </a>
+                    <a href="{% url 'financial_web:investment_list' %}" 
+                       class="flex items-center w-full bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-3">list</span>
+                        <span class="text-sm">{% trans 'Ver Todas' %}</span>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar -->
-        <div class="col-lg-4">
-            <!-- Quick Actions -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Acciones Rápidas' %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'financial:investment_create' %}" class="btn btn-outline-primary">
-                            <i class="bi bi-plus-circle"></i> {% trans 'Nueva Inversión' %}
-                        </a>
-                        <a href="{% url 'financial:category_create' %}" class="btn btn-outline-secondary">
-                            <i class="bi bi-tags"></i> {% trans 'Nueva Categoría' %}
-                        </a>
-                        <a href="{% url 'financial:investment_list' %}" class="btn btn-outline-info">
-                            <i class="bi bi-list"></i> {% trans 'Ver Todas' %}
-                        </a>
+        <!-- Ayuda -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">help</span>
+                    {% trans 'Ayuda' %}
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6 text-sm text-slate-600">
+                    <div>
+                        <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                            <span class="material-icons text-red-500 mr-2 text-sm">priority_high</span>
+                            {% trans 'Campos obligatorios:' %}
+                        </h4>
+                        <ul class="space-y-2 ml-6">
+                            <li class="flex items-center">
+                                <span class="material-icons text-blue-500 mr-2 text-sm">check_circle</span>
+                                {% trans 'Título de la inversión' %}
+                            </li>
+                            <li class="flex items-center">
+                                <span class="material-icons text-blue-500 mr-2 text-sm">check_circle</span>
+                                {% trans 'Tipo de inversión' %}
+                            </li>
+                            <li class="flex items-center">
+                                <span class="material-icons text-blue-500 mr-2 text-sm">check_circle</span>
+                                {% trans 'Categoría' %}
+                            </li>
+                            <li class="flex items-center">
+                                <span class="material-icons text-blue-500 mr-2 text-sm">check_circle</span>
+                                {% trans 'Monto' %}
+                            </li>
+                            <li class="flex items-center">
+                                <span class="material-icons text-blue-500 mr-2 text-sm">check_circle</span>
+                                {% trans 'Fecha planificada' %}
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                            <span class="material-icons text-blue-500 mr-2 text-sm">category</span>
+                            {% trans 'Tipos de inversión:' %}
+                        </h4>
+                        <ul class="space-y-2 ml-6">
+                            <li class="flex items-start">
+                                <span class="material-icons text-amber-500 mr-2 text-sm mt-0.5">build</span>
+                                <div>
+                                    <strong>{% trans 'Equipamiento:' %}</strong> {% trans 'Maquinaria, herramientas' %}
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="material-icons text-emerald-500 mr-2 text-sm mt-0.5">construction</span>
+                                <div>
+                                    <strong>{% trans 'Infraestructura:' %}</strong> {% trans 'Obras, remodelaciones' %}
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="material-icons text-purple-500 mr-2 text-sm mt-0.5">computer</span>
+                                <div>
+                                    <strong>{% trans 'Tecnología:' %}</strong> {% trans 'Software, hardware' %}
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="material-icons text-pink-500 mr-2 text-sm mt-0.5">campaign</span>
+                                <div>
+                                    <strong>{% trans 'Marketing:' %}</strong> {% trans 'Publicidad, promociones' %}
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="material-icons text-indigo-500 mr-2 text-sm mt-0.5">school</span>
+                                <div>
+                                    <strong>{% trans 'Capacitación:' %}</strong> {% trans 'Cursos, entrenamientos' %}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                            <span class="material-icons text-emerald-500 mr-2 text-sm">lightbulb</span>
+                            {% trans 'Consejos:' %}
+                        </h4>
+                        <ul class="space-y-2 ml-6">
+                            <li class="flex items-start">
+                                <span class="material-icons text-emerald-500 mr-2 text-sm mt-0.5">sync</span>
+                                <div>{% trans 'Actualiza el progreso regularmente' %}</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="material-icons text-emerald-500 mr-2 text-sm mt-0.5">trending_up</span>
+                                <div>{% trans 'Establece ROI esperado realista' %}</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="material-icons text-emerald-500 mr-2 text-sm mt-0.5">description</span>
+                                <div>{% trans 'Documenta los beneficios esperados' %}</div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Help -->
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Ayuda' %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="small text-muted">
-                        <p><strong>{% trans 'Campos obligatorios:' %}</strong></p>
-                        <ul class="mb-3">
-                            <li>{% trans 'Título de la inversión' %}</li>
-                            <li>{% trans 'Tipo de inversión' %}</li>
-                            <li>{% trans 'Categoría' %}</li>
-                            <li>{% trans 'Monto' %}</li>
-                            <li>{% trans 'Fecha planificada' %}</li>
-                        </ul>
-                        
-                        <p><strong>{% trans 'Tipos de inversión:' %}</strong></p>
-                        <ul class="mb-3">
-                            <li><strong>{% trans 'Equipamiento:' %}</strong> {% trans 'Maquinaria, herramientas' %}</li>
-                            <li><strong>{% trans 'Infraestructura:' %}</strong> {% trans 'Obras, remodelaciones' %}</li>
-                            <li><strong>{% trans 'Tecnología:' %}</strong> {% trans 'Software, hardware' %}</li>
-                            <li><strong>{% trans 'Marketing:' %}</strong> {% trans 'Publicidad, promociones' %}</li>
-                            <li><strong>{% trans 'Capacitación:' %}</strong> {% trans 'Cursos, entrenamientos' %}</li>
-                        </ul>
-                        
-                        <p><strong>{% trans 'Consejos:' %}</strong></p>
-                        <ul>
-                            <li>{% trans 'Actualiza el progreso regularmente' %}</li>
-                            <li>{% trans 'Establece ROI esperado realista' %}</li>
-                            <li>{% trans 'Documenta los beneficios esperados' %}</li>
-                        </ul>
+        <!-- Información del Formulario -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-400 to-slate-500 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">info</span>
+                    {% trans 'Información del Formulario' %}
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4 text-sm text-slate-600">
+                    <div class="flex items-center">
+                        <span class="material-icons text-blue-500 mr-3">schedule</span>
+                        <div>
+                            <div class="font-semibold text-slate-800">{% trans 'Tiempo estimado' %}</div>
+                            <div>{% trans '5-10 minutos para completar' %}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="material-icons text-emerald-500 mr-3">security</span>
+                        <div>
+                            <div class="font-semibold text-slate-800">{% trans 'Datos seguros' %}</div>
+                            <div>{% trans 'Toda la información se guarda de forma segura' %}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="material-icons text-purple-500 mr-3">support_agent</span>
+                        <div>
+                            <div class="font-semibold text-slate-800">{% trans 'Soporte disponible' %}</div>
+                            <div>{% trans 'Contacta al administrador si necesitas ayuda' %}</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Progress bar update
-    $('#{{ form.progress_percentage.id_for_label }}').on('input', function() {
-        const progress = $(this).val();
-        $('#progressBar').css('width', progress + '%').text(progress + '%');
-    });
-
+    const progressInput = document.getElementById('{{ form.progress_percentage.id_for_label }}');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    
+    function updateProgress() {
+        const progress = progressInput.value || 0;
+        progressBar.style.width = progress + '%';
+        progressText.textContent = progress + '%';
+    }
+    
+    progressInput.addEventListener('input', updateProgress);
+    
     // Initialize progress bar
-    const initialProgress = $('#{{ form.progress_percentage.id_for_label }}').val() || 0;
-    $('#progressBar').css('width', initialProgress + '%').text(initialProgress + '%');
-
+    updateProgress();
+    
     // Form validation
-    $('#investmentForm').on('submit', function(e) {
-        const amount = $('#{{ form.amount.id_for_label }}').val();
-        const progress = $('#{{ form.progress_percentage.id_for_label }}').val();
+    const form = document.getElementById('investmentForm');
+    form.addEventListener('submit', function(e) {
+        const amount = document.getElementById('{{ form.amount.id_for_label }}').value;
+        const progress = progressInput.value;
         
         if (amount <= 0) {
             e.preventDefault();
@@ -391,25 +535,29 @@ $(document).ready(function() {
             return false;
         }
     });
-
+    
     // Date validation
-    $('#{{ form.start_date.id_for_label }}').on('change', function() {
-        const plannedDate = $('#{{ form.planned_date.id_for_label }}').val();
-        const startDate = $(this).val();
+    const startDateInput = document.getElementById('{{ form.start_date.id_for_label }}');
+    const plannedDateInput = document.getElementById('{{ form.planned_date.id_for_label }}');
+    const completionDateInput = document.getElementById('{{ form.completion_date.id_for_label }}');
+    
+    startDateInput.addEventListener('change', function() {
+        const plannedDate = plannedDateInput.value;
+        const startDate = this.value;
         
         if (startDate && plannedDate && startDate < plannedDate) {
             alert('{% trans "La fecha de inicio no puede ser anterior a la fecha planificada" %}');
-            $(this).val('');
+            this.value = '';
         }
     });
-
-    $('#{{ form.completion_date.id_for_label }}').on('change', function() {
-        const startDate = $('#{{ form.start_date.id_for_label }}').val();
-        const completionDate = $(this).val();
+    
+    completionDateInput.addEventListener('change', function() {
+        const startDate = startDateInput.value;
+        const completionDate = this.value;
         
         if (completionDate && startDate && completionDate < startDate) {
             alert('{% trans "La fecha de finalización no puede ser anterior a la fecha de inicio" %}');
-            $(this).val('');
+            this.value = '';
         }
     });
 });

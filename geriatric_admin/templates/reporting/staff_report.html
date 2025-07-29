@@ -4,183 +4,328 @@
 
 {% block title %}{% trans 'Reporte de Personal' %}{% endblock %}
 
+{% block page_title %}{% trans 'Reporte de Personal' %}{% endblock %}
+
+{% block page_subtitle %}{% trans 'Configura filtros y genera reportes detallados del personal' %}{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'reporting_web:index' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">{% trans 'Volver al Dashboard' %}</span>
+    </a>
+    <a href="{% url 'reporting_web:dashboard' %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">dashboard</span>
+        <span class="text-sm">{% trans 'Dashboard' %}</span>
+    </a>
+</div>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-user-tie me-2"></i>{% trans 'Reporte de Personal' %}
-        </h1>
-        <a href="{% url 'reporting_web:index' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>{% trans 'Volver al Dashboard' %}
-        </a>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-filter me-2"></i>{% trans 'Configurar Filtros del Reporte' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
+<div class="max-w-6xl mx-auto">
+    <!-- Main Form Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">filter_list</span>
+                {% trans 'Configurar Filtros del Reporte' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Fechas -->
+                <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6 mb-6 border border-emerald-100">
+                    <h4 class="text-lg font-semibold text-emerald-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-emerald-600">event</span>
+                        {% trans 'Rango de Fechas' %}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.date_from.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📅 {% trans 'Fecha Desde' %}
+                            </label>
+                            <input type="date" 
+                                   name="{{ form.date_from.name }}" 
+                                   id="{{ form.date_from.id_for_label }}" 
+                                   value="{{ form.date_from.value|date:'Y-m-d'|default:'' }}"
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.date_from.errors %}border-red-500{% endif %}">
+                            {% if form.date_from.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.date_from.errors.0 }}</p>
+                            {% endif %}
+                        </div>
                         
-                        <div class="row">
-                            <!-- Fechas -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.date_from.id_for_label }}" class="form-label">
-                                    {{ form.date_from.label }}
-                                </label>
-                                {{ form.date_from }}
-                                {% if form.date_from.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.date_from.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.date_to.id_for_label }}" class="form-label">
-                                    {{ form.date_to.label }}
-                                </label>
-                                {{ form.date_to }}
-                                {% if form.date_to.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.date_to.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                        <div>
+                            <label for="{{ form.date_to.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📅 {% trans 'Fecha Hasta' %}
+                            </label>
+                            <input type="date" 
+                                   name="{{ form.date_to.name }}" 
+                                   id="{{ form.date_to.id_for_label }}" 
+                                   value="{{ form.date_to.value|date:'Y-m-d'|default:'' }}"
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 {% if form.date_to.errors %}border-red-500{% endif %}">
+                            {% if form.date_to.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.date_to.errors.0 }}</p>
+                            {% endif %}
                         </div>
+                    </div>
+                </div>
 
-                        <div class="row">
-                            <!-- Estado -->
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.status.id_for_label }}" class="form-label">
-                                    {{ form.status.label }}
-                                </label>
-                                {{ form.status }}
-                                {% if form.status.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.status.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Departamento -->
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.department.id_for_label }}" class="form-label">
-                                    {{ form.department.label }}
-                                </label>
-                                {{ form.department }}
-                                {% if form.department.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.department.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                <!-- Filtros Laborales -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-100">
+                    <h4 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-blue-600">work</span>
+                        {% trans 'Filtros Laborales' %}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                📊 {% trans 'Estado' %}
+                            </label>
+                            <select name="{{ form.status.name }}" 
+                                    id="{{ form.status.id_for_label }}"
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.status.errors %}border-red-500{% endif %}">
+                                <option value="">{% trans 'Todos los estados' %}</option>
+                                {% for value, label in form.status.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            {% if form.status.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.status.errors.0 }}</p>
+                            {% endif %}
                         </div>
-
-                        <div class="row">
-                            <!-- Salario Mínimo -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.min_salary.id_for_label }}" class="form-label">
-                                    {{ form.min_salary.label }}
-                                </label>
-                                {{ form.min_salary }}
-                                {% if form.min_salary.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.min_salary.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Salario Máximo -->
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.max_salary.id_for_label }}" class="form-label">
-                                    {{ form.max_salary.label }}
-                                </label>
-                                {{ form.max_salary }}
-                                {% if form.max_salary.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.max_salary.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                        
+                        <div>
+                            <label for="{{ form.department.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                🏢 {% trans 'Departamento' %}
+                            </label>
+                            <select name="{{ form.department.name }}" 
+                                    id="{{ form.department.id_for_label }}"
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.department.errors %}border-red-500{% endif %}">
+                                <option value="">{% trans 'Todos los departamentos' %}</option>
+                                {% for value, label in form.department.field.choices %}
+                                    {% if value %}
+                                        <option value="{{ value }}" {% if form.department.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            {% if form.department.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.department.errors.0 }}</p>
+                            {% endif %}
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Opciones de Información -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="form-check">
-                                    {{ form.include_salary_info }}
-                                    <label class="form-check-label" for="{{ form.include_salary_info.id_for_label }}">
-                                        {{ form.include_salary_info.label }}
-                                    </label>
-                                </div>
+                <!-- Rango de Salarios -->
+                <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 mb-6 border border-amber-100">
+                    <h4 class="text-lg font-semibold text-amber-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-amber-600">account_balance_wallet</span>
+                        {% trans 'Rango de Salarios' %}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.min_salary.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                💰 {% trans 'Salario Mínimo' %}
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                                <input type="number" 
+                                       name="{{ form.min_salary.name }}" 
+                                       id="{{ form.min_salary.id_for_label }}" 
+                                       value="{{ form.min_salary.value|default:'' }}"
+                                       min="0" step="0.01"
+                                       class="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.min_salary.errors %}border-red-500{% endif %}"
+                                       placeholder="{% trans 'Ej: 1500' %}">
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="form-check">
-                                    {{ form.include_schedule_info }}
-                                    <label class="form-check-label" for="{{ form.include_schedule_info.id_for_label }}">
-                                        {{ form.include_schedule_info.label }}
-                                    </label>
-                                </div>
-                            </div>
+                            {% if form.min_salary.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.min_salary.errors.0 }}</p>
+                            {% endif %}
                         </div>
+                        
+                        <div>
+                            <label for="{{ form.max_salary.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                                💰 {% trans 'Salario Máximo' %}
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                                <input type="number" 
+                                       name="{{ form.max_salary.name }}" 
+                                       id="{{ form.max_salary.id_for_label }}" 
+                                       value="{{ form.max_salary.value|default:'' }}"
+                                       min="0" step="0.01"
+                                       class="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all duration-300 {% if form.max_salary.errors %}border-red-500{% endif %}"
+                                       placeholder="{% trans 'Ej: 5000' %}">
+                            </div>
+                            {% if form.max_salary.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.max_salary.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
 
-                        <!-- Errores generales del formulario -->
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
+                <!-- Opciones de Información -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 mb-6 border border-purple-100">
+                    <h4 class="text-lg font-semibold text-purple-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-purple-600">settings</span>
+                        {% trans 'Opciones de Información' %}
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex items-center">
+                            <input type="checkbox" 
+                                   name="{{ form.include_salary_info.name }}" 
+                                   id="{{ form.include_salary_info.id_for_label }}"
+                                   {% if form.include_salary_info.value %}checked{% endif %}
+                                   class="w-4 h-4 text-purple-600 bg-slate-100 border-slate-300 rounded focus:ring-purple-500 focus:ring-2">
+                            <label for="{{ form.include_salary_info.id_for_label }}" class="ml-3 text-sm font-medium text-slate-700">
+                                💰 {% trans 'Incluir información salarial' %}
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" 
+                                   name="{{ form.include_schedule_info.name }}" 
+                                   id="{{ form.include_schedule_info.id_for_label }}"
+                                   {% if form.include_schedule_info.value %}checked{% endif %}
+                                   class="w-4 h-4 text-purple-600 bg-slate-100 border-slate-300 rounded focus:ring-purple-500 focus:ring-2">
+                            <label for="{{ form.include_schedule_info.id_for_label }}" class="ml-3 text-sm font-medium text-slate-700">
+                                ⏰ {% trans 'Incluir información de horarios' %}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Errores generales del formulario -->
+                {% if form.non_field_errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-center">
+                            <span class="material-icons text-red-500 mr-2">error</span>
+                            <div class="text-red-700">
                                 {% for error in form.non_field_errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
-                        {% endif %}
-
-                        <!-- Botones -->
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'reporting_web:index' %}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>{% trans 'Cancelar' %}
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search me-2"></i>{% trans 'Generar Reporte' %}
-                            </button>
                         </div>
-                    </form>
-                </div>
-            </div>
+                    </div>
+                {% endif %}
 
-            <!-- Información adicional -->
-            <div class="card shadow mt-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-info-circle me-2"></i>{% trans 'Información del Reporte' %}
-                    </h6>
+                <!-- Form Actions -->
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-6 border-t border-slate-200">
+                    <a href="{% url 'reporting_web:index' %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">cancel</span>
+                        {% trans 'Cancelar' %}
+                    </a>
+                    <button type="submit" 
+                            class="flex items-center bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">search</span>
+                        {% trans 'Generar Reporte' %}
+                    </button>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>{% trans 'Información Incluida:' %}</h6>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-user text-primary me-2"></i>{% trans 'Datos personales básicos' %}</li>
-                                <li><i class="fas fa-calendar text-primary me-2"></i>{% trans 'Fecha de contratación' %}</li>
-                                <li><i class="fas fa-building text-primary me-2"></i>{% trans 'Información del departamento' %}</li>
-                                <li><i class="fas fa-euro-sign text-primary me-2"></i>{% trans 'Información salarial (opcional)' %}</li>
-                                <li><i class="fas fa-clock text-primary me-2"></i>{% trans 'Información de horarios (opcional)' %}</li>
-                            </ul>
+            </form>
+        </div>
+    </div>
+
+    <!-- Información Adicional -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">info</span>
+                {% trans 'Información del Reporte' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons text-emerald-500 mr-2">featured_play_list</span>
+                        {% trans 'Información Incluida:' %}
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <span class="material-icons text-emerald-500 mr-3">person</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Datos personales básicos' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Nombre, edad, género, etc.' %}</div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h6>{% trans 'Filtros Disponibles:' %}</h6>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-calendar-alt text-success me-2"></i>{% trans 'Rango de fechas de contratación' %}</li>
-                                <li><i class="fas fa-toggle-on text-success me-2"></i>{% trans 'Estado de empleo' %}</li>
-                                <li><i class="fas fa-sitemap text-success me-2"></i>{% trans 'Filtro por departamento' %}</li>
-                                <li><i class="fas fa-euro-sign text-success me-2"></i>{% trans 'Rango de salarios' %}</li>
-                                <li><i class="fas fa-chart-line text-success me-2"></i>{% trans 'Años de servicio' %}</li>
-                            </ul>
+                        <div class="flex items-center">
+                            <span class="material-icons text-emerald-500 mr-3">event</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Fecha de contratación' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Cuándo ingresó a la empresa' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-emerald-500 mr-3">business</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Información del departamento' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Departamento y posición' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-emerald-500 mr-3">account_balance_wallet</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Información salarial (opcional)' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Salario y beneficios' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-emerald-500 mr-3">schedule</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Información de horarios (opcional)' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Turnos y horarios de trabajo' %}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons text-blue-500 mr-2">filter_list</span>
+                        {% trans 'Filtros Disponibles:' %}
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <span class="material-icons text-blue-500 mr-3">event</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Rango de fechas de contratación' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Filtrar por período de ingreso' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-blue-500 mr-3">toggle_on</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Estado de empleo' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Activo, inactivo o despedido' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-blue-500 mr-3">business</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Filtro por departamento' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Médico, administrativo, etc.' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-blue-500 mr-3">account_balance_wallet</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Rango de salarios' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Filtrar por salario mínimo y máximo' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-blue-500 mr-3">trending_up</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Años de servicio' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Antigüedad en la empresa' %}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -188,44 +333,42 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Validación de fechas
-        const dateFrom = document.getElementById('{{ form.date_from.id_for_label }}');
-        const dateTo = document.getElementById('{{ form.date_to.id_for_label }}');
-        
-        function validateDates() {
-            if (dateFrom.value && dateTo.value) {
-                if (dateFrom.value > dateTo.value) {
-                    dateTo.setCustomValidity('La fecha de fin debe ser posterior a la fecha de inicio');
-                } else {
-                    dateTo.setCustomValidity('');
-                }
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación de fechas
+    const dateFrom = document.getElementById('{{ form.date_from.id_for_label }}');
+    const dateTo = document.getElementById('{{ form.date_to.id_for_label }}');
+    
+    function validateDates() {
+        if (dateFrom.value && dateTo.value) {
+            if (dateFrom.value > dateTo.value) {
+                dateTo.setCustomValidity('{% trans "La fecha de fin debe ser posterior a la fecha de inicio" %}');
+            } else {
+                dateTo.setCustomValidity('');
             }
         }
-        
-        dateFrom.addEventListener('change', validateDates);
-        dateTo.addEventListener('change', validateDates);
-        
-        // Validación de salarios
-        const minSalary = document.getElementById('{{ form.min_salary.id_for_label }}');
-        const maxSalary = document.getElementById('{{ form.max_salary.id_for_label }}');
-        
-        function validateSalaries() {
-            if (minSalary.value && maxSalary.value) {
-                if (parseFloat(minSalary.value) > parseFloat(maxSalary.value)) {
-                    maxSalary.setCustomValidity('El salario máximo debe ser mayor que el salario mínimo');
-                } else {
-                    maxSalary.setCustomValidity('');
-                }
+    }
+    
+    dateFrom.addEventListener('change', validateDates);
+    dateTo.addEventListener('change', validateDates);
+    
+    // Validación de salarios
+    const minSalary = document.getElementById('{{ form.min_salary.id_for_label }}');
+    const maxSalary = document.getElementById('{{ form.max_salary.id_for_label }}');
+    
+    function validateSalaries() {
+        if (minSalary.value && maxSalary.value) {
+            if (parseFloat(minSalary.value) > parseFloat(maxSalary.value)) {
+                maxSalary.setCustomValidity('{% trans "El salario máximo debe ser mayor que el salario mínimo" %}');
+            } else {
+                maxSalary.setCustomValidity('');
             }
         }
-        
-        minSalary.addEventListener('change', validateSalaries);
-        maxSalary.addEventListener('change', validateSalaries);
-    });
+    }
+    
+    minSalary.addEventListener('change', validateSalaries);
+    maxSalary.addEventListener('change', validateSalaries);
+});
 </script>
 {% endblock %} 

@@ -4,278 +4,381 @@
 
 {% block title %}{% trans 'Lista de Reportes' %}{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">{% trans 'Reportes' %}</h1>
-        <div class="btn-group" role="group">
-            <a href="{% url 'reporting_web:quick_report' %}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>{% trans 'Reporte Rápido' %}
-            </a>
-            <a href="{% url 'reporting_web:report_create' %}" class="btn btn-outline-primary">
-                <i class="fas fa-file-alt me-2"></i>{% trans 'Nuevo Reporte' %}
-            </a>
-        </div>
-    </div>
+{% block page_title %}{% trans 'Reportes' %}{% endblock %}
 
-    <!-- Filtros -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-secondary">{% trans 'Filtros y Búsqueda' %}</h6>
-        </div>
-        <div class="card-body">
-            <form method="get" class="row g-3">
-                <div class="col-md-3">
-                    <label for="search" class="form-label">{% trans 'Buscar' %}</label>
-                    <input type="text" class="form-control" id="search" name="search" 
-                           value="{{ filters.search }}" placeholder="{% trans 'Título o descripción...' %}">
-                </div>
-                <div class="col-md-2">
-                    <label for="type" class="form-label">{% trans 'Tipo' %}</label>
-                    <select class="form-select" id="type" name="type">
-                        <option value="">{% trans 'Todos' %}</option>
-                        {% for value, label in report_types %}
-                        <option value="{{ value }}" {% if filters.type == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label for="status" class="form-label">{% trans 'Estado' %}</label>
-                    <select class="form-select" id="status" name="status">
-                        <option value="">{% trans 'Todos' %}</option>
-                        {% for value, label in status_choices %}
-                        <option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label for="date_from" class="form-label">{% trans 'Desde' %}</label>
-                    <input type="date" class="form-control" id="date_from" name="date_from" 
-                           value="{{ filters.date_from }}">
-                </div>
-                <div class="col-md-2">
-                    <label for="date_to" class="form-label">{% trans 'Hasta' %}</label>
-                    <input type="date" class="form-control" id="date_to" name="date_to" 
-                           value="{{ filters.date_to }}">
-                </div>
-                <div class="col-md-1 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+{% block page_subtitle %}{% trans 'Gestiona todos los reportes del sistema' %}{% endblock %}
 
-    <!-- Lista de Reportes -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-secondary">
-                {% trans 'Reportes' %} 
-                <span class="badge bg-primary">{{ page_obj.paginator.count }}</span>
-            </h6>
-        </div>
-        <div class="card-body">
-            {% if page_obj %}
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>{% trans 'Título' %}</th>
-                                <th>{% trans 'Tipo' %}</th>
-                                <th>{% trans 'Formato' %}</th>
-                                <th>{% trans 'Estado' %}</th>
-                                <th>{% trans 'Creado' %}</th>
-                                <th>{% trans 'Tamaño' %}</th>
-                                <th>{% trans 'Acciones' %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for report in page_obj %}
-                            <tr>
-                                <td>
-                                    <div>
-                                        <strong>{{ report.title }}</strong>
-                                        {% if report.description %}
-                                        <br><small class="text-muted">{{ report.description|truncatechars:60 }}</small>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge bg-secondary">{{ report.get_report_type_display }}</span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-info">{{ report.format|upper }}</span>
-                                </td>
-                                <td>
-                                    {% if report.status == 'completed' %}
-                                        <span class="badge bg-success">{% trans 'Completado' %}</span>
-                                    {% elif report.status == 'pending' %}
-                                        <span class="badge bg-warning">{% trans 'Pendiente' %}</span>
-                                    {% elif report.status == 'processing' %}
-                                        <span class="badge bg-info">{% trans 'Procesando' %}</span>
-                                    {% else %}
-                                        <span class="badge bg-danger">{% trans 'Fallido' %}</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <div>
-                                        <small>{{ report.created_at|date:"d/m/Y" }}</small>
-                                        <br><small class="text-muted">{{ report.created_at|date:"H:i" }}</small>
-                                    </div>
-                                </td>
-                                <td>
-                                    {% if report.file_size %}
-                                        <small>{{ report.file_size_mb }} MB</small>
-                                    {% else %}
-                                        <small class="text-muted">-</small>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <a href="{% url 'reporting_web:report_detail' report.id %}" 
-                                           class="btn btn-outline-primary" title="{% trans 'Ver detalles' %}">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{% url 'reporting_web:report_update' report.id %}" 
-                                           class="btn btn-outline-warning" title="{% trans 'Editar' %}">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        {% if report.is_completed %}
-                                        <a href="#" class="btn btn-outline-success" title="{% trans 'Descargar' %}">
-                                            <i class="fas fa-download"></i>
-                                        </a>
-                                        {% endif %}
-                                        <button type="button" class="btn btn-outline-danger" 
-                                                title="{% trans 'Eliminar' %}"
-                                                onclick="confirmDelete('{{ report.title }}', '{% url 'reporting_web:report_delete' report.id %}')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Paginación -->
-                {% if page_obj.has_other_pages %}
-                <nav aria-label="{% trans 'Navegación de páginas' %}">
-                    <ul class="pagination justify-content-center">
-                        {% if page_obj.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                                    <i class="fas fa-angle-double-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                                    <i class="fas fa-angle-left"></i>
-                                </a>
-                            </li>
-                        {% endif %}
-
-                        {% for num in page_obj.paginator.page_range %}
-                            {% if page_obj.number == num %}
-                                <li class="page-item active">
-                                    <span class="page-link">{{ num }}</span>
-                                </li>
-                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-
-                        {% if page_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                                    <i class="fas fa-angle-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
-                                    <i class="fas fa-angle-double-right"></i>
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-                {% endif %}
-
-                <!-- Información de paginación -->
-                <div class="text-center text-muted">
-                    <small>
-                        {% trans 'Mostrando' %} {{ page_obj.start_index }}-{{ page_obj.end_index }} 
-                        {% trans 'de' %} {{ page_obj.paginator.count }} {% trans 'reportes' %}
-                    </small>
-                </div>
-
-            {% else %}
-                <div class="text-center py-5">
-                    <i class="fas fa-chart-bar fa-4x text-muted mb-4"></i>
-                    <h4 class="text-muted">{% trans 'No se encontraron reportes' %}</h4>
-                    <p class="text-muted">{% trans 'No hay reportes que coincidan con los filtros aplicados.' %}</p>
-                    <div class="mt-3">
-                        <a href="{% url 'reporting_web:report_create' %}" class="btn btn-primary me-2">
-                            <i class="fas fa-plus me-2"></i>{% trans 'Crear Reporte' %}
-                        </a>
-                        <a href="{% url 'reporting_web:index' %}" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>{% trans 'Volver al Dashboard' %}
-                        </a>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-<!-- Modal de confirmación de eliminación -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">{% trans 'Confirmar Eliminación' %}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>{% trans '¿Estás seguro de que quieres eliminar el reporte' %} <strong id="reportTitle"></strong>?</p>
-                <p class="text-muted">{% trans 'Esta acción no se puede deshacer.' %}</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Cancelar' %}</button>
-                <form id="deleteForm" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">{% trans 'Eliminar' %}</button>
-                </form>
-            </div>
-        </div>
-    </div>
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'reporting_web:index' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">dashboard</span>
+        <span class="text-sm">Dashboard</span>
+    </a>
+    <a href="{% url 'reporting_web:quick_report' %}" class="flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">flash_on</span>
+        <span class="text-sm">{% trans 'Reporte Rápido' %}</span>
+    </a>
+    <a href="{% url 'reporting_web:report_create' %}" class="flex items-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">add</span>
+        <span class="text-sm">{% trans 'Nuevo Reporte' %}</span>
+    </a>
 </div>
 {% endblock %}
 
-{% block extra_js %}
-<script>
-    function confirmDelete(title, url) {
-        document.getElementById('reportTitle').textContent = title;
-        document.getElementById('deleteForm').action = url;
-        new bootstrap.Modal(document.getElementById('deleteModal')).show();
-    }
+{% block content %}
+<!-- Header con gradiente -->
+<div class="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-2xl">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative p-8">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white border-opacity-30">
+                        <span class="material-icons text-white text-3xl">assessment</span>
+                    </div>
+                </div>
+                <div class="text-white">
+                    <h2 class="text-3xl font-bold mb-2">{% trans 'Reportes' %}</h2>
+                    <p class="text-white text-opacity-90 text-lg">{% trans 'Gestiona todos los reportes del sistema' %}</p>
+                </div>
+            </div>
+            <div class="text-white text-right">
+                <div class="text-4xl font-bold">{{ page_obj.paginator.count|default:"0" }}</div>
+                <div class="text-white text-opacity-80">Total Reportes</div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Filtros y Búsqueda -->
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+        <h3 class="text-lg font-semibold text-white flex items-center">
+            <span class="material-icons mr-2">filter_list</span>
+            {% trans 'Filtros y Búsqueda' %}
+        </h3>
+    </div>
+    <div class="p-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+            <div>
+                <label for="search" class="block text-sm font-medium text-slate-700 mb-3">
+                    🔍 {% trans 'Buscar' %}
+                </label>
+                <input type="text" 
+                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                       id="search" 
+                       name="search" 
+                       value="{{ filters.search }}" 
+                       placeholder="{% trans 'Título o descripción...' %}">
+            </div>
+            
+            <div>
+                <label for="type" class="block text-sm font-medium text-slate-700 mb-3">
+                    📊 {% trans 'Tipo' %}
+                </label>
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                        id="type" 
+                        name="type">
+                    <option value="">{% trans 'Todos' %}</option>
+                    {% for value, label in report_types %}
+                    <option value="{{ value }}" {% if filters.type == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="status" class="block text-sm font-medium text-slate-700 mb-3">
+                    ✅ {% trans 'Estado' %}
+                </label>
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                        id="status" 
+                        name="status">
+                    <option value="">{% trans 'Todos' %}</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="date_from" class="block text-sm font-medium text-slate-700 mb-3">
+                    📅 {% trans 'Desde' %}
+                </label>
+                <input type="date" 
+                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                       id="date_from" 
+                       name="date_from" 
+                       value="{{ filters.date_from }}">
+            </div>
+            
+            <div>
+                <label for="date_to" class="block text-sm font-medium text-slate-700 mb-3">
+                    📅 {% trans 'Hasta' %}
+                </label>
+                <input type="date" 
+                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                       id="date_to" 
+                       name="date_to" 
+                       value="{{ filters.date_to }}">
+            </div>
+            
+            <div class="flex items-end space-x-3">
+                <button type="submit" class="flex-1 flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons mr-2 text-sm">search</span>
+                    <span class="text-sm">{% trans 'Filtrar' %}</span>
+                </button>
+                <a href="{% url 'reporting_web:report_list' %}" 
+                   class="flex items-center justify-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">clear</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista de Reportes -->
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">assessment</span>
+                {% trans 'Reportes' %}
+            </h3>
+            <div class="flex items-center space-x-4 text-white">
+                <div class="flex items-center space-x-2">
+                    <span class="material-icons text-sm">assessment</span>
+                    <span class="text-sm">{{ page_obj.paginator.count|default:"0" }} reportes</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="material-icons text-sm">schedule</span>
+                    <span class="text-sm">Página {{ page_obj.number|default:"1" }} de {{ page_obj.paginator.num_pages|default:"1" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="p-6">
+        {% if page_obj %}
+        <div class="overflow-x-auto">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>{% trans 'Título' %}</th>
+                        <th>{% trans 'Tipo' %}</th>
+                        <th>{% trans 'Formato' %}</th>
+                        <th>{% trans 'Estado' %}</th>
+                        <th>{% trans 'Creado' %}</th>
+                        <th>{% trans 'Tamaño' %}</th>
+                        <th>{% trans 'Acciones' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in page_obj %}
+                    <tr class="hover:bg-slate-50 transition-all duration-300">
+                        <td class="py-4">
+                            <div class="flex flex-col">
+                                <span class="font-semibold text-slate-900">{{ report.title }}</span>
+                                {% if report.description %}
+                                <span class="text-sm text-slate-500 mt-1">{{ report.description|truncatechars:60 }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="py-4">
+                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-800">
+                                {{ report.get_report_type_display }}
+                            </span>
+                        </td>
+                        <td class="py-4">
+                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {{ report.format|upper }}
+                            </span>
+                        </td>
+                        <td class="py-4">
+                            {% if report.status == 'completed' %}
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                                    <span class="material-icons text-xs mr-1">check_circle</span>
+                                    {% trans 'Completado' %}
+                                </span>
+                            {% elif report.status == 'pending' %}
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">
+                                    <span class="material-icons text-xs mr-1">schedule</span>
+                                    {% trans 'Pendiente' %}
+                                </span>
+                            {% elif report.status == 'processing' %}
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    <span class="material-icons text-xs mr-1">sync</span>
+                                    {% trans 'Procesando' %}
+                                </span>
+                            {% else %}
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                    <span class="material-icons text-xs mr-1">error</span>
+                                    {% trans 'Fallido' %}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="py-4">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-slate-900">{{ report.created_at|date:"d/m/Y" }}</span>
+                                <span class="text-xs text-slate-500">{{ report.created_at|date:"H:i" }}</span>
+                            </div>
+                        </td>
+                        <td class="py-4">
+                            {% if report.file_size %}
+                                <span class="text-sm text-slate-600">{{ report.file_size_mb }} MB</span>
+                            {% else %}
+                                <span class="text-sm text-slate-400">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-4">
+                            <div class="flex items-center space-x-2">
+                                <a href="{% url 'reporting_web:report_detail' report.id %}" 
+                                   class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105"
+                                   title="{% trans 'Ver detalles' %}">
+                                    <span class="material-icons text-sm">visibility</span>
+                                </a>
+                                <a href="{% url 'reporting_web:report_update' report.id %}" 
+                                   class="flex items-center bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105"
+                                   title="{% trans 'Editar' %}">
+                                    <span class="material-icons text-sm">edit</span>
+                                </a>
+                                {% if report.is_completed %}
+                                <a href="#" 
+                                   class="flex items-center bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105"
+                                   title="{% trans 'Descargar' %}">
+                                    <span class="material-icons text-sm">download</span>
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'reporting_web:report_delete' report.id %}" 
+                                   class="flex items-center bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105"
+                                   title="{% trans 'Eliminar' %}">
+                                    <span class="material-icons text-sm">delete</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        {% if page_obj.has_other_pages %}
+        <div class="flex items-center justify-center mt-8">
+            <nav class="flex items-center space-x-2">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons text-sm">first_page</span>
+                    </a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons text-sm">chevron_left</span>
+                    </a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <span class="flex items-center bg-indigo-500 text-white font-semibold py-2 px-3 rounded-lg shadow-sm">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                           class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons text-sm">chevron_right</span>
+                    </a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons text-sm">last_page</span>
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+
+        <!-- Información de paginación -->
+        <div class="text-center text-slate-500 mt-4">
+            <small>
+                {% trans 'Mostrando' %} {{ page_obj.start_index }}-{{ page_obj.end_index }} 
+                {% trans 'de' %} {{ page_obj.paginator.count }} {% trans 'reportes' %}
+            </small>
+        </div>
+
+        {% else %}
+        <div class="flex flex-col items-center justify-center text-center text-slate-500 py-16">
+            <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+                <span class="material-icons text-4xl text-slate-300">assessment</span>
+            </div>
+            <h3 class="text-xl font-semibold text-slate-700 mb-2">{% trans 'No se encontraron reportes' %}</h3>
+            <p class="text-slate-500 mb-6">{% trans 'No hay reportes que coincidan con los filtros aplicados.' %}</p>
+            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                <a href="{% url 'reporting_web:report_create' %}" 
+                   class="flex items-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons mr-2">add</span>
+                    {% trans 'Crear Reporte' %}
+                </a>
+                <a href="{% url 'reporting_web:index' %}" 
+                   class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-xl border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons mr-2">arrow_back</span>
+                    {% trans 'Volver al Dashboard' %}
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Información adicional -->
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mt-8">
+    <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+        <h3 class="text-lg font-semibold text-white flex items-center">
+            <span class="material-icons mr-2">info</span>
+            {% trans 'Información de Reportes' %}
+        </h3>
+    </div>
+    <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons text-indigo-600 text-2xl">assessment</span>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Generación de Reportes' %}</h4>
+                <p class="text-sm text-slate-600">{% trans 'Crea reportes personalizados con datos del geriátrico' %}</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons text-purple-600 text-2xl">download</span>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Descarga de Archivos' %}</h4>
+                <p class="text-sm text-slate-600">{% trans 'Descarga reportes en múltiples formatos (PDF, Excel)' %}</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons text-pink-600 text-2xl">schedule</span>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Seguimiento de Estado' %}</h4>
+                <p class="text-sm text-slate-600">{% trans 'Monitorea el progreso de generación de reportes' %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
     // Auto-submit del formulario de filtros cuando cambian los selects
-    document.addEventListener('DOMContentLoaded', function() {
-        const selects = document.querySelectorAll('select[name="type"], select[name="status"]');
-        selects.forEach(select => {
-            select.addEventListener('change', function() {
-                this.form.submit();
-            });
+    const selects = document.querySelectorAll('select[name="type"], select[name="status"]');
+    selects.forEach(select => {
+        select.addEventListener('change', function() {
+            this.form.submit();
         });
     });
+});
 </script>
 {% endblock %} 

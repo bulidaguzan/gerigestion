@@ -4,93 +4,126 @@
 
 {% block title %}{{ report.title }} - {% trans 'Detalles del Reporte' %}{% endblock %}
 
-{% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-file-alt me-2"></i>{{ report.title }}
-        </h1>
-        <div class="btn-group" role="group">
-            <a href="{% url 'reporting_web:report_list' %}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-2"></i>{% trans 'Volver a la Lista' %}
-            </a>
-            <a href="{% url 'reporting_web:report_update' report.id %}" class="btn btn-outline-primary">
-                <i class="fas fa-edit me-2"></i>{% trans 'Editar' %}
-            </a>
-            {% if report.is_completed %}
-            <a href="{% url 'reporting_web:report_download' report.id %}" class="btn btn-success">
-                <i class="fas fa-download me-2"></i>{% trans 'Descargar' %}
-            </a>
-            {% endif %}
-        </div>
-    </div>
+{% block page_title %}{{ report.title }}{% endblock %}
 
-    <div class="row">
-        <!-- Información Principal -->
-        <div class="col-lg-8">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-info-circle me-2"></i>{% trans 'Información del Reporte' %}
-                    </h6>
+{% block page_subtitle %}{% trans 'Detalles completos del reporte' %}{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'reporting_web:report_list' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">{% trans 'Volver a la Lista' %}</span>
+    </a>
+    <a href="{% url 'reporting_web:report_update' report.id %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">edit</span>
+        <span class="text-sm">{% trans 'Editar' %}</span>
+    </a>
+    {% if report.is_completed %}
+    <a href="{% url 'reporting_web:report_download' report.id %}" class="flex items-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">download</span>
+        <span class="text-sm">{% trans 'Descargar' %}</span>
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Información del Reporte -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="material-icons mr-2">info</span>
+                        {% trans 'Información del Reporte' %}
+                    </h3>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <dl class="row">
-                                <dt class="col-sm-4">{% trans 'Título:' %}</dt>
-                                <dd class="col-sm-8">{{ report.title }}</dd>
-                                
-                                <dt class="col-sm-4">{% trans 'Tipo:' %}</dt>
-                                <dd class="col-sm-8">
-                                    <span class="badge bg-secondary">{{ report.get_report_type_display }}</span>
-                                </dd>
-                                
-                                <dt class="col-sm-4">{% trans 'Formato:' %}</dt>
-                                <dd class="col-sm-8">
-                                    <span class="badge bg-info">{{ report.get_format_display }}</span>
-                                </dd>
-                                
-                                <dt class="col-sm-4">{% trans 'Estado:' %}</dt>
-                                <dd class="col-sm-8">
-                                    {% if report.status == 'completed' %}
-                                        <span class="badge bg-success">{% trans 'Completado' %}</span>
-                                    {% elif report.status == 'pending' %}
-                                        <span class="badge bg-warning">{% trans 'Pendiente' %}</span>
-                                    {% elif report.status == 'processing' %}
-                                        <span class="badge bg-info">{% trans 'Procesando' %}</span>
-                                    {% else %}
-                                        <span class="badge bg-danger">{% trans 'Fallido' %}</span>
-                                    {% endif %}
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-6">
-                            <dl class="row">
-                                <dt class="col-sm-4">{% trans 'Creado por:' %}</dt>
-                                <dd class="col-sm-8">{{ report.created_by.get_full_name|default:report.created_by.username }}</dd>
-                                
-                                <dt class="col-sm-4">{% trans 'Creado el:' %}</dt>
-                                <dd class="col-sm-8">{{ report.created_at|date:"d/m/Y H:i" }}</dd>
-                                
-                                <dt class="col-sm-4">{% trans 'Actualizado:' %}</dt>
-                                <dd class="col-sm-8">{{ report.updated_at|date:"d/m/Y H:i" }}</dd>
-                                
-                                {% if report.generated_at %}
-                                <dt class="col-sm-4">{% trans 'Generado el:' %}</dt>
-                                <dd class="col-sm-8">{{ report.generated_at|date:"d/m/Y H:i" }}</dd>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Columna Izquierda -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Título:' %}</span>
+                                <span class="text-sm font-semibold text-slate-800">{{ report.title }}</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Tipo:' %}</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                    <span class="material-icons text-xs mr-1">category</span>
+                                    {{ report.get_report_type_display }}
+                                </span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Formato:' %}</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                    <span class="material-icons text-xs mr-1">folder</span>
+                                    {{ report.get_format_display }}
+                                </span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Estado:' %}</span>
+                                {% if report.status == 'completed' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <span class="material-icons text-xs mr-1">check_circle</span>
+                                        {% trans 'Completado' %}
+                                    </span>
+                                {% elif report.status == 'pending' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <span class="material-icons text-xs mr-1">schedule</span>
+                                        {% trans 'Pendiente' %}
+                                    </span>
+                                {% elif report.status == 'processing' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        <span class="material-icons text-xs mr-1">sync</span>
+                                        {% trans 'Procesando' %}
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <span class="material-icons text-xs mr-1">error</span>
+                                        {% trans 'Fallido' %}
+                                    </span>
                                 {% endif %}
-                            </dl>
+                            </div>
+                        </div>
+                        
+                        <!-- Columna Derecha -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Creado por:' %}</span>
+                                <span class="text-sm font-semibold text-slate-800">{{ report.created_by.get_full_name|default:report.created_by.username }}</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Creado el:' %}</span>
+                                <span class="text-sm font-semibold text-slate-800">{{ report.created_at|date:"d/m/Y H:i" }}</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Actualizado:' %}</span>
+                                <span class="text-sm font-semibold text-slate-800">{{ report.updated_at|date:"d/m/Y H:i" }}</span>
+                            </div>
+                            
+                            {% if report.generated_at %}
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Generado el:' %}</span>
+                                <span class="text-sm font-semibold text-slate-800">{{ report.generated_at|date:"d/m/Y H:i" }}</span>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                     
                     {% if report.description %}
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <h6>{% trans 'Descripción:' %}</h6>
-                            <p class="text-muted">{{ report.description }}</p>
-                        </div>
+                    <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                        <h4 class="font-semibold text-blue-800 mb-2 flex items-center">
+                            <span class="material-icons text-blue-600 mr-2 text-sm">description</span>
+                            {% trans 'Descripción:' %}
+                        </h4>
+                        <p class="text-slate-700">{{ report.description }}</p>
                     </div>
                     {% endif %}
                 </div>
@@ -98,33 +131,40 @@
 
             <!-- Filtros y Parámetros -->
             {% if report.date_from or report.date_to or report.filters %}
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-filter me-2"></i>{% trans 'Filtros y Parámetros' %}
-                    </h6>
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="material-icons mr-2">filter_list</span>
+                        {% trans 'Filtros y Parámetros' %}
+                    </h3>
                 </div>
-                <div class="card-body">
-                    <div class="row">
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {% if report.date_from or report.date_to %}
-                        <div class="col-md-6">
-                            <h6>{% trans 'Rango de Fechas:' %}</h6>
-                            <p class="text-muted">
+                        <div class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
+                            <h4 class="font-semibold text-purple-800 mb-3 flex items-center">
+                                <span class="material-icons text-purple-600 mr-2 text-sm">event</span>
+                                {% trans 'Rango de Fechas:' %}
+                            </h4>
+                            <p class="text-slate-700">
                                 {% if report.date_from and report.date_to %}
-                                    {{ report.date_from|date:"d/m/Y" }} - {{ report.date_to|date:"d/m/Y" }}
+                                    <span class="font-medium">{{ report.date_from|date:"d/m/Y" }}</span> - <span class="font-medium">{{ report.date_to|date:"d/m/Y" }}</span>
                                 {% elif report.date_from %}
-                                    {% trans 'Desde:' %} {{ report.date_from|date:"d/m/Y" }}
+                                    <span class="font-medium">{% trans 'Desde:' %}</span> {{ report.date_from|date:"d/m/Y" }}
                                 {% elif report.date_to %}
-                                    {% trans 'Hasta:' %} {{ report.date_to|date:"d/m/Y" }}
+                                    <span class="font-medium">{% trans 'Hasta:' %}</span> {{ report.date_to|date:"d/m/Y" }}
                                 {% endif %}
                             </p>
                         </div>
                         {% endif %}
                         
                         {% if report.filters %}
-                        <div class="col-md-6">
-                            <h6>{% trans 'Filtros Aplicados:' %}</h6>
-                            <p class="text-muted">{{ report.get_filters_display }}</p>
+                        <div class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
+                            <h4 class="font-semibold text-purple-800 mb-3 flex items-center">
+                                <span class="material-icons text-purple-600 mr-2 text-sm">tune</span>
+                                {% trans 'Filtros Aplicados:' %}
+                            </h4>
+                            <p class="text-slate-700">{{ report.get_filters_display }}</p>
                         </div>
                         {% endif %}
                     </div>
@@ -134,26 +174,32 @@
 
             <!-- Archivo Generado -->
             {% if report.is_completed and report.file_path %}
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-file me-2"></i>{% trans 'Archivo Generado' %}
-                    </h6>
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="material-icons mr-2">file_present</span>
+                        {% trans 'Archivo Generado' %}
+                    </h3>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <dl class="row">
-                                <dt class="col-sm-4">{% trans 'Ruta:' %}</dt>
-                                <dd class="col-sm-8">{{ report.file_path }}</dd>
-                                
-                                <dt class="col-sm-4">{% trans 'Tamaño:' %}</dt>
-                                <dd class="col-sm-8">{{ report.file_size_mb }} MB</dd>
-                            </dl>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Ruta:' %}</span>
+                                <span class="text-sm font-semibold text-slate-800 truncate">{{ report.file_path }}</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Tamaño:' %}</span>
+                                <span class="text-sm font-semibold text-slate-800">{{ report.file_size_mb }} MB</span>
+                            </div>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <a href="{% url 'reporting_web:report_download' report.id %}" class="btn btn-success">
-                                <i class="fas fa-download me-2"></i>{% trans 'Descargar Archivo' %}
+                        
+                        <div class="flex justify-center">
+                            <a href="{% url 'reporting_web:report_download' report.id %}" 
+                               class="flex items-center bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                                <span class="material-icons mr-2">download</span>
+                                {% trans 'Descargar Archivo' %}
                             </a>
                         </div>
                     </div>
@@ -163,59 +209,102 @@
         </div>
 
         <!-- Sidebar -->
-        <div class="col-lg-4">
+        <div class="space-y-6">
             <!-- Acciones -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-cogs me-2"></i>{% trans 'Acciones' %}
-                    </h6>
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="material-icons mr-2">settings</span>
+                        {% trans 'Acciones' %}
+                    </h3>
                 </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'reporting_web:report_update' report.id %}" class="btn btn-outline-primary">
-                            <i class="fas fa-edit me-2"></i>{% trans 'Editar Reporte' %}
+                <div class="p-6">
+                    <div class="space-y-3">
+                        <a href="{% url 'reporting_web:report_update' report.id %}" 
+                           class="flex items-center w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                            <span class="material-icons mr-2">edit</span>
+                            {% trans 'Editar Reporte' %}
                         </a>
                         
                         {% if not report.is_completed %}
-                        <a href="{% url 'reporting_web:report_regenerate' report.id %}" class="btn btn-outline-success">
-                            <i class="fas fa-sync me-2"></i>{% trans 'Regenerar Reporte' %}
+                        <a href="{% url 'reporting_web:report_regenerate' report.id %}" 
+                           class="flex items-center w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                            <span class="material-icons mr-2">refresh</span>
+                            {% trans 'Regenerar Reporte' %}
                         </a>
                         {% endif %}
                         
                         {% if report.is_completed %}
-                        <button class="btn btn-outline-info" onclick="previewReport()">
-                            <i class="fas fa-eye me-2"></i>{% trans 'Vista Previa' %}
+                        <button onclick="previewReport()" 
+                                class="flex items-center w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                            <span class="material-icons mr-2">visibility</span>
+                            {% trans 'Vista Previa' %}
                         </button>
                         {% endif %}
                         
-                        <a href="{% url 'reporting_web:report_delete' report.id %}" class="btn btn-outline-danger">
-                            <i class="fas fa-trash me-2"></i>{% trans 'Eliminar Reporte' %}
+                        <a href="{% url 'reporting_web:report_delete' report.id %}" 
+                           class="flex items-center w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                            <span class="material-icons mr-2">delete</span>
+                            {% trans 'Eliminar Reporte' %}
                         </a>
                     </div>
                 </div>
             </div>
 
             <!-- Estadísticas -->
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-chart-bar me-2"></i>{% trans 'Estadísticas' %}
-                    </h6>
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="material-icons mr-2">analytics</span>
+                        {% trans 'Estadísticas' %}
+                    </h3>
                 </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-6">
-                            <div class="border-end">
-                                <h4 class="text-primary">{{ report.file_size_mb }}</h4>
-                                <small class="text-muted">{% trans 'MB' %}</small>
+                <div class="p-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                            <div class="text-2xl font-bold text-blue-600">{{ report.file_size_mb }}</div>
+                            <div class="text-sm text-slate-600">{% trans 'MB' %}</div>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100">
+                            <div class="text-2xl font-bold text-green-600">
+                                {% if report.is_completed %}100%{% else %}0%{% endif %}
+                            </div>
+                            <div class="text-sm text-slate-600">{% trans 'Completado' %}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del Sistema -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-slate-400 to-slate-500 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="material-icons mr-2">info</span>
+                        {% trans 'Información del Sistema' %}
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <span class="material-icons text-indigo-500 mr-3">schedule</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Tiempo de generación' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Variable según complejidad' %}</div>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <h4 class="text-success">
-                                {% if report.is_completed %}100%{% else %}0%{% endif %}
-                            </h4>
-                            <small class="text-muted">{% trans 'Completado' %}</small>
+                        <div class="flex items-center">
+                            <span class="material-icons text-emerald-500 mr-3">security</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Seguridad' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Acceso autorizado únicamente' %}</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="material-icons text-purple-500 mr-3">backup</span>
+                            <div>
+                                <div class="font-semibold text-slate-800">{% trans 'Respaldo' %}</div>
+                                <div class="text-sm text-slate-600">{% trans 'Archivos guardados automáticamente' %}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -223,13 +312,11 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
-    function previewReport() {
-        // Implementar vista previa del reporte
-        alert('{% trans "Función de vista previa en desarrollo" %}');
-    }
+function previewReport() {
+    // Implementar vista previa del reporte
+    alert('{% trans "Función de vista previa en desarrollo" %}');
+}
 </script>
 {% endblock %} 

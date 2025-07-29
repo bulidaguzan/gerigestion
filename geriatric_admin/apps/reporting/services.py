@@ -60,19 +60,23 @@ class ReportGenerator:
         """Genera reporte de residentes"""
         residents = Resident.objects.all()
         
-        # Aplicar filtros
-        if self.report.date_from:
-            residents = residents.filter(admission_date__gte=self.report.date_from)
-        if self.report.date_to:
-            residents = residents.filter(admission_date__lte=self.report.date_to)
+        # Determinar si es un reporte rápido o específico basado en el título
+        is_quick_report = 'Week' in self.report.title or 'Month' in self.report.title or 'Today' in self.report.title
+        
+        # Aplicar filtros de fecha solo para reportes específicos, no para reportes rápidos
+        if not is_quick_report and self.report.date_from and self.report.date_to:
+            residents = residents.filter(admission_date__gte=self.report.date_from, 
+                                      admission_date__lte=self.report.date_to)
         
         # Aplicar filtros adicionales desde JSON
         filters = self.report.filters or {}
         if filters.get('status'):
             if filters['status'] == 'active':
-                residents = residents.filter(is_active=True)
+                # Para residentes activos, consideramos aquellos que están en tratamiento o recientemente admitidos
+                residents = residents.filter(is_in_treatment=True)
             elif filters['status'] == 'inactive':
-                residents = residents.filter(is_active=False)
+                # Para residentes inactivos, consideramos aquellos que no están en tratamiento
+                residents = residents.filter(is_in_treatment=False)
         
         if filters.get('gender'):
             residents = residents.filter(gender=filters['gender'])
@@ -86,11 +90,11 @@ class ReportGenerator:
         # Filtros de edad
         if filters.get('min_age'):
             min_age_date = timezone.now().date() - timedelta(days=filters['min_age'] * 365)
-            residents = residents.filter(birth_date__lte=min_age_date)
+            residents = residents.filter(date_of_birth__lte=min_age_date)
         
         if filters.get('max_age'):
             max_age_date = timezone.now().date() - timedelta(days=filters['max_age'] * 365)
-            residents = residents.filter(birth_date__gte=max_age_date)
+            residents = residents.filter(date_of_birth__gte=max_age_date)
         
         # Generar archivo según formato
         if self.report.format == 'csv':
@@ -104,11 +108,13 @@ class ReportGenerator:
         """Genera reporte de personal"""
         staff = Staff.objects.all()
         
-        # Aplicar filtros
-        if self.report.date_from:
-            staff = staff.filter(hire_date__gte=self.report.date_from)
-        if self.report.date_to:
-            staff = staff.filter(hire_date__lte=self.report.date_to)
+        # Determinar si es un reporte rápido o específico basado en el título
+        is_quick_report = 'Week' in self.report.title or 'Month' in self.report.title or 'Today' in self.report.title
+        
+        # Aplicar filtros de fecha solo para reportes específicos, no para reportes rápidos
+        if not is_quick_report and self.report.date_from and self.report.date_to:
+            staff = staff.filter(hire_date__gte=self.report.date_from, 
+                               hire_date__lte=self.report.date_to)
         
         # Aplicar filtros adicionales
         filters = self.report.filters or {}
@@ -207,7 +213,7 @@ class ReportGenerator:
         
         with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
             fieldnames = ['ID', 'Nombre', 'Apellidos', 'Fecha de Nacimiento', 'Edad', 'Género', 
-                         'Fecha de Admisión', 'Habitación', 'Estado', 'Teléfono', 'Email']
+                         'Fecha de Admisión', 'Habitación', 'Teléfono', 'Email']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             
             writer.writeheader()
@@ -216,12 +222,11 @@ class ReportGenerator:
                     'ID': resident.id,
                     'Nombre': resident.first_name,
                     'Apellidos': resident.last_name,
-                    'Fecha de Nacimiento': resident.birth_date,
+                    'Fecha de Nacimiento': resident.date_of_birth,
                     'Edad': resident.age,
                     'Género': resident.get_gender_display(),
                     'Fecha de Admisión': resident.admission_date,
-                    'Habitación': resident.room.number if resident.room else 'Sin asignar',
-                    'Estado': 'Activo' if resident.is_active else 'Inactivo',
+                    'Habitación': resident.room.room_number if resident.room else 'Sin asignar',
                     'Teléfono': resident.phone,
                     'Email': resident.email
                 })
@@ -247,12 +252,11 @@ class ReportGenerator:
                 'id': resident.id,
                 'first_name': resident.first_name,
                 'last_name': resident.last_name,
-                'birth_date': resident.birth_date.isoformat() if resident.birth_date else None,
+                'birth_date': resident.date_of_birth.isoformat() if resident.date_of_birth else None,
                 'age': resident.age,
                 'gender': resident.get_gender_display(),
                 'admission_date': resident.admission_date.isoformat() if resident.admission_date else None,
-                'room': resident.room.number if resident.room else None,
-                'is_active': resident.is_active,
+                'room': resident.room.room_number if resident.room else None,
                 'phone': resident.phone,
                 'email': resident.email
             })
@@ -278,7 +282,7 @@ class ReportGenerator:
                     'ID': member.id,
                     'Nombre': member.first_name,
                     'Apellidos': member.last_name,
-                    'Departamento': member.get_department_display(),
+                    'Departamento': member.department,
                     'Cargo': member.position,
                     'Fecha de Contratación': member.hire_date,
                     'Salario': member.salary,
@@ -308,7 +312,7 @@ class ReportGenerator:
                 'id': member.id,
                 'first_name': member.first_name,
                 'last_name': member.last_name,
-                'department': member.get_department_display(),
+                'department': member.department,
                 'position': member.position,
                 'hire_date': member.hire_date.isoformat() if member.hire_date else None,
                 'salary': float(member.salary) if member.salary else None,
@@ -467,8 +471,10 @@ class ReportGenerator:
         # Tabla de residentes
         if residents.exists():
             # Definir encabezados según los filtros
-            headers = ['ID', 'Nombre', 'Apellidos', 'Edad', 'Género', 'Habitación', 'Estado']
-            col_widths = [0.5*inch, 1.2*inch, 1.2*inch, 0.6*inch, 0.8*inch, 1*inch, 0.8*inch]
+            headers = ['ID', 'Nombre', 'Apellidos', 'Edad', 'Género', 'Habitación']
+            col_widths = [0.5*inch, 1.2*inch, 1.2*inch, 0.6*inch, 0.8*inch, 1*inch]
+            
+            filters = self.report.filters or {}
             
             if filters.get('include_medical'):
                 headers.append('Información Médica')
@@ -488,8 +494,7 @@ class ReportGenerator:
                     resident.last_name or '',
                     str(resident.age) if resident.age else '',
                     resident.get_gender_display() if resident.gender else '',
-                    resident.room.number if resident.room else 'Sin asignar',
-                    'Activo' if resident.is_active else 'Inactivo'
+                    resident.room.room_number if resident.room else 'Sin asignar'
                 ]
                 
                 # Agregar información médica si se solicita
@@ -594,6 +599,8 @@ class ReportGenerator:
             headers = ['ID', 'Nombre', 'Apellidos', 'Departamento', 'Cargo', 'Estado']
             col_widths = [0.5*inch, 1.2*inch, 1.2*inch, 1.2*inch, 1.2*inch, 1*inch]
             
+            filters = self.report.filters or {}
+            
             if filters.get('include_salary'):
                 headers.append('Información Salarial')
                 col_widths.append(1.5*inch)
@@ -610,7 +617,7 @@ class ReportGenerator:
                     str(member.id),
                     member.first_name or '',
                     member.last_name or '',
-                    member.get_department_display() if member.department else '',
+                    member.department or '',
                     member.position or '',
                     member.get_employment_status_display() if member.employment_status else ''
                 ]
@@ -630,8 +637,8 @@ class ReportGenerator:
                     schedule_info = []
                     if hasattr(member, 'work_schedule') and member.work_schedule:
                         schedule_info.append(f"Horario: {member.work_schedule}")
-                    if hasattr(member, 'shift') and member.shift:
-                        schedule_info.append(f"Turno: {member.shift}")
+                    if hasattr(member, 'shift_type') and member.shift_type:
+                        schedule_info.append(f"Turno: {member.shift_type}")
                     
                     row.append('; '.join(schedule_info) if schedule_info else 'Sin información de horarios')
                 

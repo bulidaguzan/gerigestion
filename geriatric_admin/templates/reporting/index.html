@@ -3,16 +3,178 @@
 
 {% block title %}{% trans 'Reportes' %} - {% trans 'Sistema de Administración Geriátrica' %}{% endblock %}
 
+{% block page_title %}{% trans 'Módulo de Reportes' %}{% endblock %}
+
+{% block page_subtitle %}{% trans 'Redirigiendo al dashboard de reportes...' %}{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="text-center py-5">
-                <i class="fas fa-chart-bar fa-4x text-primary mb-4"></i>
-                <h1 class="h3 mb-3">{% trans 'Módulo de Reportes' %}</h1>
-                <p class="text-muted mb-4">{% trans 'Redirigiendo al dashboard de reportes...' %}</p>
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">{% trans 'Cargando...' %}</span>
+<div class="max-w-4xl mx-auto">
+    <!-- Main Redirect Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-8">
+            <div class="text-center">
+                <div class="relative w-24 h-24 mx-auto mb-6">
+                    <div class="absolute inset-0 bg-white bg-opacity-20 rounded-full animate-ping"></div>
+                    <div class="relative w-full h-full bg-white bg-opacity-30 rounded-full flex items-center justify-center">
+                        <span class="material-icons text-4xl text-white">assessment</span>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">{% trans 'Módulo de Reportes' %}</h2>
+                <p class="text-indigo-100 text-lg">{% trans 'Sistema de generación y gestión de reportes' %}</p>
+            </div>
+        </div>
+        <div class="p-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center mb-6">
+                    <div class="relative">
+                        <div class="w-8 h-8 bg-indigo-500 rounded-full animate-ping"></div>
+                        <div class="absolute top-0 left-0 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <span class="material-icons text-white text-sm">arrow_forward</span>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-lg font-semibold text-slate-800">{% trans 'Redirigiendo...' %}</p>
+                        <p class="text-sm text-slate-600">{% trans 'Preparando el dashboard de reportes' %}</p>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full animate-pulse" style="width: 100%"></div>
+                </div>
+                
+                <!-- Loading Animation -->
+                <div class="flex items-center justify-center space-x-2 mb-8">
+                    <div class="w-3 h-3 bg-indigo-500 rounded-full animate-bounce"></div>
+                    <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                    <div class="w-3 h-3 bg-pink-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <a href="{% url 'reporting_web:dashboard' %}" 
+                       class="flex items-center p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-100 hover:from-indigo-100 hover:to-purple-100 transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons text-indigo-600 mr-3">dashboard</span>
+                        <div>
+                            <div class="font-semibold text-slate-800">{% trans 'Dashboard' %}</div>
+                            <div class="text-sm text-slate-600">{% trans 'Vista general' %}</div>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'reporting_web:report_create' %}" 
+                       class="flex items-center p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-lg border border-emerald-100 hover:from-emerald-100 hover:to-green-100 transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons text-emerald-600 mr-3">add</span>
+                        <div>
+                            <div class="font-semibold text-slate-800">{% trans 'Crear Reporte' %}</div>
+                            <div class="text-sm text-slate-600">{% trans 'Nuevo reporte' %}</div>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'reporting_web:quick_report' %}" 
+                       class="flex items-center p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100 hover:from-purple-100 hover:to-pink-100 transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons text-purple-600 mr-3">flash_on</span>
+                        <div>
+                            <div class="font-semibold text-slate-800">{% trans 'Reporte Rápido' %}</div>
+                            <div class="text-sm text-slate-600">{% trans 'Configuración rápida' %}</div>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- System Status -->
+                <div class="bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg p-6 border border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center justify-center">
+                        <span class="material-icons text-slate-600 mr-2">info</span>
+                        {% trans 'Estado del Sistema' %}
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
+                            <span class="text-sm text-slate-700">{% trans 'Generación' %}</span>
+                            <span class="text-emerald-600">
+                                <span class="material-icons text-sm">check_circle</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
+                            <span class="text-sm text-slate-700">{% trans 'Exportación' %}</span>
+                            <span class="text-emerald-600">
+                                <span class="material-icons text-sm">check_circle</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
+                            <span class="text-sm text-slate-700">{% trans 'Programación' %}</span>
+                            <span class="text-emerald-600">
+                                <span class="material-icons text-sm">check_circle</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
+                            <span class="text-sm text-slate-700">{% trans 'Seguridad' %}</span>
+                            <span class="text-emerald-600">
+                                <span class="material-icons text-sm">check_circle</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Information Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mt-8">
+        <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">info</span>
+                {% trans 'Información del Módulo' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                        <span class="material-icons text-indigo-500 mr-2">featured_play_list</span>
+                        {% trans 'Tipos de Reportes' %}
+                    </h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-blue-500 mr-2 text-sm">people</span>
+                            {% trans 'Resumen de Residentes' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-emerald-500 mr-2 text-sm">person</span>
+                            {% trans 'Resumen del Personal' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-amber-500 mr-2 text-sm">business</span>
+                            {% trans 'Ocupación de Instalaciones' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-green-500 mr-2 text-sm">account_balance</span>
+                            {% trans 'Resumen Financiero' %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                        <span class="material-icons text-emerald-500 mr-2">folder</span>
+                        {% trans 'Formatos Disponibles' %}
+                    </h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-red-500 mr-2 text-sm">picture_as_pdf</span>
+                            PDF - {% trans 'Para impresión' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-green-500 mr-2 text-sm">table_chart</span>
+                            Excel - {% trans 'Para análisis' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-blue-500 mr-2 text-sm">table_view</span>
+                            CSV - {% trans 'Para importar' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-purple-500 mr-2 text-sm">auto_awesome</span>
+                            {% trans 'Generación automática' %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -20,9 +182,9 @@
 </div>
 
 <script>
-    // Redirigir automáticamente al dashboard de reportes
+    // Redirigir automáticamente al dashboard de reportes después de 3 segundos
     setTimeout(function() {
         window.location.href = "{% url 'reporting_web:dashboard' %}";
-    }, 1000);
+    }, 3000);
 </script>
 {% endblock %} 

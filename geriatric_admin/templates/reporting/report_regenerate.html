@@ -4,116 +4,233 @@
 
 {% block title %}{% trans 'Regenerar Reporte' %} - {{ report.title }}{% endblock %}
 
+{% block page_title %}{% trans 'Regenerar Reporte' %}{% endblock %}
+
+{% block page_subtitle %}{% trans 'Crear una nueva versión con datos actualizados' %}{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'reporting_web:report_detail' report.id %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">{% trans 'Volver al Detalle' %}</span>
+    </a>
+    <a href="{% url 'reporting_web:report_list' %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">list</span>
+        <span class="text-sm">{% trans 'Lista de Reportes' %}</span>
+    </a>
+</div>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-sync me-2"></i>{% trans 'Regenerar Reporte' %}
-        </h1>
-        <a href="{% url 'reporting_web:report_detail' report.id %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>{% trans 'Volver al Detalle' %}
-        </a>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card shadow">
-                <div class="card-header py-3 bg-warning text-dark">
-                    <h6 class="m-0 font-weight-bold">
-                        <i class="fas fa-sync me-2"></i>{% trans 'Confirmar Regeneración' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>{% trans 'Información:' %}</strong>
-                        {% trans 'Al regenerar el reporte, se creará una nueva versión con los datos más actualizados.' %}
+<div class="max-w-4xl mx-auto">
+    <!-- Main Confirmation Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">refresh</span>
+                {% trans 'Confirmar Regeneración' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <!-- Information Alert -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div class="flex items-start">
+                    <span class="material-icons text-blue-600 mr-3 mt-0.5">info</span>
+                    <div>
+                        <h4 class="font-semibold text-blue-800 mb-1">{% trans 'Información:' %}</h4>
+                        <p class="text-blue-700">{% trans 'Al regenerar el reporte, se creará una nueva versión con los datos más actualizados.' %}</p>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <dl class="row">
-                                <dt class="col-sm-4">{% trans 'Título:' %}</dt>
-                                <dd class="col-sm-8">{{ report.title }}</dd>
-                                
-                                <dt class="col-sm-4">{% trans 'Tipo:' %}</dt>
-                                <dd class="col-sm-8">{{ report.get_report_type_display }}</dd>
-                                
-                                <dt class="col-sm-4">{% trans 'Estado:' %}</dt>
-                                <dd class="col-sm-8">
-                                    {% if report.status == 'completed' %}
-                                        <span class="badge bg-success">{% trans 'Completado' %}</span>
-                                    {% elif report.status == 'pending' %}
-                                        <span class="badge bg-warning">{% trans 'Pendiente' %}</span>
-                                    {% elif report.status == 'processing' %}
-                                        <span class="badge bg-info">{% trans 'Procesando' %}</span>
-                                    {% else %}
-                                        <span class="badge bg-danger">{% trans 'Fallido' %}</span>
-                                    {% endif %}
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-6">
-                            <dl class="row">
-                                <dt class="col-sm-4">{% trans 'Creado por:' %}</dt>
-                                <dd class="col-sm-8">{{ report.created_by.get_full_name|default:report.created_by.username }}</dd>
-                                
-                                <dt class="col-sm-4">{% trans 'Creado el:' %}</dt>
-                                <dd class="col-sm-8">{{ report.created_at|date:"d/m/Y H:i" }}</dd>
-                                
-                                {% if report.generated_at %}
-                                <dt class="col-sm-4">{% trans 'Generado el:' %}</dt>
-                                <dd class="col-sm-8">{{ report.generated_at|date:"d/m/Y H:i" }}</dd>
-                                {% endif %}
-                            </dl>
-                        </div>
-                    </div>
-
-                    {% if report.description %}
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <h6>{% trans 'Descripción:' %}</h6>
-                            <p class="text-muted">{{ report.description }}</p>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>{% trans 'Nota:' %}</strong>
-                        {% trans 'El archivo anterior será reemplazado por la nueva versión.' %}
-                    </div>
-
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'reporting_web:report_detail' report.id %}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>{% trans 'Cancelar' %}
-                            </a>
-                            <button type="submit" class="btn btn-warning">
-                                <i class="fas fa-sync me-2"></i>{% trans 'Regenerar Reporte' %}
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
 
-            <!-- Información adicional -->
-            <div class="card shadow mt-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-info-circle me-2"></i>{% trans '¿Qué sucede al regenerar?' %}
-                    </h6>
+            <!-- Report Information -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Left Column -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <span class="text-sm font-medium text-slate-600">{% trans 'Título:' %}</span>
+                        <span class="text-sm font-semibold text-slate-800">{{ report.title }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <span class="text-sm font-medium text-slate-600">{% trans 'Tipo:' %}</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                            <span class="material-icons text-xs mr-1">category</span>
+                            {{ report.get_report_type_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <span class="text-sm font-medium text-slate-600">{% trans 'Estado:' %}</span>
+                        {% if report.status == 'completed' %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <span class="material-icons text-xs mr-1">check_circle</span>
+                                {% trans 'Completado' %}
+                            </span>
+                        {% elif report.status == 'pending' %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <span class="material-icons text-xs mr-1">schedule</span>
+                                {% trans 'Pendiente' %}
+                            </span>
+                        {% elif report.status == 'processing' %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                <span class="material-icons text-xs mr-1">sync</span>
+                                {% trans 'Procesando' %}
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <span class="material-icons text-xs mr-1">error</span>
+                                {% trans 'Fallido' %}
+                            </span>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="card-body">
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-check text-success me-2"></i>{% trans 'Se actualizarán los datos con la información más reciente' %}</li>
-                        <li><i class="fas fa-check text-success me-2"></i>{% trans 'Se aplicarán los filtros y parámetros actuales' %}</li>
-                        <li><i class="fas fa-check text-success me-2"></i>{% trans 'Se generará un nuevo archivo con la fecha y hora actual' %}</li>
-                        <li><i class="fas fa-times text-danger me-2"></i>{% trans 'El archivo anterior será reemplazado' %}</li>
-                        <li><i class="fas fa-clock text-info me-2"></i>{% trans 'El proceso puede tomar unos minutos' %}</li>
-                    </ul>
+                
+                <!-- Right Column -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <span class="text-sm font-medium text-slate-600">{% trans 'Creado por:' %}</span>
+                        <span class="text-sm font-semibold text-slate-800">{{ report.created_by.get_full_name|default:report.created_by.username }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <span class="text-sm font-medium text-slate-600">{% trans 'Creado el:' %}</span>
+                        <span class="text-sm font-semibold text-slate-800">{{ report.created_at|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    
+                    {% if report.generated_at %}
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <span class="text-sm font-medium text-slate-600">{% trans 'Generado el:' %}</span>
+                        <span class="text-sm font-semibold text-slate-800">{{ report.generated_at|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Description -->
+            {% if report.description %}
+            <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                <h4 class="font-semibold text-blue-800 mb-2 flex items-center">
+                    <span class="material-icons text-blue-600 mr-2 text-sm">description</span>
+                    {% trans 'Descripción:' %}
+                </h4>
+                <p class="text-slate-700">{{ report.description }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Warning Alert -->
+            <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4 mb-6">
+                <div class="flex items-start">
+                    <span class="material-icons text-amber-600 mr-3 mt-0.5">warning</span>
+                    <div>
+                        <h4 class="font-semibold text-amber-800 mb-1">{% trans 'Nota:' %}</h4>
+                        <p class="text-amber-700">{% trans 'El archivo anterior será reemplazado por la nueva versión.' %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-6 border-t border-slate-200">
+                    <a href="{% url 'reporting_web:report_detail' report.id %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">cancel</span>
+                        {% trans 'Cancelar' %}
+                    </a>
+                    <button type="submit" 
+                            class="flex items-center bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">refresh</span>
+                        {% trans 'Regenerar Reporte' %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- What Happens When Regenerating -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+        <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">help</span>
+                {% trans '¿Qué sucede al regenerar?' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="space-y-4">
+                <div class="flex items-start">
+                    <span class="material-icons text-green-500 mr-3 mt-0.5">check_circle</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Se actualizarán los datos con la información más reciente' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Incluye todos los cambios realizados desde la última generación' %}</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-start">
+                    <span class="material-icons text-green-500 mr-3 mt-0.5">check_circle</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Se aplicarán los filtros y parámetros actuales' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Mantiene la configuración original del reporte' %}</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-start">
+                    <span class="material-icons text-green-500 mr-3 mt-0.5">check_circle</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Se generará un nuevo archivo con la fecha y hora actual' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'El archivo tendrá la marca de tiempo actual' %}</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-start">
+                    <span class="material-icons text-red-500 mr-3 mt-0.5">cancel</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'El archivo anterior será reemplazado' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'La versión anterior se perderá permanentemente' %}</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-start">
+                    <span class="material-icons text-blue-500 mr-3 mt-0.5">schedule</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'El proceso puede tomar unos minutos' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Dependiendo del tamaño y complejidad del reporte' %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Process Information -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">process</span>
+                {% trans 'Información del Proceso' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="flex items-center">
+                    <span class="material-icons text-emerald-500 mr-3">data_usage</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Datos actualizados' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Información más reciente' %}</div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="material-icons text-blue-500 mr-3">settings</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Configuración preservada' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Mismos filtros y parámetros' %}</div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="material-icons text-purple-500 mr-3">file_present</span>
+                    <div>
+                        <div class="font-semibold text-slate-800">{% trans 'Nuevo archivo' %}</div>
+                        <div class="text-sm text-slate-600">{% trans 'Con marca de tiempo actual' %}</div>
+                    </div>
                 </div>
             </div>
         </div>

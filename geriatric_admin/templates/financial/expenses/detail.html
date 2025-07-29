@@ -5,330 +5,352 @@
 
 {% block title %}{{ expense.title }} - {% trans 'Detalles del Gasto' %}{% endblock %}
 
-{% block extra_css %}
-<style>
-    .detail-card {
-        border-left: 4px solid #e74a3b;
-    }
-    .status-badge {
-        font-size: 0.875rem;
-        padding: 0.5rem 1rem;
-    }
-    .amount-display {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #e74a3b;
-    }
-    .overdue {
-        color: #dc3545;
-        font-weight: bold;
-    }
-    .info-row {
-        border-bottom: 1px solid #e3e6f0;
-        padding: 0.75rem 0;
-    }
-    .info-row:last-child {
-        border-bottom: none;
-    }
-    .info-label {
-        font-weight: 600;
-        color: #5a5c69;
-    }
-    .info-value {
-        color: #858796;
-    }
-</style>
+{% block page_title %}{% trans 'Detalles del Gasto' %}{% endblock %}
+
+{% block page_subtitle %}{{ expense.title }}{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'financial_web:expense_list' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">arrow_back</span>
+        <span class="text-sm">{% trans 'Volver' %}</span>
+    </a>
+    <a href="{% url 'financial_web:expense_update' expense.id %}" class="flex items-center bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">edit</span>
+        <span class="text-sm">{% trans 'Editar' %}</span>
+    </a>
+</div>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">{% trans 'Detalles del Gasto' %}</h1>
-            <p class="text-muted">{{ expense.title }}</p>
-        </div>
-        <div>
-            <a href="{% url 'financial:expense_list' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> {% trans 'Volver' %}
-            </a>
-            <a href="{% url 'financial:expense_update' expense.id %}" class="btn btn-warning">
-                <i class="bi bi-pencil"></i> {% trans 'Editar' %}
-            </a>
+<!-- Header con gradiente -->
+<div class="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-red-500 via-pink-500 to-orange-600 shadow-2xl">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative p-8">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white border-opacity-30">
+                        <span class="material-icons text-white text-3xl">receipt_long</span>
+                    </div>
+                </div>
+                <div class="text-white">
+                    <h2 class="text-3xl font-bold mb-2">{{ expense.title }}</h2>
+                    <p class="text-white text-opacity-90 text-lg">{% trans 'Detalles completos del gasto' %}</p>
+                </div>
+            </div>
+            <div class="text-white text-right">
+                <div class="text-4xl font-bold">${{ expense.amount|floatformat:0|intcomma }}</div>
+                <div class="text-white text-opacity-80">Monto del Gasto</div>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="row">
-        <!-- Main Content -->
-        <div class="col-lg-8">
-            <!-- Expense Details Card -->
-            <div class="card shadow detail-card">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="bi bi-cash-stack"></i> {% trans 'Información del Gasto' %}
-                    </h6>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Contenido Principal -->
+    <div class="lg:col-span-2">
+        <!-- Información del Gasto -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+            <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="material-icons mr-2">receipt_long</span>
+                        {% trans 'Información del Gasto' %}
+                    </h3>
                     <div>
                         {% if expense.status == 'pending' %}
-                            <span class="badge bg-warning status-badge">{% trans 'Pendiente' %}</span>
+                            <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-amber-100 text-amber-800">
+                                <span class="material-icons text-sm mr-1">schedule</span>
+                                {% trans 'Pendiente' %}
+                            </span>
                         {% elif expense.status == 'paid' %}
-                            <span class="badge bg-success status-badge">{% trans 'Pagado' %}</span>
+                            <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                                <span class="material-icons text-sm mr-1">check_circle</span>
+                                {% trans 'Pagado' %}
+                            </span>
                         {% elif expense.status == 'cancelled' %}
-                            <span class="badge bg-secondary status-badge">{% trans 'Cancelado' %}</span>
+                            <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-slate-100 text-slate-800">
+                                <span class="material-icons text-sm mr-1">cancel</span>
+                                {% trans 'Cancelado' %}
+                            </span>
                         {% endif %}
                     </div>
                 </div>
-                <div class="card-body">
-                    <!-- Title and Amount -->
-                    <div class="row mb-4">
-                        <div class="col-md-8">
-                            <h4 class="mb-2">{{ expense.title }}</h4>
-                            {% if expense.description %}
-                                <p class="text-muted mb-0">{{ expense.description }}</p>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <div class="amount-display">${{ expense.amount|floatformat:0|intcomma }}</div>
-                        </div>
-                    </div>
-
-                    <!-- Basic Information -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Categoría' %}</div>
-                                <div class="info-value">
-                                    <span class="badge" style="background-color: {{ expense.category.color }}">
-                                        {{ expense.category.name }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Fecha del Gasto' %}</div>
-                                <div class="info-value">{{ expense.expense_date|date:"d/m/Y" }}</div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Método de Pago' %}</div>
-                                <div class="info-value">{{ expense.get_payment_method_display }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Estado' %}</div>
-                                <div class="info-value">{{ expense.get_status_display }}</div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Fecha de Vencimiento' %}</div>
-                                <div class="info-value">
-                                    {% if expense.due_date %}
-                                        <span {% if expense.is_overdue %}class="overdue"{% endif %}>
-                                            {{ expense.due_date|date:"d/m/Y" }}
-                                            {% if expense.is_overdue %}
-                                                <br><small class="text-danger">
-                                                    {% trans 'Vencido hace' %} {{ expense.days_overdue }} {% trans 'días' %}
-                                                </small>
-                                            {% endif %}
-                                        </span>
-                                    {% else %}
-                                        <span class="text-muted">-</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Fecha de Pago' %}</div>
-                                <div class="info-value">
-                                    {% if expense.payment_date %}
-                                        {{ expense.payment_date|date:"d/m/Y" }}
-                                    {% else %}
-                                        <span class="text-muted">-</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Supplier Information -->
-                    {% if expense.supplier or expense.invoice_number %}
-                    <hr class="my-4">
-                    <h6 class="font-weight-bold text-primary mb-3">
-                        <i class="bi bi-building"></i> {% trans 'Información del Proveedor' %}
-                    </h6>
-                    <div class="row">
-                        <div class="col-md-6">
-                            {% if expense.supplier %}
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Proveedor' %}</div>
-                                <div class="info-value">{{ expense.supplier }}</div>
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            {% if expense.invoice_number %}
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Número de Factura' %}</div>
-                                <div class="info-value">{{ expense.invoice_number }}</div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
+            </div>
+            
+            <div class="p-6">
+                <!-- Título y Descripción -->
+                <div class="mb-6">
+                    <h4 class="text-2xl font-bold text-slate-800 mb-2">{{ expense.title }}</h4>
+                    {% if expense.description %}
+                        <p class="text-slate-600">{{ expense.description }}</p>
                     {% endif %}
+                </div>
 
-                    <!-- Receipt File -->
-                    {% if expense.receipt_file %}
-                    <hr class="my-4">
-                    <h6 class="font-weight-bold text-primary mb-3">
-                        <i class="bi bi-file-earmark"></i> {% trans 'Comprobante' %}
-                    </h6>
-                    <div class="info-row">
-                        <div class="info-label">{% trans 'Archivo' %}</div>
-                        <div class="info-value">
-                            <a href="{{ expense.receipt_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-download"></i> {% trans 'Descargar Comprobante' %}
-                            </a>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- Metadata -->
-                    <hr class="my-4">
-                    <div class="row text-muted small">
-                        <div class="col-md-6">
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Creado por' %}</div>
-                                <div class="info-value">{{ expense.created_by.get_full_name|default:expense.created_by.username }}</div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Fecha de Creación' %}</div>
-                                <div class="info-value">{{ expense.created_at|date:"d/m/Y H:i" }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'Última Actualización' %}</div>
-                                <div class="info-value">{{ expense.updated_at|date:"d/m/Y H:i" }}</div>
-                            </div>
-                            <div class="info-row">
-                                <div class="info-label">{% trans 'ID del Gasto' %}</div>
-                                <div class="info-value">{{ expense.id }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="col-lg-4">
-            <!-- Actions Card -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Acciones' %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'financial:expense_update' expense.id %}" class="btn btn-warning">
-                            <i class="bi bi-pencil"></i> {% trans 'Editar Gasto' %}
-                        </a>
-                        <button type="button" class="btn btn-danger" onclick="confirmDelete()">
-                            <i class="bi bi-trash"></i> {% trans 'Eliminar Gasto' %}
-                        </button>
-                        <a href="{% url 'financial:expense_list' %}" class="btn btn-outline-secondary">
-                            <i class="bi bi-list"></i> {% trans 'Ver Todos los Gastos' %}
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Status Actions -->
-            {% if expense.status == 'pending' %}
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Cambiar Estado' %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-success" onclick="markAsPaid()">
-                            <i class="bi bi-check-circle"></i> {% trans 'Marcar como Pagado' %}
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="markAsCancelled()">
-                            <i class="bi bi-x-circle"></i> {% trans 'Cancelar Gasto' %}
-                        </button>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            <!-- Related Information -->
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">{% trans 'Información Relacionada' %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="small">
-                        <div class="mb-3">
-                            <strong>{% trans 'Categoría:' %}</strong><br>
-                            <span class="badge" style="background-color: {{ expense.category.color }}">
+                <!-- Información Básica -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Categoría' %}</span>
+                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white" 
+                                  style="background-color: {{ expense.category.color }}">
                                 {{ expense.category.name }}
                             </span>
                         </div>
-                        <div class="mb-3">
-                            <strong>{% trans 'Tipo:' %}</strong><br>
-                            {{ expense.category.get_category_type_display }}
+                        
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Fecha del Gasto' %}</span>
+                            <span class="text-sm font-semibold text-slate-800">{{ expense.expense_date|date:"d/m/Y" }}</span>
                         </div>
-                        {% if expense.category.description %}
-                        <div class="mb-3">
-                            <strong>{% trans 'Descripción de la Categoría:' %}</strong><br>
-                            {{ expense.category.description }}
+                        
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Método de Pago' %}</span>
+                            <span class="text-sm font-semibold text-slate-800">{{ expense.get_payment_method_display }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Estado' %}</span>
+                            <span class="text-sm font-semibold text-slate-800">{{ expense.get_status_display }}</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Fecha de Vencimiento' %}</span>
+                            <div class="text-right">
+                                {% if expense.due_date %}
+                                    <div class="text-sm {% if expense.is_overdue %}text-red-600 font-semibold{% else %}text-slate-800 font-semibold{% endif %}">
+                                        {{ expense.due_date|date:"d/m/Y" }}
+                                    </div>
+                                    {% if expense.is_overdue %}
+                                        <div class="text-xs text-red-500 mt-1">
+                                            {% trans 'Vencido hace' %} {{ expense.days_overdue }} {% trans 'días' %}
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-slate-400">-</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Fecha de Pago' %}</span>
+                            <span class="text-sm font-semibold text-slate-800">
+                                {% if expense.payment_date %}
+                                    {{ expense.payment_date|date:"d/m/Y" }}
+                                {% else %}
+                                    <span class="text-slate-400">-</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del Proveedor -->
+                {% if expense.supplier or expense.invoice_number %}
+                <div class="border-t border-slate-200 pt-6 mb-6">
+                    <h5 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-red-600">business</span>
+                        {% trans 'Información del Proveedor' %}
+                    </h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {% if expense.supplier %}
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Proveedor' %}</span>
+                            <span class="text-sm font-semibold text-slate-800">{{ expense.supplier }}</span>
                         </div>
                         {% endif %}
+                        
+                        {% if expense.invoice_number %}
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-sm font-medium text-slate-600">{% trans 'Número de Factura' %}</span>
+                            <span class="text-sm font-semibold text-slate-800">{{ expense.invoice_number }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Comprobante -->
+                {% if expense.receipt_file %}
+                <div class="border-t border-slate-200 pt-6 mb-6">
+                    <h5 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-red-600">file_present</span>
+                        {% trans 'Comprobante' %}
+                    </h5>
+                    <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                        <span class="text-sm font-medium text-slate-600">{% trans 'Archivo' %}</span>
+                        <a href="{{ expense.receipt_file.url }}" target="_blank" 
+                           class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105">
+                            <span class="material-icons mr-2 text-sm">download</span>
+                            <span class="text-sm">{% trans 'Descargar Comprobante' %}</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Metadatos -->
+                <div class="border-t border-slate-200 pt-6">
+                    <h5 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-slate-600">info</span>
+                        {% trans 'Información del Sistema' %}
+                    </h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Creado por' %}</span>
+                                <span class="text-sm font-semibold text-slate-800">{{ expense.created_by.get_full_name|default:expense.created_by.username }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Fecha de Creación' %}</span>
+                                <span class="text-sm font-semibold text-slate-800">{{ expense.created_at|date:"d/m/Y H:i" }}</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'Última Actualización' %}</span>
+                                <span class="text-sm font-semibold text-slate-800">{{ expense.updated_at|date:"d/m/Y H:i" }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                                <span class="text-sm font-medium text-slate-600">{% trans 'ID del Gasto' %}</span>
+                                <span class="text-sm font-semibold text-slate-800">{{ expense.id }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{% trans 'Confirmar Eliminación' %}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Sidebar -->
+    <div class="space-y-6">
+        <!-- Acciones -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">settings</span>
+                    {% trans 'Acciones' %}
+                </h3>
             </div>
-            <div class="modal-body">
-                <p>{% trans '¿Estás seguro de que quieres eliminar este gasto?' %}</p>
-                <p class="text-danger">{% trans 'Esta acción no se puede deshacer.' %}</p>
+            <div class="p-6">
+                <div class="space-y-3">
+                    <a href="{% url 'financial_web:expense_update' expense.id %}" 
+                       class="flex items-center justify-center bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">edit</span>
+                        {% trans 'Editar Gasto' %}
+                    </a>
+                    <a href="{% url 'financial_web:expense_delete' expense.id %}" 
+                       class="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">delete</span>
+                        {% trans 'Eliminar Gasto' %}
+                    </a>
+                    <a href="{% url 'financial_web:expense_list' %}" 
+                       class="flex items-center justify-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-xl border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        <span class="material-icons mr-2">list</span>
+                        {% trans 'Ver Todos los Gastos' %}
+                    </a>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Cancelar' %}</button>
-                <form method="post" action="{% url 'financial:expense_delete' expense.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">{% trans 'Eliminar' %}</button>
-                </form>
+        </div>
+
+        <!-- Cambiar Estado -->
+        {% if expense.status == 'pending' %}
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">swap_horiz</span>
+                    {% trans 'Cambiar Estado' %}
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-3">
+                    <button type="button" onclick="markAsPaid()" 
+                            class="flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 w-full">
+                        <span class="material-icons mr-2">check_circle</span>
+                        {% trans 'Marcar como Pagado' %}
+                    </button>
+                    <button type="button" onclick="markAsCancelled()" 
+                            class="flex items-center justify-center bg-slate-500 hover:bg-slate-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 w-full">
+                        <span class="material-icons mr-2">cancel</span>
+                        {% trans 'Cancelar Gasto' %}
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Información Relacionada -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">link</span>
+                    {% trans 'Información Relacionada' %}
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-sm font-medium text-slate-600">{% trans 'Categoría:' %}</span>
+                        <div class="mt-2">
+                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white" 
+                                  style="background-color: {{ expense.category.color }}">
+                                {{ expense.category.name }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <span class="text-sm font-medium text-slate-600">{% trans 'Tipo:' %}</span>
+                        <div class="mt-2">
+                            <span class="text-sm text-slate-800">{{ expense.category.get_category_type_display }}</span>
+                        </div>
+                    </div>
+                    
+                    {% if expense.category.description %}
+                    <div>
+                        <span class="text-sm font-medium text-slate-600">{% trans 'Descripción de la Categoría:' %}</span>
+                        <div class="mt-2">
+                            <span class="text-sm text-slate-800">{{ expense.category.description }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Status Change Modals -->
-<div class="modal fade" id="paidModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{% trans 'Marcar como Pagado' %}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>{% trans '¿Confirmas que este gasto ha sido pagado?' %}</p>
-                <div class="mb-3">
-                    <label for="payment_date" class="form-label">{% trans 'Fecha de Pago' %}</label>
-                    <input type="date" class="form-control" id="payment_date" name="payment_date" 
-                           value="{{ today|date:'Y-m-d' }}">
+<!-- Información adicional -->
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mt-8">
+    <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+        <h3 class="text-lg font-semibold text-white flex items-center">
+            <span class="material-icons mr-2">info</span>
+            {% trans 'Información del Gasto' %}
+        </h3>
+    </div>
+    <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons text-red-600 text-2xl">receipt_long</span>
                 </div>
+                <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Control Financiero' %}</h4>
+                <p class="text-sm text-slate-600">{% trans 'Registra y gestiona todos los gastos del geriátrico' %}</p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Cancelar' %}</button>
-                <button type="button" class="btn btn-success" onclick="confirmMarkAsPaid()">{% trans 'Confirmar' %}</button>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons text-amber-600 text-2xl">schedule</span>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Seguimiento de Pagos' %}</h4>
+                <p class="text-sm text-slate-600">{% trans 'Monitorea el estado y vencimiento de los gastos' %}</p>
+            </div>
+            <div class="text-center">
+                <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons text-emerald-600 text-2xl">analytics</span>
+                </div>
+                <h4 class="font-semibold text-slate-800 mb-2">{% trans 'Análisis Detallado' %}</h4>
+                <p class="text-sm text-slate-600">{% trans 'Genera reportes y análisis financieros completos' %}</p>
             </div>
         </div>
     </div>
@@ -337,20 +359,31 @@
 
 {% block extra_js %}
 <script>
-function confirmDelete() {
-    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    deleteModal.show();
-}
-
 function markAsPaid() {
-    const paidModal = new bootstrap.Modal(document.getElementById('paidModal'));
-    paidModal.show();
+    if (confirm('{% trans "¿Confirmas que este gasto ha sido pagado?" %}')) {
+        const paymentDate = new Date().toISOString().split('T')[0];
+        
+        fetch(`{% url 'financial_web:expense_update' expense.id %}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                status: 'paid',
+                payment_date: paymentDate
+            })
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
 }
 
 function markAsCancelled() {
     if (confirm('{% trans "¿Confirmas que quieres cancelar este gasto?" %}')) {
-        // Send AJAX request to mark as cancelled
-        fetch(`{% url 'financial:expense_update' expense.id %}`, {
+        fetch(`{% url 'financial_web:expense_update' expense.id %}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -365,27 +398,6 @@ function markAsCancelled() {
             }
         });
     }
-}
-
-function confirmMarkAsPaid() {
-    const paymentDate = document.getElementById('payment_date').value;
-    
-    // Send AJAX request to mark as paid
-    fetch(`{% url 'financial:expense_update' expense.id %}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        },
-        body: JSON.stringify({
-            status: 'paid',
-            payment_date: paymentDate
-        })
-    }).then(response => {
-        if (response.ok) {
-            location.reload();
-        }
-    });
 }
 </script>
 {% endblock %} 

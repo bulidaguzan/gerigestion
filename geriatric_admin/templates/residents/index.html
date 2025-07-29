@@ -1,17 +1,150 @@
 {% extends "base_modern.html" %}
+{% load i18n %}
 
-{% block title %}Residentes - Sistema de Administración Geriátrica{% endblock %}
+{% block title %}{% trans 'Residentes' %} - {% trans 'Sistema de Administración Geriátrica' %}{% endblock %}
+
+{% block page_title %}{% trans 'Gestión de Residentes' %}{% endblock %}
+
+{% block page_subtitle %}{% trans 'Redirigiendo al dashboard de residentes...' %}{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="text-center py-5">
-                <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                <h1>Gestión de Residentes</h1>
-                <p class="text-muted mb-4">Redirigiendo al dashboard de residentes...</p>
-                <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Cargando...</span>
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-8">
+            <div class="text-center">
+                <div class="relative w-24 h-24 mx-auto mb-6">
+                    <div class="absolute inset-0 bg-white bg-opacity-20 rounded-full animate-ping"></div>
+                    <div class="relative w-full h-full bg-white bg-opacity-30 rounded-full flex items-center justify-center">
+                        <span class="material-icons text-4xl text-white">people</span>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">{% trans 'Gestión de Residentes' %}</h2>
+                <p class="text-blue-100 text-lg">{% trans 'Redirigiendo al dashboard de residentes...' %}</p>
+            </div>
+        </div>
+        <div class="p-8">
+            <div class="text-center">
+                <!-- Loading Animation -->
+                <div class="flex items-center justify-center space-x-2 mb-8">
+                    <div class="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
+                    <div class="w-3 h-3 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                    <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-200 rounded-full h-2 mb-6">
+                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full animate-pulse" style="width: 75%"></div>
+                </div>
+                
+                <!-- Status Message -->
+                <div class="flex items-center justify-center mb-6">
+                    <div class="relative">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full animate-ping"></div>
+                        <div class="absolute top-0 left-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                            <span class="material-icons text-white text-sm">schedule</span>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-lg font-semibold text-slate-800">{% trans 'Cargando...' %}</p>
+                        <p class="text-sm text-slate-600">{% trans 'Preparando el dashboard' %}</p>
+                    </div>
+                </div>
+                
+                <!-- Quick Info -->
+                <div class="bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg p-6 border border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4 flex items-center justify-center">
+                        <span class="material-icons text-slate-600 mr-2">info</span>
+                        {% trans 'Información del Sistema' %}
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
+                            <span class="text-sm text-slate-700">{% trans 'Estado' %}</span>
+                            <span class="text-blue-600">
+                                <span class="material-icons text-sm">check_circle</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
+                            <span class="text-sm text-slate-700">{% trans 'Redirección' %}</span>
+                            <span class="text-emerald-600">
+                                <span class="material-icons text-sm">schedule</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
+                            <span class="text-sm text-slate-700">{% trans 'Funcionalidades' %}</span>
+                            <span class="text-purple-600">
+                                <span class="material-icons text-sm">featured_play_list</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
+                            <span class="text-sm text-slate-700">{% trans 'Integración' %}</span>
+                            <span class="text-emerald-600">
+                                <span class="material-icons text-sm">integration_instructions</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Information Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mt-8">
+        <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">info</span>
+                {% trans 'Información del Módulo' %}
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                        <span class="material-icons text-blue-500 mr-2">featured_play_list</span>
+                        {% trans 'Funcionalidades Disponibles' %}
+                    </h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-blue-500 mr-2 text-sm">person</span>
+                            {% trans 'Gestión de residentes' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-emerald-500 mr-2 text-sm">bed</span>
+                            {% trans 'Asignación de habitaciones' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-amber-500 mr-2 text-sm">medical_services</span>
+                            {% trans 'Información médica' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-green-500 mr-2 text-sm">phone</span>
+                            {% trans 'Contactos de emergencia' %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-slate-800 mb-3 flex items-center">
+                        <span class="material-icons text-emerald-500 mr-2">schedule</span>
+                        {% trans 'Próximas Actualizaciones' %}
+                    </h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-blue-500 mr-2 text-sm">update</span>
+                            {% trans 'Interfaz mejorada' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-emerald-500 mr-2 text-sm">analytics</span>
+                            {% trans 'Reportes avanzados' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-amber-500 mr-2 text-sm">notifications</span>
+                            {% trans 'Alertas automáticas' %}
+                        </div>
+                        <div class="flex items-center text-sm text-slate-600">
+                            <span class="material-icons text-purple-500 mr-2 text-sm">integration_instructions</span>
+                            {% trans 'Integración completa' %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -21,7 +154,7 @@
 <script>
     // Redirigir automáticamente al dashboard
     setTimeout(function() {
-        window.location.href = "{% url 'residents_web:index' %}";
-    }, 1000);
+        window.location.href = "{% url 'residents_web:dashboard' %}";
+    }, 2000);
 </script>
 {% endblock %} 
