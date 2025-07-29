@@ -4,4 +4,4 @@ from django.apps import AppConfig
 class MedicalConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.medical'
-    verbose_name = 'Medical Records'
+    verbose_name = 'Registros Médicos'

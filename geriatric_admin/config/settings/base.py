@@ -171,10 +171,20 @@ LOGOUT_URL = '/api/v1/auth/logout/'
 LOGOUT_REDIRECT_URL = '/api/v1/auth/login/'
 
 # Internationalization
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
+
+# Configuración de idiomas disponibles
+LANGUAGES = [
+    ('es', 'Español'),
+    ('en', 'English'),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'

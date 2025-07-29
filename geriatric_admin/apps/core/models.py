@@ -309,12 +309,12 @@ class User(AbstractUser):
     """
     
     ROLE_CHOICES = [
-        ('administrator', 'Administrator'),
-        ('nurse', 'Nurse'),
-        ('caregiver', 'Caregiver'),
-        ('doctor', 'Doctor'),
-        ('manager', 'Manager'),
-        ('receptionist', 'Receptionist'),
+        ('administrator', 'Administrador'),
+        ('nurse', 'Enfermero/a'),
+        ('caregiver', 'Cuidador/a'),
+        ('doctor', 'Doctor/a'),
+        ('manager', 'Gerente'),
+        ('receptionist', 'Recepcionista'),
     ]
     
     id = models.UUIDField(
@@ -449,8 +449,8 @@ class User(AbstractUser):
     
     class Meta:
         db_table = 'core_user'
-        verbose_name = 'User'
-        verbose_name_plural = 'Users'
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
         
     def __str__(self):
         return f"{self.get_full_name()} ({self.employee_id})"
@@ -672,8 +672,8 @@ class GeriatricCenter(BaseModel):
     
     class Meta:
         db_table = 'core_geriatric_center'
-        verbose_name = 'Geriatric Center'
-        verbose_name_plural = 'Geriatric Centers'
+        verbose_name = 'Centro Geriátrico'
+        verbose_name_plural = 'Centros Geriátricos'
         
     def __str__(self):
         return f"{self.name} ({self.code})"
@@ -840,8 +840,8 @@ class AuditTrail(models.Model):
     
     class Meta:
         db_table = 'core_audit_trail'
-        verbose_name = 'Audit Trail Entry'
-        verbose_name_plural = 'Audit Trail Entries'
+        verbose_name = 'Entrada de Auditoría'
+        verbose_name_plural = 'Entradas de Auditoría'
         ordering = ['-timestamp']
         indexes = [
             models.Index(fields=['timestamp']),

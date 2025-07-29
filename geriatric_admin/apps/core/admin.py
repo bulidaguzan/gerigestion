@@ -45,23 +45,23 @@ class UserAdmin(BaseUserAdmin):
         (None, {
             'fields': ('username', 'password', 'employee_id')
         }),
-        ('Personal info', {
+        ('Información Personal', {
             'fields': (
                 'first_name', 'last_name', 'email', 'phone_number',
                 'date_of_birth', 'hire_date'
             )
         }),
-        ('Emergency Contact', {
+        ('Contacto de Emergencia', {
             'fields': ('emergency_contact_name', 'emergency_contact_phone'),
             'classes': ('collapse',)
         }),
-        ('Role and Permissions', {
+        ('Rol y Permisos', {
             'fields': (
                 'role', 'is_active', 'is_staff', 'is_superuser',
                 'is_multi_center_admin', 'groups', 'user_permissions'
             )
         }),
-        ('Security', {
+        ('Seguridad', {
             'fields': (
                 'two_factor_enabled', 'must_change_password',
                 'failed_login_attempts', 'last_failed_login',
@@ -69,11 +69,11 @@ class UserAdmin(BaseUserAdmin):
             ),
             'classes': ('collapse',)
         }),
-        ('Preferences', {
+        ('Preferencias', {
             'fields': ('preferences',),
             'classes': ('collapse',)
         }),
-        ('Important dates', {
+        ('Fechas Importantes', {
             'fields': ('last_login', 'date_joined', 'created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
@@ -165,17 +165,17 @@ class GeriatricCenterAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('name', 'code', 'administrator')
         }),
-        ('Contact Information', {
+        ('Información de Contacto', {
             'fields': ('address', 'phone_number', 'email')
         }),
-        ('Operational Details', {
+        ('Detalles Operacionales', {
             'fields': ('license_number', 'capacity', 'is_active')
         }),
-        ('Configuration', {
+        ('Configuración', {
             'fields': ('settings',),
             'classes': ('collapse',)
         }),
-        ('Metadata', {
+        ('Metadatos', {
             'fields': (
                 'notes', 'created_at', 'updated_at', 
                 'created_by', 'updated_by'
@@ -208,7 +208,7 @@ class GeriatricCenterAdmin(admin.ModelAdmin):
             color, icon, current, obj.capacity, rate
         )
     
-    occupancy_info.short_description = 'Occupancy'
+    occupancy_info.short_description = 'Ocupación'
     
     def get_queryset(self, request):
         """
@@ -326,6 +326,6 @@ class AuditTrailAdmin(admin.ModelAdmin):
 
 
 # Customize admin site headers
-admin.site.site_header = 'Geriatric Administration System'
-admin.site.site_title = 'Geriatric Admin'
-admin.site.index_title = 'System Administration'
+admin.site.site_header = 'Sistema de Administración Geriátrica'
+admin.site.site_title = 'Admin Geriátrico'
+admin.site.index_title = 'Administración del Sistema'
