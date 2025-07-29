@@ -4,64 +4,64 @@
 
 :root {
   /* ========================================
-     COLORES PRINCIPALES DEL SISTEMA
+     COLORES PRINCIPALES DEL SISTEMA (PASTELES)
      ======================================== */
   
-  /* Colores de marca principal */
-  --primary-color: #4f46e5;          /* Indigo-600 */
-  --primary-light: #6366f1;          /* Indigo-500 */
-  --primary-dark: #3730a3;           /* Indigo-700 */
-  --primary-hover: #4338ca;          /* Indigo-600 hover */
+  /* Colores de marca principal - Azul suave */
+  --primary-color: #6366f1;          /* Indigo-400 (más suave) */
+  --primary-light: #818cf8;          /* Indigo-300 (más claro) */
+  --primary-dark: #4f46e5;           /* Indigo-500 (más suave) */
+  --primary-hover: #5b5bdb;          /* Indigo-400 hover (suave) */
   
-  /* Colores secundarios */
-  --secondary-color: #7c3aed;        /* Violet-600 */
-  --secondary-light: #8b5cf6;        /* Violet-500 */
-  --secondary-dark: #5b21b6;         /* Violet-700 */
-  --secondary-hover: #6d28d9;        /* Violet-600 hover */
+  /* Colores secundarios - Violeta suave */
+  --secondary-color: #a78bfa;        /* Violet-300 (más suave) */
+  --secondary-light: #c4b5fd;        /* Violet-200 (más claro) */
+  --secondary-dark: #8b5cf6;         /* Violet-400 (más suave) */
+  --secondary-hover: #9f7aea;        /* Violet-300 hover (suave) */
   
-  /* Colores de acento */
-  --accent-color: #ec4899;           /* Pink-500 */
-  --accent-light: #f472b6;           /* Pink-400 */
-  --accent-dark: #be185d;            /* Pink-600 */
-  --accent-hover: #db2777;           /* Pink-500 hover */
+  /* Colores de acento - Rosa suave */
+  --accent-color: #f472b6;           /* Pink-300 (más suave) */
+  --accent-light: #f9a8d4;           /* Pink-200 (más claro) */
+  --accent-dark: #ec4899;            /* Pink-400 (más suave) */
+  --accent-hover: #f093b3;           /* Pink-300 hover (suave) */
   
   /* ========================================
-     COLORES DE ESTADO
+     COLORES DE ESTADO (PASTELES)
      ======================================== */
   
-  /* Éxito/Completado */
-  --success-color: #10b981;          /* Emerald-500 */
-  --success-light: #34d399;          /* Emerald-400 */
-  --success-dark: #059669;           /* Emerald-600 */
-  --success-bg: #d1fae5;             /* Emerald-100 */
-  --success-text: #065f46;           /* Emerald-800 */
+  /* Éxito/Completado - Verde suave */
+  --success-color: #34d399;          /* Emerald-400 (más suave) */
+  --success-light: #6ee7b7;          /* Emerald-300 (más claro) */
+  --success-dark: #10b981;           /* Emerald-500 (más suave) */
+  --success-bg: #d1fae5;             /* Emerald-100 (mantiene) */
+  --success-text: #065f46;           /* Emerald-800 (mantiene) */
   
-  /* Advertencia/En proceso */
-  --warning-color: #f59e0b;          /* Amber-500 */
-  --warning-light: #fbbf24;          /* Amber-400 */
-  --warning-dark: #d97706;           /* Amber-600 */
-  --warning-bg: #fef3c7;             /* Amber-100 */
-  --warning-text: #92400e;           /* Amber-800 */
+  /* Advertencia/En proceso - Amarillo suave */
+  --warning-color: #fbbf24;          /* Amber-400 (más suave) */
+  --warning-light: #fcd34d;          /* Amber-300 (más claro) */
+  --warning-dark: #f59e0b;           /* Amber-500 (más suave) */
+  --warning-bg: #fef3c7;             /* Amber-100 (mantiene) */
+  --warning-text: #92400e;           /* Amber-800 (mantiene) */
   
-  /* Error/Fallido */
-  --error-color: #ef4444;            /* Red-500 */
-  --error-light: #f87171;            /* Red-400 */
-  --error-dark: #dc2626;             /* Red-600 */
-  --error-bg: #fee2e2;               /* Red-100 */
-  --error-text: #991b1b;             /* Red-800 */
+  /* Error/Fallido - Rojo suave */
+  --error-color: #f87171;            /* Red-400 (más suave) */
+  --error-light: #fca5a5;            /* Red-300 (más claro) */
+  --error-dark: #ef4444;             /* Red-500 (más suave) */
+  --error-bg: #fee2e2;               /* Red-100 (mantiene) */
+  --error-text: #991b1b;             /* Red-800 (mantiene) */
   
-  /* Información/Pendiente */
-  --info-color: #3b82f6;             /* Blue-500 */
-  --info-light: #60a5fa;             /* Blue-400 */
-  --info-dark: #2563eb;              /* Blue-600 */
-  --info-bg: #dbeafe;                /* Blue-100 */
-  --info-text: #1e40af;              /* Blue-800 */
+  /* Información/Pendiente - Azul suave */
+  --info-color: #60a5fa;             /* Blue-400 (más suave) */
+  --info-light: #93c5fd;             /* Blue-300 (más claro) */
+  --info-dark: #3b82f6;              /* Blue-500 (más suave) */
+  --info-bg: #dbeafe;                /* Blue-100 (mantiene) */
+  --info-text: #1e40af;              /* Blue-800 (mantiene) */
   
   /* ========================================
-     COLORES NEUTROS
+     COLORES NEUTROS (MÁS SUAVES)
      ======================================== */
   
-  /* Grises */
+  /* Grises más suaves */
   --gray-50: #f8fafc;
   --gray-100: #f1f5f9;
   --gray-200: #e2e8f0;
@@ -74,180 +74,180 @@
   --gray-900: #0f172a;
   
   /* ========================================
-     COLORES DE FONDO
+     COLORES DE FONDO (MÁS SUAVES)
      ======================================== */
   
   --bg-primary: #ffffff;             /* Fondo principal */
   --bg-secondary: #f8fafc;           /* Fondo secundario */
   --bg-tertiary: #f1f5f9;            /* Fondo terciario */
   --bg-card: #ffffff;                /* Fondo de tarjetas */
-  --bg-overlay: rgba(0, 0, 0, 0.5); /* Fondo de overlay */
+  --bg-overlay: rgba(0, 0, 0, 0.3); /* Fondo de overlay (más suave) */
   
   /* ========================================
-     COLORES DE TEXTO
+     COLORES DE TEXTO (MÁS SUAVES)
      ======================================== */
   
-  --text-primary: #1e293b;           /* Texto principal */
-  --text-secondary: #475569;         /* Texto secundario */
-  --text-tertiary: #64748b;          /* Texto terciario */
-  --text-muted: #94a3b8;             /* Texto atenuado */
+  --text-primary: #334155;           /* Texto principal (más suave) */
+  --text-secondary: #64748b;         /* Texto secundario (más suave) */
+  --text-tertiary: #94a3b8;          /* Texto terciario (más suave) */
+  --text-muted: #cbd5e1;             /* Texto atenuado (más suave) */
   --text-inverse: #ffffff;           /* Texto invertido */
   
   /* ========================================
-     COLORES DE BORDES
+     COLORES DE BORDES (MÁS SUAVES)
      ======================================== */
   
   --border-light: #e2e8f0;           /* Borde claro */
   --border-medium: #cbd5e1;          /* Borde medio */
   --border-dark: #94a3b8;            /* Borde oscuro */
-  --border-focus: #4f46e5;           /* Borde de foco */
+  --border-focus: #6366f1;           /* Borde de foco (más suave) */
   
   /* ========================================
-     COLORES DE SOMBRAS
+     COLORES DE SOMBRAS (MÁS SUAVES)
      ======================================== */
   
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
   
   /* ========================================
-     COLORES ESPECÍFICOS POR MÓDULO
+     COLORES ESPECÍFICOS POR MÓDULO (PASTELES)
      ======================================== */
   
-  /* Módulo de Residentes */
-  --residents-primary: #0ea5e9;      /* Sky-500 */
-  --residents-light: #38bdf8;        /* Sky-400 */
-  --residents-dark: #0284c7;         /* Sky-600 */
-  --residents-bg: #e0f2fe;           /* Sky-100 */
+  /* Módulo de Residentes - Azul cielo suave */
+  --residents-primary: #38bdf8;      /* Sky-400 (más suave) */
+  --residents-light: #7dd3fc;        /* Sky-300 (más claro) */
+  --residents-dark: #0ea5e9;         /* Sky-500 (más suave) */
+  --residents-bg: #e0f2fe;           /* Sky-100 (mantiene) */
   
-  /* Módulo de Personal */
-  --staff-primary: #8b5cf6;          /* Violet-500 */
-  --staff-light: #a78bfa;            /* Violet-400 */
-  --staff-dark: #7c3aed;             /* Violet-600 */
-  --staff-bg: #ede9fe;               /* Violet-100 */
+  /* Módulo de Personal - Violeta suave */
+  --staff-primary: #a78bfa;          /* Violet-300 (más suave) */
+  --staff-light: #c4b5fd;            /* Violet-200 (más claro) */
+  --staff-dark: #8b5cf6;             /* Violet-400 (más suave) */
+  --staff-bg: #ede9fe;               /* Violet-100 (mantiene) */
   
-  /* Módulo de Instalaciones */
-  --facilities-primary: #10b981;     /* Emerald-500 */
-  --facilities-light: #34d399;       /* Emerald-400 */
-  --facilities-dark: #059669;        /* Emerald-600 */
-  --facilities-bg: #d1fae5;          /* Emerald-100 */
+  /* Módulo de Instalaciones - Verde suave */
+  --facilities-primary: #34d399;     /* Emerald-400 (más suave) */
+  --facilities-light: #6ee7b7;       /* Emerald-300 (más claro) */
+  --facilities-dark: #10b981;        /* Emerald-500 (más suave) */
+  --facilities-bg: #d1fae5;          /* Emerald-100 (mantiene) */
   
-  /* Módulo Financiero */
-  --financial-primary: #f59e0b;      /* Amber-500 */
-  --financial-light: #fbbf24;        /* Amber-400 */
-  --financial-dark: #d97706;         /* Amber-600 */
-  --financial-bg: #fef3c7;           /* Amber-100 */
+  /* Módulo Financiero - Naranja suave */
+  --financial-primary: #fb923c;      /* Orange-400 (más suave) */
+  --financial-light: #fdba74;        /* Orange-300 (más claro) */
+  --financial-dark: #f97316;         /* Orange-500 (más suave) */
+  --financial-bg: #fed7aa;           /* Orange-100 (más suave) */
   
-  /* Módulo Médico */
-  --medical-primary: #ef4444;        /* Red-500 */
-  --medical-light: #f87171;          /* Red-400 */
-  --medical-dark: #dc2626;           /* Red-600 */
-  --medical-bg: #fee2e2;             /* Red-100 */
+  /* Módulo Médico - Rojo suave */
+  --medical-primary: #f87171;        /* Red-400 (más suave) */
+  --medical-light: #fca5a5;          /* Red-300 (más claro) */
+  --medical-dark: #ef4444;           /* Red-500 (más suave) */
+  --medical-bg: #fee2e2;             /* Red-100 (mantiene) */
   
-  /* Módulo de Reportes */
-  --reports-primary: #6366f1;        /* Indigo-500 */
-  --reports-light: #818cf8;          /* Indigo-400 */
-  --reports-dark: #4f46e5;           /* Indigo-600 */
-  --reports-bg: #e0e7ff;             /* Indigo-100 */
+  /* Módulo de Reportes - Azul índigo suave */
+  --reports-primary: #818cf8;        /* Indigo-300 (más suave) */
+  --reports-light: #a5b4fc;          /* Indigo-200 (más claro) */
+  --reports-dark: #6366f1;           /* Indigo-400 (más suave) */
+  --reports-bg: #e0e7ff;             /* Indigo-100 (mantiene) */
   
   /* ========================================
-     COLORES DE ESTADO DE REPORTES
+     COLORES DE ESTADO DE REPORTES (PASTELES)
      ======================================== */
   
-  /* Reporte Completado */
-  --report-completed: #10b981;       /* Emerald-500 */
-  --report-completed-bg: #d1fae5;    /* Emerald-100 */
-  --report-completed-text: #065f46;  /* Emerald-800 */
+  /* Reporte Completado - Verde suave */
+  --report-completed: #34d399;       /* Emerald-400 (más suave) */
+  --report-completed-bg: #d1fae5;    /* Emerald-100 (mantiene) */
+  --report-completed-text: #065f46;  /* Emerald-800 (mantiene) */
   
-  /* Reporte En Proceso */
-  --report-processing: #f59e0b;      /* Amber-500 */
-  --report-processing-bg: #fef3c7;   /* Amber-100 */
-  --report-processing-text: #92400e; /* Amber-800 */
+  /* Reporte En Proceso - Amarillo suave */
+  --report-processing: #fbbf24;      /* Amber-400 (más suave) */
+  --report-processing-bg: #fef3c7;   /* Amber-100 (mantiene) */
+  --report-processing-text: #92400e; /* Amber-800 (mantiene) */
   
-  /* Reporte Pendiente */
-  --report-pending: #3b82f6;         /* Blue-500 */
-  --report-pending-bg: #dbeafe;      /* Blue-100 */
-  --report-pending-text: #1e40af;    /* Blue-800 */
+  /* Reporte Pendiente - Azul suave */
+  --report-pending: #60a5fa;         /* Blue-400 (más suave) */
+  --report-pending-bg: #dbeafe;      /* Blue-100 (mantiene) */
+  --report-pending-text: #1e40af;    /* Blue-800 (mantiene) */
   
-  /* Reporte Fallido */
-  --report-failed: #ef4444;          /* Red-500 */
-  --report-failed-bg: #fee2e2;       /* Red-100 */
-  --report-failed-text: #991b1b;     /* Red-800 */
+  /* Reporte Fallido - Rojo suave */
+  --report-failed: #f87171;          /* Red-400 (más suave) */
+  --report-failed-bg: #fee2e2;       /* Red-100 (mantiene) */
+  --report-failed-text: #991b1b;     /* Red-800 (mantiene) */
   
   /* ========================================
-     COLORES DE BOTONES
+     COLORES DE BOTONES (PASTELES)
      ======================================== */
   
-  /* Botón Primario */
-  --btn-primary-bg: #4f46e5;
-  --btn-primary-hover: #4338ca;
+  /* Botón Primario - Azul suave */
+  --btn-primary-bg: #6366f1;
+  --btn-primary-hover: #5b5bdb;
   --btn-primary-text: #ffffff;
-  --btn-primary-border: #4f46e5;
+  --btn-primary-border: #6366f1;
   
-  /* Botón Secundario */
+  /* Botón Secundario - Gris suave */
   --btn-secondary-bg: #ffffff;
   --btn-secondary-hover: #f8fafc;
-  --btn-secondary-text: #475569;
+  --btn-secondary-text: #64748b;
   --btn-secondary-border: #e2e8f0;
   
-  /* Botón de Éxito */
-  --btn-success-bg: #10b981;
-  --btn-success-hover: #059669;
+  /* Botón de Éxito - Verde suave */
+  --btn-success-bg: #34d399;
+  --btn-success-hover: #10b981;
   --btn-success-text: #ffffff;
-  --btn-success-border: #10b981;
+  --btn-success-border: #34d399;
   
-  /* Botón de Advertencia */
-  --btn-warning-bg: #f59e0b;
-  --btn-warning-hover: #d97706;
+  /* Botón de Advertencia - Amarillo suave */
+  --btn-warning-bg: #fbbf24;
+  --btn-warning-hover: #f59e0b;
   --btn-warning-text: #ffffff;
-  --btn-warning-border: #f59e0b;
+  --btn-warning-border: #fbbf24;
   
-  /* Botón de Peligro */
-  --btn-danger-bg: #ef4444;
-  --btn-danger-hover: #dc2626;
+  /* Botón de Peligro - Rojo suave */
+  --btn-danger-bg: #f87171;
+  --btn-danger-hover: #ef4444;
   --btn-danger-text: #ffffff;
-  --btn-danger-border: #ef4444;
+  --btn-danger-border: #f87171;
   
   /* ========================================
-     COLORES DE FORMULARIOS
+     COLORES DE FORMULARIOS (MÁS SUAVES)
      ======================================== */
   
   --input-bg: #ffffff;
-  --input-border: #d1d5db;
-  --input-border-focus: #4f46e5;
-  --input-text: #1e293b;
-  --input-placeholder: #9ca3af;
+  --input-border: #e2e8f0;
+  --input-border-focus: #6366f1;
+  --input-text: #334155;
+  --input-placeholder: #cbd5e1;
   
   /* ========================================
-     COLORES DE TABLAS
+     COLORES DE TABLAS (MÁS SUAVES)
      ======================================== */
   
   --table-header-bg: #f8fafc;
-  --table-header-text: #475569;
+  --table-header-text: #64748b;
   --table-row-bg: #ffffff;
   --table-row-hover: #f1f5f9;
   --table-border: #e2e8f0;
   
   /* ========================================
-     COLORES DE NAVEGACIÓN
+     COLORES DE NAVEGACIÓN (MÁS SUAVES)
      ======================================== */
   
   --nav-bg: #ffffff;
-  --nav-text: #475569;
-  --nav-text-active: #4f46e5;
+  --nav-text: #64748b;
+  --nav-text-active: #6366f1;
   --nav-hover: #f1f5f9;
   --nav-border: #e2e8f0;
   
   /* ========================================
-     COLORES DE SIDEBAR
+     COLORES DE SIDEBAR (MÁS SUAVES)
      ======================================== */
   
-  --sidebar-bg: #1e293b;
+  --sidebar-bg: #334155;
   --sidebar-text: #cbd5e1;
   --sidebar-text-active: #ffffff;
-  --sidebar-hover: #334155;
-  --sidebar-border: #334155;
+  --sidebar-hover: #475569;
+  --sidebar-border: #475569;
 }
 
 /* ========================================
