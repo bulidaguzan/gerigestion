@@ -998,7 +998,7 @@ def dashboard_view(request):
                 'hover_color': 'hover:bg-slate-700'
             },
             {
-                'url': '/financial/dashboard/',
+                'url': '/financial/',
                 'icon': 'account_balance_wallet',
                 'text': 'Finanzas',
                 'bg_color': 'bg-emerald-600',
@@ -1059,7 +1059,7 @@ def dashboard_view(request):
                     'hover_color': 'hover:bg-slate-700'
                 },
                 {
-                    'url': '/financial/dashboard/',
+                    'url': '/financial/',
                     'icon': 'account_balance_wallet',
                     'text': 'Finanzas',
                     'bg_color': 'bg-emerald-600',
