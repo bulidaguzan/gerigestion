@@ -78,13 +78,6 @@ def staff_dashboard(request):
             'hover_color': 'hover:bg-slate-700'
         },
         {
-            'url': '/staff/search/',
-            'icon': 'search',
-            'text': 'Buscar',
-            'bg_color': 'bg-emerald-600',
-            'hover_color': 'hover:bg-emerald-700'
-        },
-        {
             'url': '/staff/list/?status=active',
             'icon': 'check_circle',
             'text': 'Activos',
