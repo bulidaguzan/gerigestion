@@ -1,0 +1,398 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Todas las Transacciones' %}{% endblock %}
+
+{% block page_title %}{% trans 'Todas las Transacciones' %}{% endblock %}
+
+{% block page_subtitle %}{% trans 'Gestión completa de ingresos y gastos' %}{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-3">
+    <a href="{% url 'financial_web:dashboard' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">dashboard</span>
+        <span class="text-sm">Dashboard</span>
+    </a>
+    <a href="{% url 'financial_web:income_create' %}" class="flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">add</span>
+        <span class="text-sm">Nuevo Ingreso</span>
+    </a>
+    <a href="{% url 'financial_web:expense_create' %}" class="flex items-center bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+        <span class="material-icons mr-2 text-base">remove</span>
+        <span class="text-sm">Nuevo Gasto</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Header con gradiente -->
+<div class="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-600 shadow-2xl">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative p-8">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white border-opacity-30">
+                        <span class="material-icons text-white text-3xl">account_balance_wallet</span>
+                    </div>
+                </div>
+                <div class="text-white">
+                    <h2 class="text-3xl font-bold mb-2">{% trans 'Todas las Transacciones' %}</h2>
+                    <p class="text-white text-opacity-90 text-lg">{% trans 'Gestión completa de ingresos y gastos' %}</p>
+                </div>
+            </div>
+            <div class="text-white text-right">
+                <div class="text-4xl font-bold">{{ page_obj.paginator.count|default:"0" }}</div>
+                <div class="text-white text-opacity-80">Transacciones</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros y Búsqueda -->
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+    <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-4">
+        <h3 class="text-lg font-semibold text-white flex items-center">
+            <span class="material-icons mr-2">filter_list</span>
+            {% trans 'Filtros y Búsqueda' %}
+        </h3>
+    </div>
+    <div class="p-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+            <div>
+                <label for="search" class="block text-sm font-medium text-slate-700 mb-3">
+                    🔍 {% trans 'Buscar' %}
+                </label>
+                <input type="text" 
+                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                       id="search" 
+                       name="search" 
+                       value="{{ search }}" 
+                       placeholder="{% trans 'Título, descripción...' %}">
+            </div>
+            
+            <div>
+                <label for="type" class="block text-sm font-medium text-slate-700 mb-3">
+                    💰 {% trans 'Tipo' %}
+                </label>
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                        id="type" 
+                        name="type">
+                    {% for value, label in transaction_types %}
+                    <option value="{{ value }}" {% if transaction_type == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="status" class="block text-sm font-medium text-slate-700 mb-3">
+                    ✅ {% trans 'Estado' %}
+                </label>
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                        id="status" 
+                        name="status">
+                    <option value="">{% trans 'Todos' %}</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="category" class="block text-sm font-medium text-slate-700 mb-3">
+                    📂 {% trans 'Categoría' %}
+                </label>
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                        id="category" 
+                        name="category">
+                    <option value="">{% trans 'Todas' %}</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if category == cat.id|stringformat:"s" %}selected{% endif %}>
+                        {{ cat.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="date_from" class="block text-sm font-medium text-slate-700 mb-3">
+                    📅 {% trans 'Desde' %}
+                </label>
+                <input type="date" 
+                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                       id="date_from" 
+                       name="date_from" 
+                       value="{{ date_from }}">
+            </div>
+            
+            <div class="flex items-end space-x-3">
+                <div class="flex-1">
+                    <label for="date_to" class="block text-sm font-medium text-slate-700 mb-3">
+                        📅 {% trans 'Hasta' %}
+                    </label>
+                    <input type="date" 
+                           class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300" 
+                           id="date_to" 
+                           name="date_to" 
+                           value="{{ date_to }}">
+                </div>
+                <button type="submit" class="flex items-center justify-center bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons mr-2 text-sm">search</span>
+                    <span class="text-sm">{% trans 'Filtrar' %}</span>
+                </button>
+                <a href="{% url 'financial_web:all_transactions' %}" 
+                   class="flex items-center justify-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">clear</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Estadísticas rápidas -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl p-6 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm opacity-90">Total Ingresos</p>
+                <p class="text-2xl font-bold">${{ total_income|floatformat:2 }}</p>
+            </div>
+            <span class="material-icons text-3xl opacity-80">trending_up</span>
+        </div>
+    </div>
+    
+    <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-6 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm opacity-90">Total Gastos</p>
+                <p class="text-2xl font-bold">${{ total_expenses|floatformat:2 }}</p>
+            </div>
+            <span class="material-icons text-3xl opacity-80">trending_down</span>
+        </div>
+    </div>
+    
+    <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl p-6 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm opacity-90">Balance</p>
+                <p class="text-2xl font-bold {% if total_balance >= 0 %}text-emerald-200{% else %}text-red-200{% endif %}">
+                    ${{ total_balance|floatformat:2 }}
+                </p>
+            </div>
+            <span class="material-icons text-3xl opacity-80">account_balance</span>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de Transacciones -->
+<div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+    <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-white flex items-center">
+                <span class="material-icons mr-2">account_balance_wallet</span>
+                {% trans 'Transacciones' %}
+            </h3>
+            <div class="flex items-center space-x-4 text-white">
+                <div class="flex items-center space-x-2">
+                    <span class="material-icons text-sm">receipt</span>
+                    <span class="text-sm">{{ page_obj.paginator.count|default:"0" }} transacciones</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="material-icons text-sm">schedule</span>
+                    <span class="text-sm">Página {{ page_obj.number|default:"1" }} de {{ page_obj.paginator.num_pages|default:"1" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="p-6">
+        {% if page_obj %}
+        <div class="space-y-4">
+            {% for transaction in page_obj %}
+            <div class="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <div class="flex items-center justify-between">
+                    <!-- Información de la transacción -->
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-16 h-16 {% if transaction.type == 'income' %}bg-gradient-to-br from-emerald-500 to-emerald-600{% else %}bg-gradient-to-br from-red-500 to-red-600{% endif %} rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                <span class="material-icons text-white">
+                                    {% if transaction.type == 'income' %}trending_up{% else %}trending_down{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <h4 class="text-lg font-semibold text-slate-800">{{ transaction.title|truncatechars:50 }}</h4>
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full {% if transaction.type == 'income' %}bg-emerald-100 text-emerald-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                    {% if transaction.type == 'income' %}Ingreso{% else %}Gasto{% endif %}
+                                </span>
+                                {% if transaction.status == 'received' or transaction.status == 'paid' %}
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                    <span class="material-icons text-xs mr-1">check_circle</span>
+                                    {% if transaction.type == 'income' %}Recibido{% else %}Pagado{% endif %}
+                                </span>
+                                {% elif transaction.status == 'pending' %}
+                                <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    <span class="material-icons text-xs mr-1">schedule</span>
+                                    Pendiente
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-slate-600">
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-slate-400 text-sm">category</span>
+                                    <span>{{ transaction.category.name|default:"Sin categoría" }}</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-slate-400 text-sm">event</span>
+                                    <span>{{ transaction.date|date:"d/m/Y" }}</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-slate-400 text-sm">
+                                        {% if transaction.type == 'income' %}person{% else %}business{% endif %}
+                                    </span>
+                                    <span>
+                                        {% if transaction.type == 'income' %}
+                                            {{ transaction.client|default:"--" }}
+                                        {% else %}
+                                            {{ transaction.supplier|default:"--" }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="material-icons text-slate-400 text-sm">person</span>
+                                    <span>{{ transaction.created_by.get_full_name|default:transaction.created_by.username }}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 mt-3 text-sm text-slate-500">
+                                <div class="flex items-center space-x-1">
+                                    <span class="material-icons text-slate-400 text-sm">euro</span>
+                                    <span class="font-semibold text-slate-700 {% if transaction.type == 'income' %}text-emerald-600{% else %}text-red-600{% endif %}">
+                                        ${{ transaction.amount|floatformat:2 }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <span class="material-icons text-slate-400 text-sm">schedule</span>
+                                    <span>{{ transaction.created_at|date:"d/m/Y H:i" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Acciones -->
+                    <div class="flex items-center space-x-2">
+                        <a href="{% if transaction.type == 'income' %}{% url 'financial_web:income_detail' transaction.id %}{% else %}{% url 'financial_web:expense_detail' transaction.id %}{% endif %}" 
+                           class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105"
+                           title="{% trans 'Ver detalles' %}">
+                            <span class="material-icons text-sm">visibility</span>
+                        </a>
+                        <a href="{% if transaction.type == 'income' %}{% url 'financial_web:income_update' transaction.id %}{% else %}{% url 'financial_web:expense_update' transaction.id %}{% endif %}" 
+                           class="flex items-center bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105"
+                           title="{% trans 'Editar' %}">
+                            <span class="material-icons text-sm">edit</span>
+                        </a>
+                        <a href="{% if transaction.type == 'income' %}{% url 'financial_web:income_delete' transaction.id %}{% else %}{% url 'financial_web:expense_delete' transaction.id %}{% endif %}" 
+                           class="flex items-center bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105"
+                           title="{% trans 'Eliminar' %}">
+                            <span class="material-icons text-sm">delete</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginación -->
+        {% if page_obj.has_other_pages %}
+        <div class="mt-8 flex items-center justify-center">
+            <nav class="flex items-center space-x-2">
+                {% if page_obj.has_previous %}
+                <a href="?page=1{% if search %}&search={{ search }}{% endif %}{% if transaction_type %}&type={{ transaction_type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" 
+                   class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">first_page</span>
+                </a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if transaction_type %}&type={{ transaction_type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" 
+                   class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">chevron_left</span>
+                </a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="flex items-center bg-blue-500 text-white font-semibold py-2 px-3 rounded-lg shadow-sm">
+                        {{ num }}
+                    </span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if transaction_type %}&type={{ transaction_type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" 
+                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if transaction_type %}&type={{ transaction_type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" 
+                   class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">chevron_right</span>
+                </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if transaction_type %}&type={{ transaction_type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" 
+                   class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-3 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons text-sm">last_page</span>
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- Estado vacío -->
+        <div class="text-center py-12">
+            <div class="w-24 h-24 bg-gradient-to-br from-slate-200 to-slate-300 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="material-icons text-slate-400 text-4xl">account_balance_wallet</span>
+            </div>
+            <h3 class="text-xl font-semibold text-slate-700 mb-2">{% trans 'No se encontraron transacciones' %}</h3>
+            <p class="text-slate-500 mb-6">{% trans 'No hay transacciones que coincidan con los filtros aplicados.' %}</p>
+            <div class="flex items-center justify-center space-x-4">
+                <a href="{% url 'financial_web:income_create' %}" 
+                   class="inline-flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons mr-2">add</span>
+                    {% trans 'Registrar primer ingreso' %}
+                </a>
+                <a href="{% url 'financial_web:expense_create' %}" 
+                   class="inline-flex items-center bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons mr-2">remove</span>
+                    {% trans 'Registrar primer gasto' %}
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Información adicional -->
+<div class="mt-8 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-6">
+    <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+        <span class="material-icons mr-2 text-slate-600">info</span>
+        Información Financiera
+    </h4>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600">
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-slate-400">schedule</span>
+            <span>Última actualización: {% now "d/m/Y H:i" %}</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-slate-400">security</span>
+            <span>Datos financieros protegidos</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span class="material-icons text-slate-400">verified</span>
+            <span>Sistema de gestión financiera</span>
+        </div>
+    </div>
+</div>
+{% endblock %} 

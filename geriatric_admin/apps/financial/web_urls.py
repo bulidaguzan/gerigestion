@@ -7,6 +7,9 @@ urlpatterns = [
     # Dashboard
     path('', views.financial_dashboard, name='dashboard'),
     
+    # Todas las transacciones
+    path('all/', views.all_transactions, name='all_transactions'),
+    
     # Categorías
     path('categories/', views.category_list, name='category_list'),
     path('categories/create/', views.category_create, name='category_create'),

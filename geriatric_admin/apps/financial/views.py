@@ -169,6 +169,13 @@ def financial_dashboard(request):
             'hover_color': 'hover:bg-red-700'
         },
         {
+            'url': '/financial/all/',
+            'icon': 'visibility',
+            'text': 'Ver Todos',
+            'bg_color': 'bg-slate-600',
+            'hover_color': 'hover:bg-slate-700'
+        },
+        {
             'url': '/financial/reports/',
             'icon': 'assessment',
             'text': 'Reportes',
@@ -869,6 +876,134 @@ def financial_reports(request):
     }
     
     return render(request, 'financial/reports.html', context)
+
+
+# Vista para mostrar todas las transacciones
+@login_required
+def all_transactions(request):
+    """Lista de todas las transacciones (ingresos y gastos)"""
+    # Obtener todas las transacciones
+    incomes = Income.objects.all()
+    expenses = Expense.objects.all()
+    
+    # Filtros
+    transaction_type = request.GET.get('type', '')
+    status = request.GET.get('status', '')
+    category = request.GET.get('category', '')
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    search = request.GET.get('search', '')
+    
+    # Aplicar filtros a ingresos
+    if transaction_type == 'income':
+        expenses = expenses.none()
+    elif transaction_type == 'expense':
+        incomes = incomes.none()
+    
+    if status:
+        incomes = incomes.filter(status=status)
+        expenses = expenses.filter(status=status)
+    
+    if category:
+        incomes = incomes.filter(category_id=category)
+        expenses = expenses.filter(category_id=category)
+    
+    if date_from:
+        incomes = incomes.filter(income_date__gte=date_from)
+        expenses = expenses.filter(expense_date__gte=date_from)
+    
+    if date_to:
+        incomes = incomes.filter(income_date__lte=date_to)
+        expenses = expenses.filter(expense_date__lte=date_to)
+    
+    if search:
+        incomes = incomes.filter(
+            Q(title__icontains=search) |
+            Q(description__icontains=search) |
+            Q(client__icontains=search)
+        )
+        expenses = expenses.filter(
+            Q(title__icontains=search) |
+            Q(description__icontains=search) |
+            Q(supplier__icontains=search)
+        )
+    
+    # Combinar y ordenar transacciones
+    transactions = []
+    
+    # Agregar ingresos
+    for income in incomes:
+        transactions.append({
+            'id': income.id,
+            'title': income.title,
+            'description': income.description,
+            'amount': income.amount,
+            'date': income.income_date,
+            'category': income.category,
+            'status': income.status,
+            'type': 'income',
+            'client': income.client,
+            'created_by': income.created_by,
+            'created_at': income.created_at,
+            'updated_at': income.updated_at
+        })
+    
+    # Agregar gastos
+    for expense in expenses:
+        transactions.append({
+            'id': expense.id,
+            'title': expense.title,
+            'description': expense.description,
+            'amount': expense.amount,
+            'date': expense.expense_date,
+            'category': expense.category,
+            'status': expense.status,
+            'type': 'expense',
+            'supplier': expense.supplier,
+            'created_by': expense.created_by,
+            'created_at': expense.created_at,
+            'updated_at': expense.updated_at
+        })
+    
+    # Ordenar por fecha (más recientes primero)
+    transactions.sort(key=lambda x: x['date'], reverse=True)
+    
+    # Paginación
+    paginator = Paginator(transactions, 25)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Estadísticas
+    total_income = sum(t['amount'] for t in transactions if t['type'] == 'income')
+    total_expenses = sum(t['amount'] for t in transactions if t['type'] == 'expense')
+    total_balance = total_income - total_expenses
+    
+    # Obtener opciones para filtros
+    income_categories = Category.objects.filter(category_type='income', is_active=True)
+    expense_categories = Category.objects.filter(category_type='expense', is_active=True)
+    all_categories = list(income_categories) + list(expense_categories)
+    
+    context = {
+        'page_obj': page_obj,
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'total_balance': total_balance,
+        'transaction_type': transaction_type,
+        'status': status,
+        'category': category,
+        'date_from': date_from,
+        'date_to': date_to,
+        'search': search,
+        'categories': all_categories,
+        'status_choices': Income.STATUS_CHOICES,  # Usar los mismos status para ambos
+        'transaction_types': [
+            ('', 'Todas'),
+            ('income', 'Ingresos'),
+            ('expense', 'Gastos')
+        ]
+    }
+    
+    return render(request, 'financial/all_transactions.html', context)
 
 
 # API endpoints para AJAX
