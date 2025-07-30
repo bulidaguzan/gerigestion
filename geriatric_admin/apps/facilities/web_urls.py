@@ -8,6 +8,7 @@ app_name = 'facilities_web'
 urlpatterns = [
     # Dashboard principal de facilities
     path('', views.room_dashboard, name='index'),
+    path('dashboard/', views.room_dashboard, name='room_dashboard'),
     
     # URLs para habitaciones
     path('rooms/', views.room_list, name='room_list'),
