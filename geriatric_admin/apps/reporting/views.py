@@ -47,6 +47,38 @@ def reporting_dashboard(request):
     # Widgets del dashboard (simplificado)
     dashboard_widgets = []
     
+    # Acciones rápidas para el dashboard
+    quick_actions = [
+        {
+            'url': '/reporting/reports/create/',
+            'icon': 'add',
+            'text': 'Nuevo Reporte',
+            'bg_color': 'bg-indigo-600',
+            'hover_color': 'hover:bg-indigo-700'
+        },
+        {
+            'url': '/reporting/quick-report/',
+            'icon': 'flash_on',
+            'text': 'Reporte Rápido',
+            'bg_color': 'bg-emerald-600',
+            'hover_color': 'hover:bg-emerald-700'
+        },
+        {
+            'url': '/reporting/resident-report/',
+            'icon': 'elderly',
+            'text': 'Reporte Residentes',
+            'bg_color': 'bg-blue-600',
+            'hover_color': 'hover:bg-blue-700'
+        },
+        {
+            'url': '/reporting/staff-report/',
+            'icon': 'badge',
+            'text': 'Reporte Personal',
+            'bg_color': 'bg-amber-600',
+            'hover_color': 'hover:bg-amber-700'
+        }
+    ]
+    
     context = {
         'total_reports': total_reports,
         'completed_reports': completed_reports,
@@ -56,6 +88,7 @@ def reporting_dashboard(request):
         'reports_by_type': reports_by_type,
         'active_templates': active_templates,
         'dashboard_widgets': dashboard_widgets,
+        'quick_actions': quick_actions,
     }
     
     return render(request, 'reporting/dashboard.html', context)

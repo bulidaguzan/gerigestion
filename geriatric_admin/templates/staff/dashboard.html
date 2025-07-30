@@ -1,4 +1,4 @@
-{% extends 'base_modern.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Dashboard de Personal{% endblock %}
@@ -17,6 +17,9 @@
 {% endblock %}
 
 {% block content %}
+<!-- Acciones Rápidas -->
+{% include 'components/quick_actions.html' with quick_actions=quick_actions %}
+
 <!-- Estadísticas principales -->
 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4 sm:gap-6 mb-8">
     <!-- TOTAL EMPLEADOS -->

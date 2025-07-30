@@ -367,4 +367,34 @@
 
 .btn-danger:hover {
   background-color: var(--btn-danger-hover) !important;
+}
+
+/* ========================================
+   CLASES PARA ACCIONES RÁPIDAS
+   ======================================== */
+
+.action-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 600 !important;
+  padding: 1rem 1.5rem !important;
+  border-radius: 0.5rem !important;
+  box-shadow: var(--shadow-md) !important;
+  transition: all 0.3s ease !important;
+  transform: scale(1) !important;
+  text-decoration: none !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+.action-button:hover {
+  transform: scale(1.05) !important;
+  box-shadow: var(--shadow-lg) !important;
+  text-decoration: none !important;
+}
+
+.action-button .material-icons {
+  margin-right: 0.75rem !important;
+  font-size: 1.25rem !important;
 } 

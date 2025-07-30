@@ -40,6 +40,26 @@ def financial_dashboard(request):
     # Balance del mes
     monthly_balance = monthly_income - monthly_expenses
     
+    # Gastos del año actual
+    yearly_expenses = Expense.objects.filter(
+        expense_date__year=today.year
+    ).aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Ingresos del año actual
+    yearly_income = Income.objects.filter(
+        income_date__year=today.year
+    ).aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Balance del año
+    yearly_balance = yearly_income - yearly_expenses
+    
+    # Nombre del mes actual
+    month_names = {
+        1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril', 5: 'Mayo', 6: 'Junio',
+        7: 'Julio', 8: 'Agosto', 9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
+    }
+    current_month_name = month_names[today.month]
+    
     # Gastos pendientes
     pending_expenses = Expense.objects.filter(status='pending').count()
     overdue_expenses = Expense.objects.filter(
@@ -132,9 +152,46 @@ def financial_dashboard(request):
     recent_transactions.sort(key=lambda x: x['date'], reverse=True)
     recent_transactions = recent_transactions[:10]  # Limitar a 10 transacciones
     
+    # Acciones rápidas para el dashboard
+    quick_actions = [
+        {
+            'url': '/financial/income/create/',
+            'icon': 'add',
+            'text': 'Nuevo Ingreso',
+            'bg_color': 'bg-emerald-600',
+            'hover_color': 'hover:bg-emerald-700'
+        },
+        {
+            'url': '/financial/expenses/create/',
+            'icon': 'remove',
+            'text': 'Nuevo Gasto',
+            'bg_color': 'bg-red-600',
+            'hover_color': 'hover:bg-red-700'
+        },
+        {
+            'url': '/financial/reports/',
+            'icon': 'assessment',
+            'text': 'Reportes',
+            'bg_color': 'bg-indigo-600',
+            'hover_color': 'hover:bg-indigo-700'
+        },
+        {
+            'url': '/financial/categories/',
+            'icon': 'category',
+            'text': 'Categorías',
+            'bg_color': 'bg-amber-600',
+            'hover_color': 'hover:bg-amber-700'
+        }
+    ]
+    
     context = {
         'monthly_expenses': monthly_expenses,
         'monthly_income': monthly_income,
+        'monthly_balance': monthly_balance,
+        'yearly_expenses': yearly_expenses,
+        'yearly_income': yearly_income,
+        'yearly_balance': yearly_balance,
+        'current_month_name': current_month_name,
         'net_balance': net_balance,
         'total_income': total_income,
         'total_expenses': total_expenses,
@@ -152,6 +209,7 @@ def financial_dashboard(request):
         'recent_income': recent_income,
         'expenses_by_category': expenses_by_category,
         'income_by_category': income_by_category,
+        'quick_actions': quick_actions,
     }
     
     return render(request, 'financial/dashboard.html', context)

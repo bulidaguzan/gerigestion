@@ -61,6 +61,38 @@ def staff_dashboard(request):
         avg_salary=Avg('salary')
     ).order_by('-avg_salary')
     
+    # Acciones rápidas para el dashboard
+    quick_actions = [
+        {
+            'url': '/staff/create/',
+            'icon': 'add',
+            'text': 'Nuevo Empleado',
+            'bg_color': 'bg-indigo-600',
+            'hover_color': 'hover:bg-indigo-700'
+        },
+        {
+            'url': '/staff/list/',
+            'icon': 'visibility',
+            'text': 'Ver Todos',
+            'bg_color': 'bg-slate-600',
+            'hover_color': 'hover:bg-slate-700'
+        },
+        {
+            'url': '/staff/search/',
+            'icon': 'search',
+            'text': 'Buscar',
+            'bg_color': 'bg-emerald-600',
+            'hover_color': 'hover:bg-emerald-700'
+        },
+        {
+            'url': '/staff/list/?status=active',
+            'icon': 'check_circle',
+            'text': 'Activos',
+            'bg_color': 'bg-amber-600',
+            'hover_color': 'hover:bg-amber-700'
+        }
+    ]
+
     context = {
         'total_staff': total_staff,
         'active_staff': active_staff,
@@ -78,6 +110,7 @@ def staff_dashboard(request):
         'recent_hires': recent_hires,
         'senior_staff': senior_staff,
         'avg_salary_by_dept': avg_salary_by_dept,
+        'quick_actions': quick_actions,
     }
     
     return render(request, 'staff/dashboard.html', context)

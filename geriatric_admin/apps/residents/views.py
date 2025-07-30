@@ -226,6 +226,38 @@ def resident_dashboard(request):
         date_of_birth__year__lte=date.today().year - 90
     ).count()
     
+    # Acciones rápidas para el dashboard
+    quick_actions = [
+        {
+            'url': '/residents/create/',
+            'icon': 'add',
+            'text': 'Nuevo Residente',
+            'bg_color': 'bg-indigo-600',
+            'hover_color': 'hover:bg-indigo-700'
+        },
+        {
+            'url': '/residents/list/',
+            'icon': 'visibility',
+            'text': 'Ver Todos',
+            'bg_color': 'bg-slate-600',
+            'hover_color': 'hover:bg-slate-700'
+        },
+        {
+            'url': '/residents/search/',
+            'icon': 'search',
+            'text': 'Buscar',
+            'bg_color': 'bg-emerald-600',
+            'hover_color': 'hover:bg-emerald-700'
+        },
+        {
+            'url': '/residents/list/?status=active',
+            'icon': 'check_circle',
+            'text': 'Activos',
+            'bg_color': 'bg-amber-600',
+            'hover_color': 'hover:bg-amber-700'
+        }
+    ]
+
     context = {
         'total_residents': total_residents,
         'active_residents': active_residents,
@@ -243,6 +275,7 @@ def resident_dashboard(request):
         'age_groups': age_groups,
         'unassigned_residents': unassigned_residents,
         'pending_reports': pending_reports,
+        'quick_actions': quick_actions,
     }
     
     return render(request, 'residents/dashboard.html', context)

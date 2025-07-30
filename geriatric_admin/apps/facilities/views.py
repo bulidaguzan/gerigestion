@@ -264,6 +264,38 @@ def room_dashboard(request):
     ]
     low_availability_rooms.sort(key=lambda x: x.available_beds)
     
+    # Acciones rápidas para el dashboard
+    quick_actions = [
+        {
+            'url': '/facilities/rooms/create/',
+            'icon': 'add',
+            'text': 'Nueva Habitación',
+            'bg_color': 'bg-indigo-600',
+            'hover_color': 'hover:bg-indigo-700'
+        },
+        {
+            'url': '/facilities/rooms/',
+            'icon': 'visibility',
+            'text': 'Ver Todas',
+            'bg_color': 'bg-slate-600',
+            'hover_color': 'hover:bg-slate-700'
+        },
+        {
+            'url': '/facilities/rooms/?status=available',
+            'icon': 'check_circle',
+            'text': 'Disponibles',
+            'bg_color': 'bg-emerald-600',
+            'hover_color': 'hover:bg-emerald-700'
+        },
+        {
+            'url': '/facilities/rooms/?status=maintenance',
+            'icon': 'build',
+            'text': 'Mantenimiento',
+            'bg_color': 'bg-amber-600',
+            'hover_color': 'hover:bg-amber-700'
+        }
+    ]
+    
     context = {
         'total_rooms': total_rooms,
         'available_rooms': available_rooms,
@@ -275,6 +307,7 @@ def room_dashboard(request):
         'occupancy_rate': round((occupied_beds / total_beds * 100) if total_beds > 0 else 0, 1),
         'floor_stats': floor_stats,
         'low_availability_rooms': low_availability_rooms,
+        'quick_actions': quick_actions,
     }
     
     return render(request, 'facilities/rooms/dashboard.html', context) 

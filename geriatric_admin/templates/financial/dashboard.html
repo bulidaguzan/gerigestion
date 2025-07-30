@@ -1,4 +1,4 @@
-{% extends 'base_modern.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Dashboard Financiero{% endblock %}
@@ -22,7 +22,7 @@
     <!-- INGRESOS MENSUALES -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
-            <p class="text-xs sm:text-sm font-medium text-slate-500">INGRESOS MENSUALES</p>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">INGRESOS {{ current_month_name|upper }}</p>
             <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ monthly_income|default:"0" }}</p>
         </div>
         <div class="bg-emerald-100 p-2 sm:p-3 rounded-full">
@@ -33,7 +33,7 @@
     <!-- GASTOS MENSUALES -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
-            <p class="text-xs sm:text-sm font-medium text-rose-600">GASTOS MENSUALES</p>
+            <p class="text-xs sm:text-sm font-medium text-rose-600">GASTOS {{ current_month_name|upper }}</p>
             <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ monthly_expenses|default:"0" }}</p>
         </div>
         <div class="bg-rose-100 p-2 sm:p-3 rounded-full">
@@ -41,44 +41,44 @@
         </div>
     </div>
     
-    <!-- BALANCE NETO -->
+    <!-- BALANCE MENSUAL -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
-            <p class="text-xs sm:text-sm font-medium text-indigo-600">BALANCE NETO</p>
-            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ net_balance|default:"0" }}</p>
+            <p class="text-xs sm:text-sm font-medium text-indigo-600">BALANCE {{ current_month_name|upper }}</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ monthly_balance|default:"0" }}</p>
         </div>
         <div class="bg-indigo-100 p-2 sm:p-3 rounded-full">
-            <span class="material-icons text-indigo-600 text-2xl sm:text-3xl">account_balance</span>
+            <span class="material-icons text-indigo-600 text-2xl sm:text-3xl">calendar_month</span>
         </div>
     </div>
     
-    <!-- MARGEN -->
+    <!-- BALANCE ANUAL -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
-            <p class="text-xs sm:text-sm font-medium text-amber-600">MARGEN</p>
-            <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ profit_margin|default:"0" }}%</p>
+            <p class="text-xs sm:text-sm font-medium text-purple-600">BALANCE ANUAL</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ yearly_balance|default:"0" }}</p>
         </div>
-        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
-            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">percent</span>
+        <div class="bg-purple-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-purple-600 text-2xl sm:text-3xl">calendar_today</span>
         </div>
     </div>
     
-    <!-- TOTAL INGRESOS -->
+    <!-- INGRESOS ANUALES -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
-            <p class="text-xs sm:text-sm font-medium text-slate-500">TOTAL INGRESOS</p>
-            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ total_income|default:"0" }}</p>
+            <p class="text-xs sm:text-sm font-medium text-slate-500">INGRESOS ANUALES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ yearly_income|default:"0" }}</p>
         </div>
         <div class="bg-sky-100 p-2 sm:p-3 rounded-full">
             <span class="material-icons text-sky-600 text-2xl sm:text-3xl">account_balance_wallet</span>
         </div>
     </div>
     
-    <!-- TOTAL GASTOS -->
+    <!-- GASTOS ANUALES -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
-            <p class="text-xs sm:text-sm font-medium text-blue-600">TOTAL GASTOS</p>
-            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ total_expenses|default:"0" }}</p>
+            <p class="text-xs sm:text-sm font-medium text-blue-600">GASTOS ANUALES</p>
+            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ yearly_expenses|default:"0" }}</p>
         </div>
         <div class="bg-blue-100 p-2 sm:p-3 rounded-full">
             <span class="material-icons text-blue-600 text-2xl sm:text-3xl">receipt_long</span>
@@ -96,101 +96,54 @@
         </div>
     </div>
     
-    <!-- PENDIENTES -->
-    <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
-        <div>
-            <p class="text-xs sm:text-sm font-medium text-amber-600">PENDIENTES</p>
-            <p class="text-2xl sm:text-3xl font-bold text-slate-800">${{ pending_amount|default:"0" }}</p>
-        </div>
-        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
-            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">schedule</span>
-        </div>
-    </div>
 </div>
 
 <!-- Contenido principal -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-    <!-- Transacciones recientes -->
-    <div class="lg:col-span-2 content-card">
-        <h2 class="text-lg font-semibold text-slate-700 mb-4">Transacciones Recientes</h2>
-        {% if recent_transactions %}
-        <div class="overflow-x-auto">
-            <table class="table-modern">
-                <thead>
-                    <tr>
-                        <th>Descripción</th>
-                        <th>Tipo</th>
-                        <th>Categoría</th>
-                        <th>Monto</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for transaction in recent_transactions %}
-                    <tr>
-                        <td class="text-sm font-medium text-slate-900">{{ transaction.description|truncatechars:30 }}</td>
-                        <td>
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {% if transaction.type == 'income' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
-                                {% if transaction.type == 'income' %}Ingreso{% else %}Gasto{% endif %}
-                            </span>
-                        </td>
-                        <td>{{ transaction.category.name|default:"--" }}</td>
-                        <td class="font-medium {% if transaction.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
-                            ${{ transaction.amount }}
-                        </td>
-                        <td>{{ transaction.date|date:"d/m/Y" }}</td>
-                        <td>
-                            <a href="{% if transaction.type == 'income' %}{% url 'financial_web:income_detail' transaction.id %}{% else %}{% url 'financial_web:expense_detail' transaction.id %}{% endif %}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
-                                Ver detalles
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <div class="flex flex-col items-center justify-center text-center text-slate-500 h-64">
-            <span class="material-icons text-5xl sm:text-6xl text-slate-300">account_balance_wallet</span>
-            <p class="mt-4 font-semibold">No hay transacciones recientes</p>
-            <p class="text-sm">Las transacciones aparecerán aquí cuando se registren.</p>
-        </div>
-        {% endif %}
+<div class="content-card">
+    <h2 class="text-lg font-semibold text-slate-700 mb-4">Transacciones Recientes</h2>
+    {% if recent_transactions %}
+    <div class="overflow-x-auto">
+        <table class="table-modern">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Tipo</th>
+                    <th>Categoría</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in recent_transactions %}
+                <tr>
+                    <td class="text-sm font-medium text-slate-900">{{ transaction.description|truncatechars:30 }}</td>
+                    <td>
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {% if transaction.type == 'income' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                            {% if transaction.type == 'income' %}Ingreso{% else %}Gasto{% endif %}
+                        </span>
+                    </td>
+                    <td>{{ transaction.category.name|default:"--" }}</td>
+                    <td class="font-medium {% if transaction.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
+                        ${{ transaction.amount }}
+                    </td>
+                    <td>{{ transaction.date|date:"d/m/Y" }}</td>
+                    <td>
+                        <a href="{% if transaction.type == 'income' %}{% url 'financial_web:income_detail' transaction.id %}{% else %}{% url 'financial_web:expense_detail' transaction.id %}{% endif %}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                            Ver detalles
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-
-    <!-- Resumen financiero -->
-    <div class="content-card flex flex-col items-center justify-center text-center">
-        <div class="relative w-16 h-16 sm:w-20 sm:h-20 {% if net_balance >= 0 %}bg-emerald-100{% else %}bg-red-100{% endif %} rounded-full flex items-center justify-center mb-4">
-            <span class="material-icons text-4xl sm:text-5xl {% if net_balance >= 0 %}text-emerald-600{% else %}text-red-600{% endif %}">
-                {% if net_balance >= 0 %}trending_up{% else %}trending_down{% endif %}
-            </span>
-            <span class="absolute h-full w-full {% if net_balance >= 0 %}bg-emerald-200{% else %}bg-red-200{% endif %} rounded-full animate-ping opacity-75"></span>
-        </div>
-        <h2 class="text-lg font-semibold text-slate-800">
-            {% if net_balance >= 0 %}¡Excelente!{% else %}Atención{% endif %}
-        </h2>
-        <p class="text-slate-500 mt-2 text-sm sm:text-base">
-            {% if net_balance >= 0 %}
-            El balance financiero es positivo este mes.
-            {% else %}
-            El balance financiero es negativo este mes.
-            {% endif %}
-        </p>
-        <div class="mt-4 space-y-2 text-xs text-slate-500">
-            <div class="flex items-center justify-between">
-                <span>Ingresos</span>
-                <span class="text-emerald-600">${{ monthly_income|default:"0" }}</span>
-            </div>
-            <div class="flex items-center justify-between">
-                <span>Gastos</span>
-                <span class="text-red-600">${{ monthly_expenses|default:"0" }}</span>
-            </div>
-            <div class="flex items-center justify-between">
-                <span>Balance</span>
-                <span class="{% if net_balance >= 0 %}text-emerald-600{% else %}text-red-600{% endif %}">${{ net_balance|default:"0" }}</span>
-            </div>
-        </div>
+    {% else %}
+    <div class="flex flex-col items-center justify-center text-center text-slate-500 h-64">
+        <span class="material-icons text-5xl sm:text-6xl text-slate-300">account_balance_wallet</span>
+        <p class="mt-4 font-semibold">No hay transacciones recientes</p>
+        <p class="text-sm">Las transacciones aparecerán aquí cuando se registren.</p>
     </div>
+    {% endif %}
 </div>
 {% endblock %} 

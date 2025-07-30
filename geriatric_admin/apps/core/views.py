@@ -981,6 +981,38 @@ def dashboard_view(request):
                 'timestamp': now.strftime('%d/%m/%Y %H:%M')
             })
         
+        # Acciones rápidas para el dashboard principal
+        quick_actions = [
+            {
+                'url': '/residents/dashboard/',
+                'icon': 'elderly',
+                'text': 'Gestionar Residentes',
+                'bg_color': 'bg-indigo-600',
+                'hover_color': 'hover:bg-indigo-700'
+            },
+            {
+                'url': '/facilities/',
+                'icon': 'hotel',
+                'text': 'Ver Instalaciones',
+                'bg_color': 'bg-slate-600',
+                'hover_color': 'hover:bg-slate-700'
+            },
+            {
+                'url': '/financial/dashboard/',
+                'icon': 'account_balance_wallet',
+                'text': 'Finanzas',
+                'bg_color': 'bg-emerald-600',
+                'hover_color': 'hover:bg-emerald-700'
+            },
+            {
+                'url': '/reporting/',
+                'icon': 'assessment',
+                'text': 'Reportes',
+                'bg_color': 'bg-amber-600',
+                'hover_color': 'hover:bg-amber-700'
+            }
+        ]
+        
         context = {
             'total_residents': total_residents,
             'available_rooms': available_rooms,
@@ -991,6 +1023,7 @@ def dashboard_view(request):
             'balance': f"{balance:,.0f}",
             'pending_reports': pending_reports,
             'recent_activities': recent_activities,
+            'quick_actions': quick_actions,
         }
         
     except Exception as e:
@@ -1010,6 +1043,36 @@ def dashboard_view(request):
                 'description': 'Hubo un problema al cargar los datos del dashboard',
                 'timestamp': now.strftime('%d/%m/%Y %H:%M')
             }],
+            'quick_actions': [
+                {
+                    'url': '/residents/dashboard/',
+                    'icon': 'elderly',
+                    'text': 'Gestionar Residentes',
+                    'bg_color': 'bg-indigo-600',
+                    'hover_color': 'hover:bg-indigo-700'
+                },
+                {
+                    'url': '/facilities/',
+                    'icon': 'hotel',
+                    'text': 'Ver Instalaciones',
+                    'bg_color': 'bg-slate-600',
+                    'hover_color': 'hover:bg-slate-700'
+                },
+                {
+                    'url': '/financial/dashboard/',
+                    'icon': 'account_balance_wallet',
+                    'text': 'Finanzas',
+                    'bg_color': 'bg-emerald-600',
+                    'hover_color': 'hover:bg-emerald-700'
+                },
+                {
+                    'url': '/reporting/',
+                    'icon': 'assessment',
+                    'text': 'Reportes',
+                    'bg_color': 'bg-amber-600',
+                    'hover_color': 'hover:bg-amber-700'
+                }
+            ],
         }
     
     return render(request, 'core/dashboard/index.html', context)
