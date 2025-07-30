@@ -7,9 +7,8 @@ A comprehensive Django-based web application for managing geriatric centers, inc
 - **Multi-Center Support**: Manage multiple geriatric centers from a single installation
 - **Infrastructure Management**: Room and bed management with occupancy tracking
 - **Resident Management**: Comprehensive resident profiles and care plans
-- **Staff Management**: Scheduling, task assignment, and productivity tracking
+- **Staff Management**: Task assignment, and productivity tracking
 - **Medical Records**: Medication management and health monitoring
-- **Scheduling & Calendar**: Integrated appointment and activity scheduling
 - **Reporting & Analytics**: Comprehensive reports and dashboards
 - **Security & Compliance**: Healthcare data protection and audit trails
 
@@ -77,7 +76,6 @@ geriatric_admin/
 │   ├── residents/        # Resident management
 │   ├── staff/           # Staff management
 │   ├── medical/         # Medical records and medications
-│   ├── scheduling/      # Calendar and scheduling
 │   └── reporting/       # Reports and analytics
 ├── static/               # Static files (CSS, JS, images)
 ├── templates/           # Django templates
