@@ -176,13 +176,6 @@ def financial_dashboard(request):
             'hover_color': 'hover:bg-slate-700'
         },
         {
-            'url': '/financial/reports/',
-            'icon': 'assessment',
-            'text': 'Reportes',
-            'bg_color': 'bg-indigo-600',
-            'hover_color': 'hover:bg-indigo-700'
-        },
-        {
             'url': '/financial/categories/',
             'icon': 'category',
             'text': 'Categorías',
