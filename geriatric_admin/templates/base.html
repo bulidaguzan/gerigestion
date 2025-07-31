@@ -132,13 +132,12 @@
             <div class="flex items-center flex-wrap gap-2">
                 {% block header_actions %}{% endblock %}
                 <div class="ml-2 sm:ml-6 relative">
-                    <div class="flex items-center text-slate-600 group">
+                    <button id="user-dropdown-toggle" class="flex items-center text-slate-600 hover:text-slate-800 transition-colors duration-200">
                         <span class="mr-2 hidden sm:inline">{{ user.get_full_name|default:user.username }}</span>
-                        <span class="material-icons transition-transform duration-300 group-focus:rotate-180">expand_more</span>
-                    </div>
-                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden group-hover:block">
-                        <a href="{% url 'admin:index' %}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Administración</a>
-                        <a href="{% url 'admin:logout' %}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Cerrar Sesión</a>
+                        <span id="dropdown-arrow" class="material-icons transition-transform duration-300">expand_more</span>
+                    </button>
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden border border-slate-200">
+                        <a href="{% url 'admin:logout' %}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors duration-200">Cerrar Sesión</a>
                     </div>
                 </div>
             </div>
@@ -150,10 +149,38 @@
 </div>
 
 <script>
+    // Mobile menu toggle
     const menuToggle = document.getElementById('menu-toggle');
     const sidebarNav = document.getElementById('sidebar-nav');
     menuToggle.addEventListener('click', () => {
         sidebarNav.classList.toggle('hidden');
+    });
+
+    // User dropdown toggle
+    const userDropdownToggle = document.getElementById('user-dropdown-toggle');
+    const userDropdown = document.getElementById('user-dropdown');
+    const dropdownArrow = document.getElementById('dropdown-arrow');
+
+    userDropdownToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userDropdown.classList.toggle('hidden');
+        dropdownArrow.style.transform = userDropdown.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!userDropdownToggle.contains(e.target) && !userDropdown.contains(e.target)) {
+            userDropdown.classList.add('hidden');
+            dropdownArrow.style.transform = 'rotate(0deg)';
+        }
+    });
+
+    // Close dropdown when pressing Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !userDropdown.classList.contains('hidden')) {
+            userDropdown.classList.add('hidden');
+            dropdownArrow.style.transform = 'rotate(0deg)';
+        }
     });
 </script>
 {% block extra_js %}{% endblock %}
