@@ -14,14 +14,11 @@
 {% if action == 'create' %}Crear una nueva habitación en el geriátrico{% else %}Modificar información de la habitación{% endif %}
 {% endblock %}
 
-{% block header_actions %}
-<a href="{% url 'facilities_web:room_list' %}" class="flex items-center bg-white hover:bg-slate-100 text-slate-600 font-semibold py-2 px-3 sm:px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
-    <span class="material-icons mr-2 text-base sm:text-lg">arrow_back</span>
-    <span class="text-sm sm:text-base">Volver</span>
-</a>
-{% endblock %}
+
 
 {% block content %}
+
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Formulario Principal -->
     <div class="lg:col-span-2">
