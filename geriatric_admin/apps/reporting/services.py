@@ -626,7 +626,7 @@ class ReportGenerator:
                 if filters.get('include_salary'):
                     salary_info = []
                     if hasattr(member, 'salary') and member.salary:
-                        salary_info.append(f"Salario: €{member.salary}")
+                        salary_info.append(f"Salario: ${member.salary}")
                     if hasattr(member, 'years_of_service') and member.years_of_service:
                         salary_info.append(f"Años servicio: {member.years_of_service}")
                     

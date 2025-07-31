@@ -4,311 +4,396 @@
 
 {% block title %}{{ staff.full_name }} - {% trans 'Detalles del Empleado' %}{% endblock %}
 
+{% block page_title %}{{ staff.full_name }}{% endblock %}
+{% block page_subtitle %}{{ staff.position }} • {{ staff.department }}{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'staff_web:staff_list' %}" class="btn-modern-secondary">
+    <span class="material-icons">arrow_back</span>
+    {% trans 'Volver' %}
+</a>
+<a href="{% url 'staff_web:staff_update' staff.id %}" class="btn-modern">
+    <span class="material-icons">edit</span>
+    {% trans 'Editar' %}
+</a>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">{{ staff.full_name }}</h1>
-            <p class="text-muted">{{ staff.position }} - {{ staff.department }}</p>
+<div class="space-y-6">
+    <!-- Header Card with Employee Status -->
+    <div class="content-card">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                    {{ staff.first_name|first }}{{ staff.last_name|first }}
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">{{ staff.full_name }}</h2>
+                    <p class="text-slate-600">{{ staff.position }} • {{ staff.department }}</p>
+                    <p class="text-sm text-slate-500">ID: {{ staff.employee_id }}</p>
+                </div>
+            </div>
+            <div class="text-right">
+                {% if staff.employment_status == 'active' %}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
+                        <span class="material-icons text-sm mr-1">check_circle</span>
+                        {% trans 'Activo' %}
+                    </span>
+                {% elif staff.employment_status == 'inactive' %}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800">
+                        <span class="material-icons text-sm mr-1">pause_circle</span>
+                        {% trans 'Inactivo' %}
+                    </span>
+                {% elif staff.employment_status == 'suspended' %}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                        <span class="material-icons text-sm mr-1">block</span>
+                        {% trans 'Suspendido' %}
+                    </span>
+                {% endif %}
+            </div>
         </div>
-        <div class="btn-group" role="group">
-            <a href="{% url 'staff_web:staff_list' %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> {% trans 'Volver al listado' %}
-            </a>
-            <a href="{% url 'staff_web:staff_update' staff.id %}" class="btn btn-warning">
-                <i class="fas fa-edit"></i> {% trans 'Editar' %}
-            </a>
-            <a href="{% url 'staff_web:staff_delete' staff.id %}" class="btn btn-danger">
-                <i class="fas fa-trash"></i> {% trans 'Eliminar' %}
-            </a>
+        
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="stat-card">
+                <div class="flex items-center">
+                    <div class="p-2 bg-blue-100 rounded-lg">
+                        <span class="material-icons text-blue-600">schedule</span>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-slate-600">{% trans 'Años de Servicio' %}</p>
+                        <p class="text-lg font-semibold text-slate-900">{{ staff.years_of_service }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="flex items-center">
+                    <div class="p-2 bg-emerald-100 rounded-lg">
+                        <span class="material-icons text-emerald-600">attach_money</span>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-slate-600">{% trans 'Salario Mensual' %}</p>
+                        <p class="text-lg font-semibold text-slate-900">${{ staff.salary|floatformat:2 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="flex items-center">
+                    <div class="p-2 bg-purple-100 rounded-lg">
+                        <span class="material-icons text-purple-600">cake</span>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-slate-600">{% trans 'Edad' %}</p>
+                        <p class="text-lg font-semibold text-slate-900">{{ staff.age }} {% trans 'años' %}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="flex items-center">
+                    <div class="p-2 bg-amber-100 rounded-lg">
+                        <span class="material-icons text-amber-600">event</span>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-slate-600">{% trans 'Contratado' %}</p>
+                        <p class="text-lg font-semibold text-slate-900">{{ staff.hire_date|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- Información Personal -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-user me-2"></i> {% trans 'Información Personal' %}
-                    </h6>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Information -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Personal Information -->
+            <div class="content-card">
+                <div class="flex items-center mb-4">
+                    <span class="material-icons text-indigo-600 mr-2">person</span>
+                    <h3 class="text-lg font-semibold text-slate-800">{% trans 'Información Personal' %}</h3>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td><strong>{% trans 'Nombre Completo' %}:</strong></td>
-                                    <td>{{ staff.full_name }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Fecha de Nacimiento' %}:</strong></td>
-                                    <td>{{ staff.date_of_birth|date:"d/m/Y" }} ({{ staff.age }} {% trans 'años' %})</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Género' %}:</strong></td>
-                                    <td>{{ staff.get_gender_display }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Estado Civil' %}:</strong></td>
-                                    <td>{{ staff.get_marital_status_display }}</td>
-                                </tr>
-                            </table>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Nombre Completo' %}</span>
+                            <span class="font-medium">{{ staff.full_name }}</span>
                         </div>
-                        <div class="col-md-6">
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td><strong>{% trans 'Teléfono' %}:</strong></td>
-                                    <td>{{ staff.phone }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Email' %}:</strong></td>
-                                    <td>{{ staff.email }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Ciudad' %}:</strong></td>
-                                    <td>{{ staff.city }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Dirección' %}:</strong></td>
-                                    <td>{{ staff.address }}</td>
-                                </tr>
-                            </table>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Fecha de Nacimiento' %}</span>
+                            <span class="font-medium">{{ staff.date_of_birth|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Género' %}</span>
+                            <span class="font-medium">{{ staff.get_gender_display }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Estado Civil' %}</span>
+                            <span class="font-medium">{{ staff.get_marital_status_display }}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Teléfono' %}</span>
+                            <a href="tel:{{ staff.phone }}" class="font-medium text-indigo-600 hover:text-indigo-700">{{ staff.phone }}</a>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Email' %}</span>
+                            <a href="mailto:{{ staff.email }}" class="font-medium text-indigo-600 hover:text-indigo-700">{{ staff.email }}</a>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Ciudad' %}</span>
+                            <span class="font-medium">{{ staff.city }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Dirección' %}</span>
+                            <span class="font-medium">{{ staff.address }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Información Laboral -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-briefcase me-2"></i> {% trans 'Información Laboral' %}
-                    </h6>
+            <!-- Work Information -->
+            <div class="content-card">
+                <div class="flex items-center mb-4">
+                    <span class="material-icons text-emerald-600 mr-2">work</span>
+                    <h3 class="text-lg font-semibold text-slate-800">{% trans 'Información Laboral' %}</h3>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td><strong>{% trans 'ID de Empleado' %}:</strong></td>
-                                    <td><span class="badge bg-secondary">{{ staff.employee_id }}</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Cargo' %}:</strong></td>
-                                    <td>{{ staff.position }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Departamento' %}:</strong></td>
-                                    <td>{{ staff.department }}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Fecha de Contratación' %}:</strong></td>
-                                    <td>{{ staff.hire_date|date:"d/m/Y" }}</td>
-                                </tr>
-                            </table>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'ID de Empleado' %}</span>
+                            <span class="font-mono font-medium bg-slate-100 px-2 py-1 rounded">{{ staff.employee_id }}</span>
                         </div>
-                        <div class="col-md-6">
-                            <table class="table table-borderless">
-                                <tr>
-                                    <td><strong>{% trans 'Estado de Empleo' %}:</strong></td>
-                                    <td>
-                                        {% if staff.employment_status == 'active' %}
-                                        <span class="badge bg-success">{% trans 'Activo' %}</span>
-                                        {% elif staff.employment_status == 'inactive' %}
-                                        <span class="badge bg-warning">{% trans 'Inactivo' %}</span>
-                                        {% elif staff.employment_status == 'suspended' %}
-                                        <span class="badge bg-danger">{% trans 'Suspendido' %}</span>
-                                        {% elif staff.employment_status == 'terminated' %}
-                                        <span class="badge bg-dark">{% trans 'Terminado' %}</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Años de Servicio' %}:</strong></td>
-                                    <td><span class="badge bg-info">{{ staff.years_of_service }}</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Salario' %}:</strong></td>
-                                    <td><strong>€{{ staff.salary|floatformat:2 }}</strong></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>{% trans 'Horario' %}:</strong></td>
-                                    <td>{{ staff.work_schedule }}</td>
-                                </tr>
-                            </table>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Cargo' %}</span>
+                            <span class="font-medium">{{ staff.position }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Departamento' %}</span>
+                            <span class="font-medium">{{ staff.department }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Fecha de Contratación' %}</span>
+                            <span class="font-medium">{{ staff.hire_date|date:"d/m/Y" }}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Estado de Empleo' %}</span>
+                            <span class="font-medium">
+                                {% if staff.employment_status == 'active' %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                        <span class="material-icons text-xs mr-1">check_circle</span>
+                                        {% trans 'Activo' %}
+                                    </span>
+                                {% elif staff.employment_status == 'inactive' %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                        <span class="material-icons text-xs mr-1">pause_circle</span>
+                                        {% trans 'Inactivo' %}
+                                    </span>
+                                {% elif staff.employment_status == 'suspended' %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <span class="material-icons text-xs mr-1">block</span>
+                                        {% trans 'Suspendido' %}
+                                    </span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Años de Servicio' %}</span>
+                            <span class="font-medium">{{ staff.years_of_service }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Salario' %}</span>
+                            <span class="font-bold text-emerald-600">${{ staff.salary|floatformat:2 }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Horario' %}</span>
+                            <span class="font-medium">{{ staff.work_schedule }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Horarios y Turnos -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-clock me-2"></i> {% trans 'Horarios y Turnos' %}
-                    </h6>
+            <!-- Schedule Information -->
+            <div class="content-card">
+                <div class="flex items-center mb-4">
+                    <span class="material-icons text-amber-600 mr-2">schedule</span>
+                    <h3 class="text-lg font-semibold text-slate-800">{% trans 'Horarios y Turnos' %}</h3>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>{% trans 'Horario de Trabajo' %}</h6>
-                            <p class="text-muted">{{ staff.work_schedule }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Horario de Trabajo' %}</span>
+                            <span class="font-medium">{{ staff.work_schedule }}</span>
                         </div>
-                        <div class="col-md-6">
-                            <h6>{% trans 'Tipo de Turno' %}</h6>
-                            <p class="text-muted">{{ staff.shift_type }}</p>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span class="text-slate-600">{% trans 'Tipo de Turno' %}</span>
+                            <span class="font-medium">{{ staff.shift_type }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Información Médica -->
+            <!-- Medical Information -->
             {% if staff.blood_type or staff.allergies or staff.medical_conditions %}
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-heartbeat me-2"></i> {% trans 'Información Médica' %}
-                    </h6>
+            <div class="content-card">
+                <div class="flex items-center mb-4">
+                    <span class="material-icons text-red-600 mr-2">favorite</span>
+                    <h3 class="text-lg font-semibold text-slate-800">{% trans 'Información Médica' %}</h3>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% if staff.blood_type %}
-                        <div class="col-md-4">
-                            <h6>{% trans 'Tipo de Sangre' %}</h6>
-                            <p class="text-muted">{{ staff.blood_type }}</p>
-                        </div>
-                        {% endif %}
-                        {% if staff.allergies %}
-                        <div class="col-md-4">
-                            <h6>{% trans 'Alergias' %}</h6>
-                            <p class="text-muted">{{ staff.allergies|linebreaks }}</p>
-                        </div>
-                        {% endif %}
-                        {% if staff.medical_conditions %}
-                        <div class="col-md-4">
-                            <h6>{% trans 'Condiciones Médicas' %}</h6>
-                            <p class="text-muted">{{ staff.medical_conditions|linebreaks }}</p>
-                        </div>
-                        {% endif %}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {% if staff.blood_type %}
+                    <div class="space-y-2">
+                        <h4 class="font-medium text-slate-700">{% trans 'Tipo de Sangre' %}</h4>
+                        <p class="text-slate-600">{{ staff.blood_type }}</p>
                     </div>
+                    {% endif %}
+                    {% if staff.allergies %}
+                    <div class="space-y-2">
+                        <h4 class="font-medium text-slate-700">{% trans 'Alergias' %}</h4>
+                        <p class="text-slate-600">{{ staff.allergies|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+                    {% if staff.medical_conditions %}
+                    <div class="space-y-2">
+                        <h4 class="font-medium text-slate-700">{% trans 'Condiciones Médicas' %}</h4>
+                        <p class="text-slate-600">{{ staff.medical_conditions|linebreaks }}</p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
 
-            <!-- Información Adicional -->
+            <!-- Additional Information -->
             {% if staff.skills or staff.notes %}
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-info-circle me-2"></i> {% trans 'Información Adicional' %}
-                    </h6>
+            <div class="content-card">
+                <div class="flex items-center mb-4">
+                    <span class="material-icons text-purple-600 mr-2">info</span>
+                    <h3 class="text-lg font-semibold text-slate-800">{% trans 'Información Adicional' %}</h3>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% if staff.skills %}
-                        <div class="col-md-6">
-                            <h6>{% trans 'Habilidades' %}</h6>
-                            <p class="text-muted">{{ staff.skills|linebreaks }}</p>
-                        </div>
-                        {% endif %}
-                        {% if staff.notes %}
-                        <div class="col-md-6">
-                            <h6>{% trans 'Notas' %}</h6>
-                            <p class="text-muted">{{ staff.notes|linebreaks }}</p>
-                        </div>
-                        {% endif %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% if staff.skills %}
+                    <div class="space-y-2">
+                        <h4 class="font-medium text-slate-700">{% trans 'Habilidades' %}</h4>
+                        <p class="text-slate-600">{{ staff.skills|linebreaks }}</p>
                     </div>
+                    {% endif %}
+                    {% if staff.notes %}
+                    <div class="space-y-2">
+                        <h4 class="font-medium text-slate-700">{% trans 'Notas' %}</h4>
+                        <p class="text-slate-600">{{ staff.notes|linebreaks }}</p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
         </div>
 
-        <div class="col-lg-4">
-            <!-- Estado del Empleado -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">{% trans 'Estado del Empleado' %}</h6>
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Employee Status Card -->
+            <div class="content-card">
+                <div class="flex items-center mb-4">
+                    <span class="material-icons text-slate-600 mr-2">verified</span>
+                    <h3 class="text-lg font-semibold text-slate-800">{% trans 'Estado del Empleado' %}</h3>
                 </div>
-                <div class="card-body">
-                    <div class="text-center mb-3">
-                        {% if staff.is_active %}
-                        <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
-                        <h5 class="text-success">{% trans 'Empleado Activo' %}</h5>
-                        <p class="text-muted">{% trans 'El empleado está activamente trabajando' %}</p>
-                        {% else %}
-                        <i class="fas fa-times-circle fa-3x text-danger mb-2"></i>
-                        <h5 class="text-danger">{% trans 'Empleado Inactivo' %}</h5>
-                        <p class="text-muted">{{ staff.get_employment_status_display }}</p>
-                        {% endif %}
+                <div class="text-center mb-4">
+                    {% if staff.employment_status == 'active' %}
+                        <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="material-icons text-3xl text-emerald-600">check_circle</span>
+                        </div>
+                        <h4 class="text-lg font-semibold text-emerald-600">{% trans 'Empleado Activo' %}</h4>
+                        <p class="text-sm text-slate-500">{% trans 'El empleado está activamente trabajando' %}</p>
+                    {% else %}
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="material-icons text-3xl text-red-600">block</span>
+                        </div>
+                        <h4 class="text-lg font-semibold text-red-600">{% trans 'Empleado Inactivo' %}</h4>
+                        <p class="text-sm text-slate-500">{{ staff.get_employment_status_display }}</p>
+                    {% endif %}
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                        <span class="text-slate-600">{% trans 'Años de Servicio' %}</span>
+                        <span class="font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ staff.years_of_service }}</span>
                     </div>
-
-                    <div class="list-group list-group-flush">
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            {% trans 'Años de Servicio' %}
-                            <span class="badge bg-info">{{ staff.years_of_service }}</span>
-                        </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            {% trans 'Edad' %}
-                            <span class="badge bg-secondary">{{ staff.age }} {% trans 'años' %}</span>
-                        </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            {% trans 'Salario Mensual' %}
-                            <span class="text-success fw-bold">€{{ staff.salary|floatformat:2 }}</span>
-                        </div>
+                    <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                        <span class="text-slate-600">{% trans 'Edad' %}</span>
+                        <span class="font-medium bg-slate-100 text-slate-800 px-2 py-1 rounded">{{ staff.age }} {% trans 'años' %}</span>
                     </div>
-                </div>
-            </div>
-
-            <!-- Contacto de Emergencia -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-exclamation-triangle me-2"></i> {% trans 'Contacto de Emergencia' %}
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <h6>{{ staff.emergency_contact_name }}</h6>
-                    <p class="text-muted mb-2">{{ staff.emergency_contact_relationship }}</p>
-                    <p class="text-muted mb-0">{{ staff.emergency_contact_phone }}</p>
-                </div>
-            </div>
-
-            <!-- Acciones Rápidas -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">{% trans 'Acciones Rápidas' %}</h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'staff_web:staff_update' staff.id %}" class="btn btn-warning">
-                            <i class="fas fa-edit"></i> {% trans 'Editar Empleado' %}
-                        </a>
-                        <a href="{% url 'staff_web:staff_delete' staff.id %}" class="btn btn-danger">
-                            <i class="fas fa-trash"></i> {% trans 'Eliminar Empleado' %}
-                        </a>
-                        <a href="mailto:{{ staff.email }}" class="btn btn-info">
-                            <i class="fas fa-envelope"></i> {% trans 'Enviar Email' %}
-                        </a>
-                        <a href="tel:{{ staff.phone }}" class="btn btn-success">
-                            <i class="fas fa-phone"></i> {% trans 'Llamar' %}
-                        </a>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-slate-600">{% trans 'Salario Mensual' %}</span>
+                        <span class="font-bold text-emerald-600">${{ staff.salary|floatformat:2 }}</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Información del Sistema -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-secondary">{% trans 'Información del Sistema' %}</h6>
+            <!-- Emergency Contact -->
+            <div class="content-card">
+                <div class="flex items-center mb-4">
+                    <span class="material-icons text-red-600 mr-2">emergency</span>
+                    <h3 class="text-lg font-semibold text-slate-800">{% trans 'Contacto de Emergencia' %}</h3>
                 </div>
-                <div class="card-body">
-                    <small class="text-muted">
-                        <div><strong>{% trans 'ID' %}:</strong> {{ staff.id }}</div>
-                        <div><strong>{% trans 'Creado' %}:</strong> {{ staff.created_at|date:"d/m/Y H:i" }}</div>
-                        <div><strong>{% trans 'Actualizado' %}:</strong> {{ staff.updated_at|date:"d/m/Y H:i" }}</div>
-                    </small>
+                <div class="space-y-3">
+                    <div class="text-center">
+                        <h4 class="font-semibold text-slate-800">{{ staff.emergency_contact_name }}</h4>
+                        <p class="text-sm text-slate-600">{{ staff.emergency_contact_relationship }}</p>
+                    </div>
+                    <div class="flex items-center justify-center space-x-2">
+                        <a href="tel:{{ staff.emergency_contact_phone }}" class="action-button bg-red-600 hover:bg-red-700">
+                            <span class="material-icons">phone</span>
+                            {% trans 'Llamar' %}
+                        </a>
+                    </div>
+                    <p class="text-center text-sm text-slate-600">{{ staff.emergency_contact_phone }}</p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="content-card">
+                <div class="flex items-center mb-4">
+                    <span class="material-icons text-indigo-600 mr-2">flash_on</span>
+                    <h3 class="text-lg font-semibold text-slate-800">{% trans 'Acciones Rápidas' %}</h3>
+                </div>
+                <div class="space-y-3">
+                    <a href="{% url 'staff_web:staff_update' staff.id %}" class="action-button bg-amber-600 hover:bg-amber-700">
+                        <span class="material-icons">edit</span>
+                        {% trans 'Editar Empleado' %}
+                    </a>
+                    <a href="mailto:{{ staff.email }}" class="action-button bg-blue-600 hover:bg-blue-700">
+                        <span class="material-icons">email</span>
+                        {% trans 'Enviar Email' %}
+                    </a>
+                    <a href="tel:{{ staff.phone }}" class="action-button bg-emerald-600 hover:bg-emerald-700">
+                        <span class="material-icons">phone</span>
+                        {% trans 'Llamar' %}
+                    </a>
+                    <a href="{% url 'staff_web:staff_delete' staff.id %}" class="action-button bg-red-600 hover:bg-red-700">
+                        <span class="material-icons">delete</span>
+                        {% trans 'Eliminar Empleado' %}
+                    </a>
+                </div>
+            </div>
+
+            <!-- System Information -->
+            <div class="content-card">
+                <div class="flex items-center mb-4">
+                    <span class="material-icons text-slate-600 mr-2">settings</span>
+                    <h3 class="text-lg font-semibold text-slate-800">{% trans 'Información del Sistema' %}</h3>
+                </div>
+                <div class="space-y-2 text-sm text-slate-600">
+                    <div class="flex justify-between">
+                        <span>{% trans 'ID' %}:</span>
+                        <span class="font-mono">{{ staff.id }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>{% trans 'Creado' %}:</span>
+                        <span>{{ staff.created_at|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>{% trans 'Actualizado' %}:</span>
+                        <span>{{ staff.updated_at|date:"d/m/Y H:i" }}</span>
+                    </div>
                 </div>
             </div>
         </div>

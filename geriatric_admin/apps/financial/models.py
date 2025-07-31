@@ -85,7 +85,7 @@ class Expense(models.Model):
         ordering = ['-expense_date', '-created_at']
     
     def __str__(self):
-        return f"{self.title} - €{self.amount}"
+        return f"{self.title} - ${self.amount}"
     
     @property
     def is_overdue(self):
@@ -150,7 +150,7 @@ class Income(models.Model):
         ordering = ['-income_date', '-created_at']
     
     def __str__(self):
-        return f"{self.title} - €{self.amount}"
+        return f"{self.title} - ${self.amount}"
     
     @property
     def is_overdue(self):
@@ -210,7 +210,7 @@ class Investment(models.Model):
         ordering = ['-planned_date', '-created_at']
     
     def __str__(self):
-        return f"{self.title} - €{self.amount}"
+        return f"{self.title} - ${self.amount}"
 
 
 class CashFlow(models.Model):
@@ -247,7 +247,7 @@ class CashFlow(models.Model):
         unique_together = ['date']
     
     def __str__(self):
-        return f"Flujo de Caja - {self.date} - Saldo: €{self.closing_balance}"
+        return f"Flujo de Caja - {self.date} - Saldo: ${self.closing_balance}"
     
     def calculate_balances(self):
         """Calcula los saldos basándose en las transacciones"""
@@ -291,7 +291,7 @@ class Budget(models.Model):
         ordering = ['-start_date']
     
     def __str__(self):
-        return f"{self.name} - €{self.total_budget}"
+        return f"{self.name} - ${self.total_budget}"
     
     @property
     def remaining_budget(self):

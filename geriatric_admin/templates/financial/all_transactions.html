@@ -20,7 +20,7 @@
     </a>
     <a href="{% url 'financial_web:expense_create' %}" class="flex items-center bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
         <span class="material-icons mr-2 text-base">remove</span>
-        <span class="text-sm">Nuevo Gasto</span>
+        <span class="text-sm">Nuevo Egreso</span>
     </a>
 </div>
 {% endblock %}
@@ -271,7 +271,7 @@
                             </div>
                             <div class="flex items-center space-x-4 mt-3 text-sm text-slate-500">
                                 <div class="flex items-center space-x-1">
-                                    <span class="material-icons text-slate-400 text-sm">euro</span>
+                                    <span class="material-icons text-slate-400 text-sm">attach_money</span>
                                     <span class="font-semibold text-slate-700 {% if transaction.type == 'income' %}text-emerald-600{% else %}text-red-600{% endif %}">
                                         ${{ transaction.amount|floatformat:2 }}
                                     </span>

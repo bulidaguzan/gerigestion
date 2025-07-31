@@ -120,7 +120,7 @@ class StaffAdmin(admin.ModelAdmin):
     
     def salary_display(self, obj):
         """Muestra el salario formateado"""
-        return format_html('€{:,.2f}', obj.salary)
+        return format_html('${:,.2f}', obj.salary)
     salary_display.short_description = _('Salario')
     salary_display.admin_order_field = 'salary'
     

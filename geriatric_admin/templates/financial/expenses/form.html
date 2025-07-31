@@ -3,14 +3,14 @@
 {% load i18n %}
 
 {% block title %}
-    {% if expense %}Editar Gasto{% else %}Nuevo Gasto{% endif %}
+    {% if expense %}Editar Gasto{% else %}Nuevo Egreso{% endif %}
 {% endblock %}
 
 {% block page_title %}
     {% if expense %}
         {% trans 'Editar Gasto' %}
     {% else %}
-        {% trans 'Nuevo Gasto' %}
+        {% trans 'Nuevo Egreso' %}
     {% endif %}
 {% endblock %}
 
