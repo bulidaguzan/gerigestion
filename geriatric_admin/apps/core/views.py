@@ -984,7 +984,7 @@ def dashboard_view(request):
         # Acciones rápidas para el dashboard principal
         quick_actions = [
             {
-                'url': '/residents/dashboard/',
+                'url': '/residents/',
                 'icon': 'elderly',
                 'text': 'Gestionar Residentes',
                 'bg_color': 'bg-indigo-600',
@@ -1045,7 +1045,7 @@ def dashboard_view(request):
             }],
             'quick_actions': [
                 {
-                    'url': '/residents/dashboard/',
+                    'url': '/residents/',
                     'icon': 'elderly',
                     'text': 'Gestionar Residentes',
                     'bg_color': 'bg-indigo-600',
