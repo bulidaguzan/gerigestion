@@ -8,21 +8,24 @@
 
 {% block page_subtitle %}{% trans 'Administra las habitaciones del geriátrico' %}{% endblock %}
 
-{% block header_actions %}
-<div class="flex items-center space-x-3">
-    <a href="{% url 'facilities_web:room_dashboard' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
-        <span class="material-icons mr-2 text-base">dashboard</span>
-        <span class="text-sm">{% trans 'Dashboard' %}</span>
-    </a>
-    <a href="{% url 'facilities_web:room_create' %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
-        <span class="material-icons mr-2 text-base">add</span>
-        <span class="text-sm">{% trans 'Nueva Habitación' %}</span>
-    </a>
-</div>
-{% endblock %}
+
 
 {% block content %}
 <div class="max-w-7xl mx-auto">
+    <!-- Header Actions -->
+    <div class="flex items-center justify-between mb-6">
+        <div></div>
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'facilities_web:room_dashboard' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
+                <span class="material-icons mr-2 text-base">dashboard</span>
+                <span class="text-sm">{% trans 'Dashboard' %}</span>
+            </a>
+            <a href="{% url 'facilities_web:room_create' %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                <span class="material-icons mr-2 text-base">add</span>
+                <span class="text-sm">{% trans 'Nueva Habitación' %}</span>
+            </a>
+        </div>
+    </div>
     <!-- Estadísticas -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="stat-card">
