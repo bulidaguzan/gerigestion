@@ -6,6 +6,9 @@
 {% block page_subtitle %}Vista general del sistema{% endblock %}
 
 {% block content %}
+<!-- Header compartido -->
+{% include 'components/dashboard_header.html' %}
+
 <!-- Acciones rápidas -->
 {% if quick_actions %}
 {% include 'components/quick_actions.html' with quick_actions=quick_actions %}

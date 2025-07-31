@@ -6,19 +6,8 @@
 {% block page_subtitle %}Historial de informes periódicos{% endblock %}
 
 {% block content %}
-<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-    <div>
-        <h1 class="text-2xl font-bold text-slate-900">Informes de {{ resident.full_name }}</h1>
-        <p class="text-slate-600 mt-1">Historial de informes periódicos del residente</p>
-    </div>
-    <div class="mt-4 sm:mt-0">
-        <a href="{% url 'residents_web:resident_report_create' resident.id %}" 
-           class="btn-primary">
-            <span class="material-icons">add</span>
-            Nuevo Informe
-        </a>
-    </div>
-</div>
+<!-- Header compartido -->
+{% include 'components/dashboard_header.html' %}
 
 <!-- Información del residente -->
 <div class="content-card mb-6">

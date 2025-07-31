@@ -27,40 +27,12 @@
 {% endblock %}
 
 {% block content %}
+<!-- Header compartido -->
+{% include 'components/dashboard_header.html' %}
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Main Content -->
     <div class="lg:col-span-2 space-y-8">
-        <!-- Header con gradiente -->
-        <div class="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 shadow-2xl">
-            <div class="absolute inset-0 bg-black opacity-10"></div>
-            <div class="relative p-8">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-6">
-                        <div class="flex-shrink-0">
-                            <div class="w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white border-opacity-30">
-                                <span class="material-icons text-white text-3xl">trending_up</span>
-                            </div>
-                        </div>
-                        <div class="text-white">
-                            <h2 class="text-3xl font-bold mb-2">{{ income.title }}</h2>
-                            <p class="text-white text-opacity-90 text-lg">{{ income.description|default:"Sin descripción" }}</p>
-                        </div>
-                    </div>
-                    <div class="text-white text-right">
-                        <div class="text-4xl font-bold">${{ income.amount|floatformat:0|intcomma }}</div>
-                        <div class="text-white text-opacity-80">
-                            {% if income.status == 'pending' %}
-                                {% trans 'Pendiente' %}
-                            {% elif income.status == 'received' %}
-                                {% trans 'Recibido' %}
-                            {% elif income.status == 'cancelled' %}
-                                {% trans 'Cancelado' %}
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Información Principal -->
         <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">

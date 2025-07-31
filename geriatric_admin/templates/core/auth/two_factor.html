@@ -77,9 +77,10 @@
 {% block content %}
 <div class="container">
     <div class="two-factor-container">
-        <div class="two-factor-header">
-            <i class="fa fa-mobile-alt"></i>
-            <h2>Autenticación de Dos Factores</h2>
+        {% include 'components/auth_header.html' %}
+        
+        <div class="text-center mb-4">
+            <h3>Autenticación de Dos Factores</h3>
             <p class="text-muted">Ingresa el código de verificación de tu aplicación autenticadora</p>
         </div>
         

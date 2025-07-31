@@ -48,15 +48,7 @@
         <!-- Login Card -->
         <div class="login-card">
             <!-- Header -->
-            <div class="text-center mb-8">
-                <div class="flex justify-center mb-4">
-                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
-                        <span class="material-icons text-3xl text-indigo-600">elderly</span>
-                    </div>
-                </div>
-                <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">GeriGestion</h1>
-                <p class="text-slate-600">Inicia sesión para acceder al sistema</p>
-            </div>
+            {% include 'components/login_header.html' %}
 
             <!-- Security Notice -->
             <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
@@ -93,11 +85,11 @@
                         Usuario o ID de Empleado
                     </label>
                     <div class="relative">
-                        <span class="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg">person</span>
+                        <span class="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg transition-opacity duration-200" id="username-icon">person</span>
                         <input type="text" 
                                name="{{ form.username.name }}" 
                                id="{{ form.username.id_for_label }}"
-                               class="input-modern pl-10 {% if form.username.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                               class="input-modern pl-14 {% if form.username.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
                                placeholder="Ingresa tu usuario"
                                value="{{ form.username.value|default:'' }}"
                                required>
@@ -113,11 +105,11 @@
                         Contraseña
                     </label>
                     <div class="relative">
-                        <span class="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg">lock</span>
+                        <span class="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg transition-opacity duration-200" id="password-icon">lock</span>
                         <input type="password" 
                                name="{{ form.password.name }}" 
                                id="{{ form.password.id_for_label }}"
-                               class="input-modern pl-10 {% if form.password.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
+                               class="input-modern pl-14 {% if form.password.errors %}border-red-300 focus:border-red-500 focus:ring-red-500{% endif %}"
                                placeholder="Ingresa tu contraseña"
                                required>
                     </div>
@@ -195,6 +187,62 @@ document.addEventListener('DOMContentLoaded', function() {
     const usernameField = document.getElementById('{{ form.username.id_for_label }}');
     if (usernameField) {
         usernameField.focus();
+    }
+    
+    // Get icon elements
+    const usernameIcon = document.getElementById('username-icon');
+    const passwordIcon = document.getElementById('password-icon');
+    
+    // Function to toggle icon visibility
+    function toggleIconVisibility(input, icon) {
+        if (input.value.trim() !== '') {
+            icon.style.opacity = '0';
+        } else {
+            icon.style.opacity = '1';
+        }
+    }
+    
+    // Add icon visibility logic for username field
+    if (usernameField && usernameIcon) {
+        // Check initial state
+        toggleIconVisibility(usernameField, usernameIcon);
+        
+        // Add event listeners
+        usernameField.addEventListener('input', function() {
+            toggleIconVisibility(this, usernameIcon);
+        });
+        
+        usernameField.addEventListener('focus', function() {
+            if (this.value.trim() !== '') {
+                usernameIcon.style.opacity = '0';
+            }
+        });
+        
+        usernameField.addEventListener('blur', function() {
+            toggleIconVisibility(this, usernameIcon);
+        });
+    }
+    
+    // Add icon visibility logic for password field
+    const passwordField = document.getElementById('{{ form.password.id_for_label }}');
+    if (passwordField && passwordIcon) {
+        // Check initial state
+        toggleIconVisibility(passwordField, passwordIcon);
+        
+        // Add event listeners
+        passwordField.addEventListener('input', function() {
+            toggleIconVisibility(this, passwordIcon);
+        });
+        
+        passwordField.addEventListener('focus', function() {
+            if (this.value.trim() !== '') {
+                passwordIcon.style.opacity = '0';
+            }
+        });
+        
+        passwordField.addEventListener('blur', function() {
+            toggleIconVisibility(this, passwordIcon);
+        });
     }
     
     // Add form validation feedback

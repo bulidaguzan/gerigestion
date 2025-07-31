@@ -8,6 +8,9 @@
 {% block page_subtitle %}{% trans 'Redirigiendo al dashboard de reportes...' %}{% endblock %}
 
 {% block content %}
+<!-- Header compartido -->
+{% include 'components/dashboard_header.html' %}
+
 <div class="max-w-4xl mx-auto">
     <!-- Main Redirect Card -->
     <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">

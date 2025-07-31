@@ -47,11 +47,14 @@
 {% block content %}
 <div class="container">
     <div class="logout-container">
-        <div class="logout-icon">
-            <i class="fa fa-check-circle"></i>
-        </div>
+        {% include 'components/auth_header.html' %}
         
-        <h2>Sesión Cerrada Exitosamente</h2>
+        <div class="text-center mb-4">
+            <div class="logout-icon">
+                <i class="fa fa-check-circle"></i>
+            </div>
+            <h3>Sesión Cerrada Exitosamente</h3>
+        </div>
         
         <div class="logout-message">
             Has sido desconectado de forma segura del Sistema de Administración Geriátrica.

@@ -8,18 +8,7 @@
 
 {% block page_subtitle %}{% trans 'Genera reportes instantáneos con configuración predefinida' %}{% endblock %}
 
-{% block header_actions %}
-<div class="flex items-center space-x-3">
-    <a href="{% url 'reporting_web:index' %}" class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-2 px-4 rounded-lg border border-slate-200 shadow-sm transition-all duration-300 transform hover:scale-105">
-        <span class="material-icons mr-2 text-base">arrow_back</span>
-        <span class="text-sm">{% trans 'Volver al Dashboard' %}</span>
-    </a>
-    <a href="{% url 'reporting_web:report_list' %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
-        <span class="material-icons mr-2 text-base">list</span>
-        <span class="text-sm">{% trans 'Lista de Reportes' %}</span>
-    </a>
-</div>
-{% endblock %}
+
 
 {% block content %}
 <div class="max-w-4xl mx-auto">

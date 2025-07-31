@@ -5,18 +5,12 @@
 {% block page_title %}Dashboard Financiero{% endblock %}
 {% block page_subtitle %}Gestión y análisis financiero{% endblock %}
 
-{% block header_actions %}
-<a href="{% url 'financial_web:all_transactions' %}" class="flex items-center bg-white hover:bg-slate-100 text-slate-600 font-semibold py-2 px-3 sm:px-4 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
-    <span class="material-icons mr-2 text-base sm:text-lg">visibility</span>
-    <span class="text-sm sm:text-base">Ver Todos</span>
-</a>
-<a href="{% url 'financial_web:income_create' %}" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-3 sm:px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
-    <span class="material-icons mr-2 text-base sm:text-lg">add</span>
-    <span class="text-sm sm:text-base">Nuevo Ingreso</span>
-</a>
-{% endblock %}
+
 
 {% block content %}
+<!-- Header compartido -->
+{% include 'components/dashboard_header.html' %}
+
 <!-- Acciones rápidas -->
 {% if quick_actions %}
 {% include 'components/quick_actions.html' with quick_actions=quick_actions %}
