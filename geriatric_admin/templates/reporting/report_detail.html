@@ -251,64 +251,9 @@
                 </div>
             </div>
 
-            <!-- Estadísticas -->
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-                <div class="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4">
-                    <h3 class="text-lg font-semibold text-white flex items-center">
-                        <span class="material-icons mr-2">analytics</span>
-                        {% trans 'Estadísticas' %}
-                    </h3>
-                </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-                            <div class="text-2xl font-bold text-blue-600">{{ report.file_size_mb }}</div>
-                            <div class="text-sm text-slate-600">{% trans 'MB' %}</div>
-                        </div>
-                        <div class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100">
-                            <div class="text-2xl font-bold text-green-600">
-                                {% if report.is_completed %}100%{% else %}0%{% endif %}
-                            </div>
-                            <div class="text-sm text-slate-600">{% trans 'Completado' %}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Información del Sistema -->
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-                <div class="bg-gradient-to-r from-slate-400 to-slate-500 px-6 py-4">
-                    <h3 class="text-lg font-semibold text-white flex items-center">
-                        <span class="material-icons mr-2">info</span>
-                        {% trans 'Información del Sistema' %}
-                    </h3>
-                </div>
-                <div class="p-6">
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <span class="material-icons text-indigo-500 mr-3">schedule</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">{% trans 'Tiempo de generación' %}</div>
-                                <div class="text-sm text-slate-600">{% trans 'Variable según complejidad' %}</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="material-icons text-emerald-500 mr-3">security</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">{% trans 'Seguridad' %}</div>
-                                <div class="text-sm text-slate-600">{% trans 'Acceso autorizado únicamente' %}</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="material-icons text-purple-500 mr-3">backup</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">{% trans 'Respaldo' %}</div>
-                                <div class="text-sm text-slate-600">{% trans 'Archivos guardados automáticamente' %}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+
         </div>
     </div>
 </div>

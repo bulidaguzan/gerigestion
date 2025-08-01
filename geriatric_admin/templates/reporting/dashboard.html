@@ -25,8 +25,8 @@
             <p class="text-xs sm:text-sm font-medium text-slate-500">{% trans 'TOTAL REPORTES' %}</p>
             <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ total_reports|default:"0" }}</p>
         </div>
-        <div class="bg-indigo-100 p-2 sm:p-3 rounded-full">
-            <span class="material-icons text-indigo-600 text-2xl sm:text-3xl">assessment</span>
+        <div class="bg-slate-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-slate-600 text-2xl sm:text-3xl">assessment</span>
         </div>
     </div>
     
@@ -66,22 +66,22 @@
     <!-- Reportes Mensuales -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
-            <p class="text-xs sm:text-sm font-medium text-sky-600">{% trans 'REPORTES MENSUALES' %}</p>
+            <p class="text-xs sm:text-sm font-medium text-slate-600">{% trans 'REPORTES MENSUALES' %}</p>
             <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ monthly_reports|default:"0" }}</p>
         </div>
-        <div class="bg-sky-100 p-2 sm:p-3 rounded-full">
-            <span class="material-icons text-sky-600 text-2xl sm:text-3xl">calendar_month</span>
+        <div class="bg-slate-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-slate-600 text-2xl sm:text-3xl">calendar_month</span>
         </div>
     </div>
     
     <!-- Descargas -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
-            <p class="text-xs sm:text-sm font-medium text-blue-600">{% trans 'DESCARGAS' %}</p>
+            <p class="text-xs sm:text-sm font-medium text-slate-600">{% trans 'DESCARGAS' %}</p>
             <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ total_downloads|default:"0" }}</p>
         </div>
-        <div class="bg-blue-100 p-2 sm:p-3 rounded-full">
-            <span class="material-icons text-blue-600 text-2xl sm:text-3xl">download</span>
+        <div class="bg-slate-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-slate-600 text-2xl sm:text-3xl">download</span>
         </div>
     </div>
     
@@ -99,20 +99,20 @@
     <!-- Manuales -->
     <div class="stat-card col-span-2 sm:col-span-1 xl:col-span-2">
         <div>
-            <p class="text-xs sm:text-sm font-medium text-amber-600">{% trans 'MANUALES' %}</p>
+            <p class="text-xs sm:text-sm font-medium text-slate-600">{% trans 'MANUALES' %}</p>
             <p class="text-2xl sm:text-3xl font-bold text-slate-800">{{ manual_reports|default:"0" }}</p>
         </div>
-        <div class="bg-amber-100 p-2 sm:p-3 rounded-full">
-            <span class="material-icons text-amber-600 text-2xl sm:text-3xl">edit</span>
+        <div class="bg-slate-100 p-2 sm:p-3 rounded-full">
+            <span class="material-icons text-slate-600 text-2xl sm:text-3xl">edit</span>
         </div>
     </div>
 </div>
 
 <!-- Contenido principal -->
-<div class="mb-8">
-    <!-- Reportes recientes -->
+<div class="w-full">
+    <!-- Lista de Reportes Recientes -->
     <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+        <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
             <h3 class="text-lg font-semibold text-white flex items-center">
                 <span class="material-icons mr-2">history</span>
                 {% trans 'Reportes Recientes' %}
@@ -120,96 +120,61 @@
         </div>
         <div class="p-6">
             {% if recent_reports %}
-            <div class="overflow-x-auto">
-                <table class="table-modern">
-                    <thead>
-                        <tr>
-                            <th class="text-left">{% trans 'Título' %}</th>
-                            <th class="text-left">{% trans 'Tipo' %}</th>
-                            <th class="text-left">{% trans 'Estado' %}</th>
-                            <th class="text-left">{% trans 'Fecha' %}</th>
-                            <th class="text-left">{% trans 'Acciones' %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for report in recent_reports %}
-                        <tr class="hover:bg-slate-50 transition-colors duration-200">
-                            <td class="text-sm font-medium text-slate-900">{{ report.title|truncatechars:30 }}</td>
-                            <td>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                                    <span class="material-icons text-xs mr-1">category</span>
-                                    {{ report.get_report_type_display }}
-                                </span>
-                            </td>
-                            <td>
-                                {% if report.status == 'completed' %}
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        <span class="material-icons text-xs mr-1">check_circle</span>
-                                        {% trans 'Completado' %}
-                                    </span>
-                                {% elif report.status == 'in_progress' %}
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        <span class="material-icons text-xs mr-1">schedule</span>
-                                        {% trans 'En Proceso' %}
-                                    </span>
-                                {% elif report.status == 'pending' %}
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        <span class="material-icons text-xs mr-1">pending</span>
-                                        {% trans 'Pendiente' %}
-                                    </span>
-                                {% else %}
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        <span class="material-icons text-xs mr-1">error</span>
-                                        {% trans 'Fallido' %}
-                                    </span>
-                                {% endif %}
-                            </td>
-                            <td class="text-sm text-slate-600">{{ report.created_at|date:"d/m/Y" }}</td>
-                            <td>
-                                <div class="flex items-center space-x-2">
-                                    <a href="{% url 'reporting_web:report_detail' report.id %}" 
-                                       class="flex items-center text-indigo-600 hover:text-indigo-900 text-sm font-medium transition-colors duration-200">
-                                        <span class="material-icons text-sm mr-1">visibility</span>
-                                        {% trans 'Ver' %}
-                                    </a>
-                                    {% if report.is_completed %}
-                                    <a href="{% url 'reporting_web:report_download' report.id %}" 
-                                       class="flex items-center text-green-600 hover:text-green-900 text-sm font-medium transition-colors duration-200">
-                                        <span class="material-icons text-sm mr-1">download</span>
-                                        {% trans 'Descargar' %}
-                                    </a>
-                                    {% endif %}
+                <div class="space-y-4">
+                    {% for report in recent_reports %}
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg border border-slate-200 hover:from-slate-100 hover:to-slate-200 transition-all duration-300">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center mr-4">
+                                <span class="material-icons text-slate-600">assessment</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-800">{{ report.title }}</h4>
+                                <p class="text-sm text-slate-600">{{ report.description|truncatechars:60 }}</p>
+                                <div class="flex items-center mt-1">
+                                    <span class="text-xs text-slate-500">{{ report.created_at|date:"d/m/Y H:i" }}</span>
+                                    <span class="mx-2 text-slate-300">•</span>
+                                    <span class="text-xs text-slate-500">{{ report.get_report_type_display }}</span>
                                 </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="flex flex-col items-center justify-center text-center text-slate-500 h-64">
-                <span class="material-icons text-5xl sm:text-6xl text-slate-300 mb-4">assessment</span>
-                <p class="mt-4 font-semibold text-lg">{% trans 'No hay reportes recientes' %}</p>
-                <p class="text-sm text-slate-400">{% trans 'Los reportes aparecerán aquí cuando se generen.' %}</p>
-                <div class="mt-6 flex space-x-3">
-                    <a href="{% url 'reporting_web:report_create' %}" 
-                       class="flex items-center bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105">
-                        <span class="material-icons mr-2 text-sm">add</span>
-                        {% trans 'Crear Reporte' %}
-                    </a>
-                    <a href="{% url 'reporting_web:quick_report' %}" 
-                       class="flex items-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105">
-                        <span class="material-icons mr-2 text-sm">flash_on</span>
-                        {% trans 'Reporte Rápido' %}
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-1 text-xs font-medium rounded-full 
+                                {% if report.status == 'completed' %}bg-emerald-100 text-emerald-700
+                                {% elif report.status == 'processing' %}bg-amber-100 text-amber-700
+                                {% elif report.status == 'pending' %}bg-slate-100 text-slate-700
+                                {% else %}bg-rose-100 text-rose-700{% endif %}">
+                                {{ report.get_status_display }}
+                            </span>
+                            <a href="{% url 'reporting_web:report_detail' report.id %}" 
+                               class="text-slate-600 hover:text-slate-800 transition-colors">
+                                <span class="material-icons">visibility</span>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-6 text-center">
+                    <a href="{% url 'reporting_web:report_list' %}" 
+                       class="inline-flex items-center px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-all duration-300">
+                        <span class="material-icons mr-2">list</span>
+                        {% trans 'Ver todos los reportes' %}
                     </a>
                 </div>
-            </div>
+            {% else %}
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="material-icons text-slate-400 text-2xl">assessment</span>
+                    </div>
+                    <h4 class="text-lg font-semibold text-slate-800 mb-2">{% trans 'No hay reportes recientes' %}</h4>
+                    <p class="text-slate-600 mb-4">{% trans 'Crea tu primer reporte para comenzar' %}</p>
+                    <a href="{% url 'reporting_web:report_create' %}" 
+                       class="inline-flex items-center px-4 py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-all duration-300">
+                        <span class="material-icons mr-2">add</span>
+                        {% trans 'Crear Reporte' %}
+                    </a>
+                </div>
             {% endif %}
         </div>
     </div>
-
-
 </div>
-
-
 {% endblock %} 

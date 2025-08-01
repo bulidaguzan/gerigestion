@@ -11,10 +11,10 @@
 
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
+<div class="w-full">
     <!-- Main Form Card -->
     <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
-        <div class="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-4">
+        <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
             <h3 class="text-lg font-semibold text-white flex items-center">
                 <span class="material-icons mr-2">flash_on</span>
                 {% trans 'Generar Reporte Rápido' %}
@@ -25,9 +25,9 @@
                 {% csrf_token %}
                 
                 <!-- Configuración Principal -->
-                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 mb-6 border border-purple-100">
-                    <h4 class="text-lg font-semibold text-purple-800 mb-4 flex items-center">
-                        <span class="material-icons mr-2 text-purple-600">settings</span>
+                <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-6 mb-6 border border-slate-200">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-slate-600">settings</span>
                         {% trans 'Configuración Principal' %}
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -37,7 +37,7 @@
                             </label>
                             <select name="{{ form.report_type.name }}" 
                                     id="{{ form.report_type.id_for_label }}"
-                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.report_type.errors %}border-red-500{% endif %}">
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 {% if form.report_type.errors %}border-red-500{% endif %}">
                                 <option value="">{% trans 'Seleccionar tipo' %}</option>
                                 {% for value, label in form.report_type.field.choices %}
                                     {% if value %}
@@ -58,7 +58,7 @@
                             </label>
                             <select name="{{ form.period.name }}" 
                                     id="{{ form.period.id_for_label }}"
-                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.period.errors %}border-red-500{% endif %}">
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 {% if form.period.errors %}border-red-500{% endif %}">
                                 {% for value, label in form.period.field.choices %}
                                     <option value="{{ value }}" {% if form.period.value == value %}selected{% endif %}>
                                         {{ label }}
@@ -73,9 +73,9 @@
                 </div>
 
                 <!-- Fechas Personalizadas -->
-                <div id="custom-dates" class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-100" style="display: none;">
-                    <h4 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
-                        <span class="material-icons mr-2 text-blue-600">event</span>
+                <div id="custom-dates" class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-6 mb-6 border border-slate-200" style="display: none;">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-slate-600">event</span>
                         {% trans 'Fechas Personalizadas' %}
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -87,7 +87,7 @@
                                    name="{{ form.date_from.name }}" 
                                    id="{{ form.date_from.id_for_label }}" 
                                    value="{{ form.date_from.value|date:'Y-m-d'|default:'' }}"
-                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.date_from.errors %}border-red-500{% endif %}">
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 {% if form.date_from.errors %}border-red-500{% endif %}">
                             {% if form.date_from.errors %}
                                 <p class="text-red-500 text-sm mt-1">{{ form.date_from.errors.0 }}</p>
                             {% endif %}
@@ -101,7 +101,7 @@
                                    name="{{ form.date_to.name }}" 
                                    id="{{ form.date_to.id_for_label }}" 
                                    value="{{ form.date_to.value|date:'Y-m-d'|default:'' }}"
-                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 {% if form.date_to.errors %}border-red-500{% endif %}">
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 {% if form.date_to.errors %}border-red-500{% endif %}">
                             {% if form.date_to.errors %}
                                 <p class="text-red-500 text-sm mt-1">{{ form.date_to.errors.0 }}</p>
                             {% endif %}
@@ -109,183 +109,92 @@
                     </div>
                 </div>
 
-                <!-- Formato -->
-                <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6 mb-6 border border-emerald-100">
-                    <h4 class="text-lg font-semibold text-emerald-800 mb-4 flex items-center">
-                        <span class="material-icons mr-2 text-emerald-600">folder</span>
-                        {% trans 'Formato del Reporte' %}
+                <!-- Formato de Exportación -->
+                <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-6 mb-6 border border-slate-200">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-slate-600">file_download</span>
+                        {% trans 'Formato de Exportación' %}
                     </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="{{ form.format.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
-                                📁 {% trans 'Formato' %}
-                            </label>
-                            <input type="text" 
-                                   name="{{ form.format.name }}" 
-                                   id="{{ form.format.id_for_label }}" 
-                                   value="csv"
-                                   readonly
-                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed">
-                            <p class="text-slate-500 text-sm mt-1">{% trans 'Los reportes se exportan únicamente en formato CSV para mayor simplicidad' %}</p>
+                    <div class="bg-white rounded-lg p-4 border border-slate-200">
+                        <div class="flex items-center">
+                            <span class="material-icons text-slate-600 mr-3">table_view</span>
+                            <div>
+                                <p class="font-semibold text-slate-800">{% trans 'Formato CSV' %}</p>
+                                <p class="text-sm text-slate-600">{% trans 'Archivo de valores separados por comas - Ideal para análisis en Excel y otras herramientas' %}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Errores generales del formulario -->
-                {% if form.non_field_errors %}
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                        <div class="flex items-center">
-                            <span class="material-icons text-red-500 mr-2">error</span>
-                            <div class="text-red-700">
-                                {% for error in form.non_field_errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-
-                <!-- Form Actions -->
-                <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-6 border-t border-slate-200">
-                    <a href="{% url 'reporting_web:index' %}" 
-                       class="flex items-center bg-white hover:bg-slate-50 text-slate-600 font-semibold py-3 px-6 rounded-lg border border-slate-300 shadow-sm transition-all duration-300 transform hover:scale-105">
-                        <span class="material-icons mr-2">cancel</span>
-                        {% trans 'Cancelar' %}
-                    </a>
+                <!-- Botones de Acción -->
+                <div class="flex flex-col sm:flex-row gap-4">
                     <button type="submit" 
-                            class="flex items-center bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                            class="flex-1 bg-gradient-to-r from-slate-500 to-slate-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-slate-600 hover:to-slate-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
                         <span class="material-icons mr-2">play_arrow</span>
                         {% trans 'Generar Reporte' %}
                     </button>
+                    
+                    <a href="{% url 'reporting_web:dashboard' %}" 
+                       class="flex-1 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 px-6 py-3 rounded-lg font-semibold hover:from-slate-200 hover:to-slate-300 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                        <span class="material-icons mr-2">arrow_back</span>
+                        {% trans 'Volver' %}
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Información Adicional -->
-    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
         <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
             <h3 class="text-lg font-semibold text-white flex items-center">
                 <span class="material-icons mr-2">info</span>
-                {% trans 'Información' %}
+                {% trans 'Información del Reporte Rápido' %}
             </h3>
         </div>
         <div class="p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
-                        <span class="material-icons text-purple-500 mr-2">category</span>
-                        {% trans 'Tipos de Reportes Disponibles:' %}
-                    </h4>
-                    <div class="space-y-3">
-                        <div class="flex items-start">
-                            <span class="material-icons text-blue-500 mr-3 mt-0.5">people</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">{% trans 'Residentes' %}</div>
-                                <div class="text-sm text-slate-600">{% trans 'Información general de residentes' %}</div>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-emerald-500 mr-3 mt-0.5">person</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">{% trans 'Personal' %}</div>
-                                <div class="text-sm text-slate-600">{% trans 'Información del staff' %}</div>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-amber-500 mr-3 mt-0.5">business</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">{% trans 'Instalaciones' %}</div>
-                                <div class="text-sm text-slate-600">{% trans 'Estado de las instalaciones' %}</div>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-green-500 mr-3 mt-0.5">account_balance</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">{% trans 'Financiero' %}</div>
-                                <div class="text-sm text-slate-600">{% trans 'Información financiera' %}</div>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-red-500 mr-3 mt-0.5">medical_services</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">{% trans 'Médico' %}</div>
-                                <div class="text-sm text-slate-600">{% trans 'Información médica' %}</div>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-purple-500 mr-3 mt-0.5">hotel</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">{% trans 'Ocupación' %}</div>
-                                <div class="text-sm text-slate-600">{% trans 'Estado de ocupación' %}</div>
-                            </div>
-                        </div>
-                    </div>
+                    <h4 class="text-lg font-semibold text-slate-800 mb-3">{% trans 'Ventajas' %}</h4>
+                    <ul class="space-y-2 text-slate-600">
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">check</span>
+                            {% trans 'Configuración predefinida' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">check</span>
+                            {% trans 'Generación instantánea' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">check</span>
+                            {% trans 'Formato CSV estándar' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">check</span>
+                            {% trans 'Datos reales de la base' %}
+                        </li>
+                    </ul>
                 </div>
-                
                 <div>
-                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
-                        <span class="material-icons text-emerald-500 mr-2">folder</span>
-                        {% trans 'Formatos Disponibles:' %}
-                    </h4>
-                    <div class="space-y-3">
-                        <div class="flex items-start">
-                            <span class="material-icons text-red-500 mr-3 mt-0.5">picture_as_pdf</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">PDF</div>
-                                <div class="text-sm text-slate-600">{% trans 'Para impresión y archivo' %}</div>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-green-500 mr-3 mt-0.5">table_chart</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">JSON</div>
-                                <div class="text-sm text-slate-600">{% trans 'Para análisis y edición' %}</div>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-blue-500 mr-3 mt-0.5">table_view</span>
-                            <div>
-                                <div class="font-semibold text-slate-800">CSV</div>
-                                <div class="text-sm text-slate-600">{% trans 'Para importar en otros sistemas' %}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Información del Formulario -->
-    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-        <div class="bg-gradient-to-r from-slate-400 to-slate-500 px-6 py-4">
-            <h3 class="text-lg font-semibold text-white flex items-center">
-                <span class="material-icons mr-2">info</span>
-                {% trans 'Información del Formulario' %}
-            </h3>
-        </div>
-        <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="flex items-center">
-                    <span class="material-icons text-purple-500 mr-3">flash_on</span>
-                    <div>
-                        <div class="font-semibold text-slate-800">{% trans 'Generación rápida' %}</div>
-                        <div class="text-sm text-slate-600">{% trans 'Reportes en segundos' %}</div>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <span class="material-icons text-emerald-500 mr-3">security</span>
-                    <div>
-                        <div class="font-semibold text-slate-800">{% trans 'Datos seguros' %}</div>
-                        <div class="text-sm text-slate-600">{% trans 'Información protegida' %}</div>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <span class="material-icons text-blue-500 mr-3">support_agent</span>
-                    <div>
-                        <div class="font-semibold text-slate-800">{% trans 'Soporte disponible' %}</div>
-                        <div class="text-sm text-slate-600">{% trans 'Ayuda si la necesitas' %}</div>
-                    </div>
+                    <h4 class="text-lg font-semibold text-slate-800 mb-3">{% trans 'Tipos Disponibles' %}</h4>
+                    <ul class="space-y-2 text-slate-600">
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">people</span>
+                            {% trans 'Residentes' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">work</span>
+                            {% trans 'Personal' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">account_balance_wallet</span>
+                            {% trans 'Financiero' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">home</span>
+                            {% trans 'Instalaciones' %}
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -293,23 +202,21 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const periodSelect = document.getElementById('{{ form.period.id_for_label }}');
-    const customDatesDiv = document.getElementById('custom-dates');
-    
-    function toggleCustomDates() {
-        if (periodSelect.value === 'custom') {
-            customDatesDiv.style.display = 'block';
-        } else {
-            customDatesDiv.style.display = 'none';
+    // Mostrar/ocultar fechas personalizadas según el período seleccionado
+    document.addEventListener('DOMContentLoaded', function() {
+        const periodSelect = document.getElementById('{{ form.period.id_for_label }}');
+        const customDates = document.getElementById('custom-dates');
+        
+        function toggleCustomDates() {
+            if (periodSelect.value === 'custom') {
+                customDates.style.display = 'block';
+            } else {
+                customDates.style.display = 'none';
+            }
         }
-    }
-    
-    // Ejecutar al cargar la página
-    toggleCustomDates();
-    
-    // Ejecutar cuando cambie el valor
-    periodSelect.addEventListener('change', toggleCustomDates);
-});
+        
+        periodSelect.addEventListener('change', toggleCustomDates);
+        toggleCustomDates(); // Ejecutar al cargar la página
+    });
 </script>
 {% endblock %} 

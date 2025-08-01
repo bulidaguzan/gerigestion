@@ -29,7 +29,7 @@
         <span class="text-sm">{% trans 'Volver a la Lista' %}</span>
     </a>
     {% if action != 'create' %}
-    <a href="{% url 'reporting_web:report_detail' report.id %}" class="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+    <a href="{% url 'reporting_web:report_detail' report.id %}" class="flex items-center bg-slate-500 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
         <span class="material-icons mr-2 text-base">visibility</span>
         <span class="text-sm">{% trans 'Ver Detalles' %}</span>
     </a>
@@ -41,7 +41,7 @@
 <div class="max-w-4xl mx-auto">
     <!-- Main Form -->
     <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
-        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+        <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
             <h3 class="text-lg font-semibold text-white flex items-center">
                 <span class="material-icons mr-2">assessment</span>
                 {% if action == 'create' %}
@@ -56,9 +56,9 @@
                 {% csrf_token %}
                 
                 <!-- Información Básica -->
-                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 mb-6 border border-indigo-100">
-                    <h4 class="text-lg font-semibold text-indigo-800 mb-4 flex items-center">
-                        <span class="material-icons mr-2 text-indigo-600">info</span>
+                <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-6 mb-6 border border-slate-200">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-slate-600">info</span>
                         {% trans 'Información Básica' %}
                     </h4>
                     <div class="grid grid-cols-1 gap-6">
@@ -70,7 +70,7 @@
                                    name="{{ form.title.name }}" 
                                    id="{{ form.title.id_for_label }}" 
                                    value="{{ form.title.value|default:'' }}"
-                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 {% if form.title.errors %}border-red-500{% endif %}"
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 {% if form.title.errors %}border-red-500{% endif %}"
                                    placeholder="{% trans 'Ej: Reporte mensual de residentes' %}">
                             {% if form.title.errors %}
                                 <p class="text-red-500 text-sm mt-1">{{ form.title.errors.0 }}</p>
@@ -84,7 +84,7 @@
                             <textarea name="{{ form.description.name }}" 
                                       id="{{ form.description.id_for_label }}" 
                                       rows="4"
-                                      class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 resize-none {% if form.description.errors %}border-red-500{% endif %}"
+                                      class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 resize-none {% if form.description.errors %}border-red-500{% endif %}"
                                       placeholder="{% trans 'Describe el propósito y contenido del reporte...' %}">{{ form.description.value|default:'' }}</textarea>
                             {% if form.description.errors %}
                                 <p class="text-red-500 text-sm mt-1">{{ form.description.errors.0 }}</p>
@@ -94,9 +94,9 @@
                 </div>
 
                 <!-- Configuración del Reporte -->
-                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 mb-6 border border-purple-100">
-                    <h4 class="text-lg font-semibold text-purple-800 mb-4 flex items-center">
-                        <span class="material-icons mr-2 text-purple-600">settings</span>
+                <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-6 mb-6 border border-slate-200">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-slate-600">settings</span>
                         {% trans 'Configuración del Reporte' %}
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -106,7 +106,7 @@
                             </label>
                             <select name="{{ form.report_type.name }}" 
                                     id="{{ form.report_type.id_for_label }}"
-                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 {% if form.report_type.errors %}border-red-500{% endif %}">
+                                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 {% if form.report_type.errors %}border-red-500{% endif %}">
                                 <option value="">{% trans 'Seleccionar tipo' %}</option>
                                 {% for value, label in form.report_type.field.choices %}
                                     {% if value %}
@@ -125,22 +125,25 @@
                             <label for="{{ form.format.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
                                 📁 {% trans 'Formato' %}
                             </label>
-                            <input type="text" 
-                                   name="{{ form.format.name }}" 
-                                   id="{{ form.format.id_for_label }}" 
-                                   value="csv"
-                                   readonly
-                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed">
-                            <p class="text-slate-500 text-sm mt-1">{% trans 'Los reportes se exportan únicamente en formato CSV para mayor simplicidad' %}</p>
+                            <div class="bg-slate-50 border border-slate-300 rounded-lg p-4">
+                                <div class="flex items-center">
+                                    <span class="material-icons text-slate-600 mr-3">table_view</span>
+                                    <div>
+                                        <p class="font-semibold text-slate-800">{% trans 'Formato CSV' %}</p>
+                                        <p class="text-sm text-slate-600">{% trans 'Archivo de valores separados por comas' %}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="{{ form.format.name }}" value="csv">
                         </div>
                     </div>
                 </div>
 
-                <!-- Rango de Fechas -->
-                <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl p-6 mb-6 border border-pink-100">
-                    <h4 class="text-lg font-semibold text-pink-800 mb-4 flex items-center">
-                        <span class="material-icons mr-2 text-pink-600">event</span>
-                        {% trans 'Rango de Fechas' %}
+                <!-- Filtros y Fechas -->
+                <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-6 mb-6 border border-slate-200">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="material-icons mr-2 text-slate-600">filter_list</span>
+                        {% trans 'Filtros y Fechas' %}
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -151,7 +154,7 @@
                                    name="{{ form.date_from.name }}" 
                                    id="{{ form.date_from.id_for_label }}" 
                                    value="{{ form.date_from.value|date:'Y-m-d'|default:'' }}"
-                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-300 {% if form.date_from.errors %}border-red-500{% endif %}">
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 {% if form.date_from.errors %}border-red-500{% endif %}">
                             {% if form.date_from.errors %}
                                 <p class="text-red-500 text-sm mt-1">{{ form.date_from.errors.0 }}</p>
                             {% endif %}
@@ -165,11 +168,26 @@
                                    name="{{ form.date_to.name }}" 
                                    id="{{ form.date_to.id_for_label }}" 
                                    value="{{ form.date_to.value|date:'Y-m-d'|default:'' }}"
-                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-300 {% if form.date_to.errors %}border-red-500{% endif %}">
+                                   class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 {% if form.date_to.errors %}border-red-500{% endif %}">
                             {% if form.date_to.errors %}
                                 <p class="text-red-500 text-sm mt-1">{{ form.date_to.errors.0 }}</p>
                             {% endif %}
                         </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <label for="{{ form.filters.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-3">
+                            🔍 {% trans 'Filtros Adicionales (JSON)' %}
+                        </label>
+                        <textarea name="{{ form.filters.name }}" 
+                                  id="{{ form.filters.id_for_label }}" 
+                                  rows="4"
+                                  class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300 resize-none font-mono text-sm {% if form.filters.errors %}border-red-500{% endif %}"
+                                  placeholder='{"status": "active", "category": "all"}'>{{ form.filters.value|default:'' }}</textarea>
+                        <p class="text-slate-500 text-sm mt-1">{% trans 'Opcional: Filtros adicionales en formato JSON' %}</p>
+                        {% if form.filters.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.filters.errors.0 }}</p>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -195,12 +213,12 @@
                         {% trans 'Cancelar' %}
                     </a>
                     <button type="submit" 
-                            class="flex items-center bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                            class="flex items-center bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
                         <span class="material-icons mr-2">save</span>
                         {% if action == 'create' %}
                             {% trans 'Crear Reporte' %}
                         {% else %}
-                            {% trans 'Guardar Cambios' %}
+                            {% trans 'Actualizar Reporte' %}
                         {% endif %}
                     </button>
                 </div>
@@ -208,138 +226,63 @@
         </div>
     </div>
 
-    <!-- Información adicional -->
+    <!-- Información Adicional -->
     <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
         <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
             <h3 class="text-lg font-semibold text-white flex items-center">
                 <span class="material-icons mr-2">info</span>
-                {% trans 'Información sobre Tipos de Reportes' %}
+                {% trans 'Información del Reporte' %}
             </h3>
         </div>
         <div class="p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
-                        <span class="material-icons text-indigo-500 mr-2">category</span>
-                        {% trans 'Tipos de Reportes:' %}
-                    </h4>
-                    <div class="space-y-3">
-                        <div class="flex items-start">
-                            <span class="material-icons text-blue-500 mr-3 mt-0.5">people</span>
-                            <div>
-                                <strong>{% trans 'Residentes' %}</strong> - {% trans 'Información de residentes' %}
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-emerald-500 mr-3 mt-0.5">person</span>
-                            <div>
-                                <strong>{% trans 'Personal' %}</strong> - {% trans 'Información del staff' %}
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-amber-500 mr-3 mt-0.5">business</span>
-                            <div>
-                                <strong>{% trans 'Instalaciones' %}</strong> - {% trans 'Estado de las instalaciones' %}
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-green-500 mr-3 mt-0.5">account_balance</span>
-                            <div>
-                                <strong>{% trans 'Financiero' %}</strong> - {% trans 'Reportes financieros' %}
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-red-500 mr-3 mt-0.5">favorite</span>
-                            <div>
-                                <strong>{% trans 'Médico' %}</strong> - {% trans 'Información médica' %}
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-purple-500 mr-3 mt-0.5">bed</span>
-                            <div>
-                                <strong>{% trans 'Ocupación' %}</strong> - {% trans 'Estado de ocupación' %}
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-slate-500 mr-3 mt-0.5">settings</span>
-                            <div>
-                                <strong>{% trans 'Personalizado' %}</strong> - {% trans 'Reporte a medida' %}
-                            </div>
-                        </div>
-                    </div>
+                    <h4 class="text-lg font-semibold text-slate-800 mb-3">{% trans 'Características' %}</h4>
+                    <ul class="space-y-2 text-slate-600">
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">check</span>
+                            {% trans 'Formato CSV estándar' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">check</span>
+                            {% trans 'Datos reales de la base' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">check</span>
+                            {% trans 'Filtros personalizables' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">check</span>
+                            {% trans 'Exportación inmediata' %}
+                        </li>
+                    </ul>
                 </div>
-                
                 <div>
-                    <h4 class="font-semibold text-slate-800 mb-4 flex items-center">
-                        <span class="material-icons text-purple-500 mr-2">folder</span>
-                        {% trans 'Formatos Disponibles:' %}
-                    </h4>
-                    <div class="space-y-3">
-                        <div class="flex items-start">
-                            <span class="material-icons text-red-500 mr-3 mt-0.5">picture_as_pdf</span>
-                            <div>
-                                <strong>PDF</strong> - {% trans 'Para impresión y archivo' %}
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-green-500 mr-3 mt-0.5">table_chart</span>
-                            <div>
-                                <strong>Excel</strong> - {% trans 'Para análisis y edición' %}
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-blue-500 mr-3 mt-0.5">table_view</span>
-                            <div>
-                                <strong>CSV</strong> - {% trans 'Para importar en otros sistemas' %}
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <span class="material-icons text-amber-500 mr-3 mt-0.5">code</span>
-                            <div>
-                                <strong>JSON</strong> - {% trans 'Para integración con APIs' %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Información del Formulario -->
-    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mt-8">
-        <div class="bg-gradient-to-r from-slate-400 to-slate-500 px-6 py-4">
-            <h3 class="text-lg font-semibold text-white flex items-center">
-                <span class="material-icons mr-2">info</span>
-                {% trans 'Información del Formulario' %}
-            </h3>
-        </div>
-        <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="flex items-center">
-                    <span class="material-icons text-indigo-500 mr-3">schedule</span>
-                    <div>
-                        <div class="font-semibold text-slate-800">{% trans 'Tiempo estimado' %}</div>
-                        <div class="text-sm text-slate-600">{% trans '2-3 minutos para completar' %}</div>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <span class="material-icons text-emerald-500 mr-3">security</span>
-                    <div>
-                        <div class="font-semibold text-slate-800">{% trans 'Datos seguros' %}</div>
-                        <div class="text-sm text-slate-600">{% trans 'Toda la información se guarda de forma segura' %}</div>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <span class="material-icons text-purple-500 mr-3">support_agent</span>
-                    <div>
-                        <div class="font-semibold text-slate-800">{% trans 'Soporte disponible' %}</div>
-                        <div class="text-sm text-slate-600">{% trans 'Contacta al administrador si necesitas ayuda' %}</div>
-                    </div>
+                    <h4 class="text-lg font-semibold text-slate-800 mb-3">{% trans 'Tipos Disponibles' %}</h4>
+                    <ul class="space-y-2 text-slate-600">
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">people</span>
+                            {% trans 'Residentes' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">work</span>
+                            {% trans 'Personal' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">account_balance_wallet</span>
+                            {% trans 'Financiero' %}
+                        </li>
+                        <li class="flex items-center">
+                            <span class="material-icons text-slate-500 mr-2 text-sm">home</span>
+                            {% trans 'Instalaciones' %}
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -360,5 +303,4 @@ document.addEventListener('DOMContentLoaded', function() {
     dateFrom.addEventListener('change', validateDates);
     dateTo.addEventListener('change', validateDates);
 });
-</script>
-{% endblock %} 
+</script> 
