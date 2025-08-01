@@ -30,6 +30,45 @@
         .nav-link.active {
             @apply bg-slate-900 text-white;
         }
+        .submenu-link {
+            @apply flex items-center px-8 py-2 text-slate-400 text-sm rounded-md transition-all duration-300 ease-in-out;
+        }
+        .submenu-link:hover {
+            @apply bg-slate-700 text-white;
+        }
+        .submenu-link.active {
+            @apply bg-slate-700 text-white;
+        }
+        .submenu {
+            @apply overflow-hidden transition-all duration-300 ease-in-out;
+        }
+        .submenu.collapsed {
+            @apply max-h-0;
+        }
+        .submenu.expanded {
+            @apply max-h-96;
+        }
+        .module-toggle {
+            @apply flex items-center justify-between w-full px-4 py-2 text-slate-300 rounded-md transition-all duration-300 ease-in-out;
+        }
+        .module-toggle:hover {
+            @apply bg-slate-700 text-white;
+        }
+        .module-toggle.active {
+            @apply bg-slate-900 text-white;
+        }
+        .module-toggle .material-icons {
+            @apply flex-shrink-0;
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+        }
+        .module-toggle .expand-icon {
+            @apply transition-transform duration-300;
+        }
+        .module-toggle.expanded .expand-icon {
+            @apply rotate-180;
+        }
         .stat-card {
             @apply bg-white p-4 sm:p-6 rounded-xl border border-slate-200 flex items-center justify-between transform transition-all duration-300 ease-in-out;
         }
@@ -96,31 +135,150 @@
                 <span class="material-icons">menu</span>
             </button>
         </div>
-        <nav class="hidden lg:flex flex-1 flex-col px-4 py-4 space-y-2" id="sidebar-nav">
+        <nav class="hidden lg:flex flex-1 flex-col px-4 py-4 space-y-2 overflow-y-auto" id="sidebar-nav">
+            <!-- Dashboard -->
             <a class="nav-link {% if request.resolver_match.namespace == 'dashboard' %}active{% endif %}" href="{% url 'dashboard:index' %}">
                 <span class="material-icons">dashboard</span>
                 Dashboard
             </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'facilities_web' %}active{% endif %}" href="{% url 'facilities_web:index' %}">
-                <span class="material-icons">hotel</span>
-                Instalaciones
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'residents_web' %}active{% endif %}" href="{% url 'residents_web:dashboard' %}">
-                <span class="material-icons">elderly</span>
-                Residentes
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'staff_web' %}active{% endif %}" href="{% url 'staff_web:index' %}">
-                <span class="material-icons">badge</span>
-                Personal
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'financial_web' %}active{% endif %}" href="{% url 'financial_web:dashboard' %}">
-                <span class="material-icons">account_balance_wallet</span>
-                Financiero
-            </a>
-            <a class="nav-link {% if request.resolver_match.namespace == 'reporting_web' %}active{% endif %}" href="{% url 'reporting_web:index' %}">
-                <span class="material-icons">assessment</span>
-                Reportes
-            </a>
+
+            <!-- Instalaciones -->
+            <div class="module-section">
+                <button class="module-toggle {% if request.resolver_match.namespace == 'facilities_web' %}active expanded{% endif %}" 
+                        data-module="facilities">
+                    <span class="material-icons">hotel</span>
+                    <span>Instalaciones</span>
+                    <span class="material-icons expand-icon">expand_more</span>
+                </button>
+                <div class="submenu {% if request.resolver_match.namespace == 'facilities_web' %}expanded{% else %}collapsed{% endif %}" id="facilities-submenu">
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'facilities_web:index' %}">
+                        Dashboard
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'room_list' %}active{% endif %}" href="{% url 'facilities_web:room_list' %}">
+                        Lista de Habitaciones
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'room_create' %}active{% endif %}" href="{% url 'facilities_web:room_create' %}">
+                        Crear Habitación
+                    </a>
+                </div>
+            </div>
+
+            <!-- Residentes -->
+            <div class="module-section">
+                <button class="module-toggle {% if request.resolver_match.namespace == 'residents_web' %}active expanded{% endif %}" 
+                        data-module="residents">
+                    <span class="material-icons">elderly</span>
+                    <span>Residentes</span>
+                    <span class="material-icons expand-icon">expand_more</span>
+                </button>
+                <div class="submenu {% if request.resolver_match.namespace == 'residents_web' %}expanded{% else %}collapsed{% endif %}" id="residents-submenu">
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'residents_web:dashboard' %}">
+                        Dashboard
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'resident_list' %}active{% endif %}" href="{% url 'residents_web:resident_list' %}">
+                        Lista de Residentes
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'resident_create' %}active{% endif %}" href="{% url 'residents_web:resident_create' %}">
+                        Crear Residente
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'resident_search' %}active{% endif %}" href="{% url 'residents_web:resident_search' %}">
+                        Buscar Residente
+                    </a>
+                </div>
+            </div>
+
+            <!-- Personal -->
+            <div class="module-section">
+                <button class="module-toggle {% if request.resolver_match.namespace == 'staff_web' %}active expanded{% endif %}" 
+                        data-module="staff">
+                    <span class="material-icons">badge</span>
+                    <span>Personal</span>
+                    <span class="material-icons expand-icon">expand_more</span>
+                </button>
+                <div class="submenu {% if request.resolver_match.namespace == 'staff_web' %}expanded{% else %}collapsed{% endif %}" id="staff-submenu">
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'staff_web:index' %}">
+                        Dashboard
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'staff_list' %}active{% endif %}" href="{% url 'staff_web:staff_list' %}">
+                        Lista de Personal
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'staff_create' %}active{% endif %}" href="{% url 'staff_web:staff_create' %}">
+                        Crear Empleado
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'staff_search' %}active{% endif %}" href="{% url 'staff_web:staff_search' %}">
+                        Buscar Personal
+                    </a>
+                </div>
+            </div>
+
+            <!-- Financiero -->
+            <div class="module-section">
+                <button class="module-toggle {% if request.resolver_match.namespace == 'financial_web' %}active expanded{% endif %}" 
+                        data-module="financial">
+                    <span class="material-icons">account_balance_wallet</span>
+                    <span>Financiero</span>
+                    <span class="material-icons expand-icon">expand_more</span>
+                </button>
+                <div class="submenu {% if request.resolver_match.namespace == 'financial_web' %}expanded{% else %}collapsed{% endif %}" id="financial-submenu">
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'financial_web:dashboard' %}">
+                        Dashboard
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'all_transactions' %}active{% endif %}" href="{% url 'financial_web:all_transactions' %}">
+                        Todas las Transacciones
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'category_list' %}active{% endif %}" href="{% url 'financial_web:category_list' %}">
+                        Categorías
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'expense_list' %}active{% endif %}" href="{% url 'financial_web:expense_list' %}">
+                        Gastos
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'income_list' %}active{% endif %}" href="{% url 'financial_web:income_list' %}">
+                        Ingresos
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'investment_list' %}active{% endif %}" href="{% url 'financial_web:investment_list' %}">
+                        Inversiones
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'budget_list' %}active{% endif %}" href="{% url 'financial_web:budget_list' %}">
+                        Presupuestos
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'cash_flow_list' %}active{% endif %}" href="{% url 'financial_web:cash_flow_list' %}">
+                        Flujo de Caja
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}" href="{% url 'financial_web:reports' %}">
+                        Reportes
+                    </a>
+                </div>
+            </div>
+
+            <!-- Reportes -->
+            <div class="module-section">
+                <button class="module-toggle {% if request.resolver_match.namespace == 'reporting_web' %}active expanded{% endif %}" 
+                        data-module="reporting">
+                    <span class="material-icons">assessment</span>
+                    <span>Reportes</span>
+                    <span class="material-icons expand-icon">expand_more</span>
+                </button>
+                <div class="submenu {% if request.resolver_match.namespace == 'reporting_web' %}expanded{% else %}collapsed{% endif %}" id="reporting-submenu">
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'reporting_web:index' %}">
+                        Dashboard
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'report_list' %}active{% endif %}" href="{% url 'reporting_web:report_list' %}">
+                        Lista de Reportes
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'report_create' %}active{% endif %}" href="{% url 'reporting_web:report_create' %}">
+                        Crear Reporte
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'quick_report' %}active{% endif %}" href="{% url 'reporting_web:quick_report' %}">
+                        Reporte Rápido
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'resident_report' %}active{% endif %}" href="{% url 'reporting_web:resident_report' %}">
+                        Reporte de Residentes
+                    </a>
+                    <a class="submenu-link {% if request.resolver_match.url_name == 'staff_report' %}active{% endif %}" href="{% url 'reporting_web:staff_report' %}">
+                        Reporte de Personal
+                    </a>
+                </div>
+            </div>
         </nav>
     </aside>
     <div class="flex-1 flex flex-col overflow-y-auto">
@@ -154,6 +312,27 @@
     const sidebarNav = document.getElementById('sidebar-nav');
     menuToggle.addEventListener('click', () => {
         sidebarNav.classList.toggle('hidden');
+    });
+
+    // Module submenu toggles
+    const moduleToggles = document.querySelectorAll('.module-toggle');
+    moduleToggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const module = toggle.getAttribute('data-module');
+            const submenu = document.getElementById(`${module}-submenu`);
+            const expandIcon = toggle.querySelector('.expand-icon');
+            
+            // Toggle the submenu
+            if (submenu.classList.contains('collapsed')) {
+                submenu.classList.remove('collapsed');
+                submenu.classList.add('expanded');
+                toggle.classList.add('expanded');
+            } else {
+                submenu.classList.remove('expanded');
+                submenu.classList.add('collapsed');
+                toggle.classList.remove('expanded');
+            }
+        });
     });
 
     // User dropdown toggle
