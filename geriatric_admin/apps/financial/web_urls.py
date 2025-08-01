@@ -37,20 +37,10 @@ urlpatterns = [
     path('investments/<uuid:investment_id>/update/', views.investment_update, name='investment_update'),
     path('investments/<uuid:investment_id>/delete/', views.investment_delete, name='investment_delete'),
     
-    # Presupuestos
-    path('budgets/', views.budget_list, name='budget_list'),
-    path('budgets/create/', views.budget_create, name='budget_create'),
-    path('budgets/<uuid:budget_id>/', views.budget_detail, name='budget_detail'),
-    path('budgets/<uuid:budget_id>/update/', views.budget_update, name='budget_update'),
-    path('budgets/<uuid:budget_id>/delete/', views.budget_delete, name='budget_delete'),
-    
     # Flujo de Caja
     path('cash-flow/', views.cash_flow_list, name='cash_flow_list'),
     path('cash-flow/create/', views.cash_flow_create, name='cash_flow_create'),
     path('cash-flow/<uuid:cash_flow_id>/', views.cash_flow_detail, name='cash_flow_detail'),
-    
-    # Reportes
-    path('reports/', views.financial_reports, name='reports'),
     
     # API endpoints
     path('api/stats/', views.financial_stats, name='financial_stats'),

@@ -238,14 +238,8 @@
                     <a class="submenu-link {% if request.resolver_match.url_name == 'investment_list' %}active{% endif %}" href="{% url 'financial_web:investment_list' %}">
                         Inversiones
                     </a>
-                    <a class="submenu-link {% if request.resolver_match.url_name == 'budget_list' %}active{% endif %}" href="{% url 'financial_web:budget_list' %}">
-                        Presupuestos
-                    </a>
                     <a class="submenu-link {% if request.resolver_match.url_name == 'cash_flow_list' %}active{% endif %}" href="{% url 'financial_web:cash_flow_list' %}">
                         Flujo de Caja
-                    </a>
-                    <a class="submenu-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}" href="{% url 'financial_web:reports' %}">
-                        Reportes
                     </a>
                 </div>
             </div>
