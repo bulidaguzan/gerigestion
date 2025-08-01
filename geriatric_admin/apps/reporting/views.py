@@ -261,7 +261,7 @@ def quick_report(request):
             report = Report.objects.create(
                 title=title,
                 report_type=report_type,
-                format=format_type,
+                format='csv',  # Siempre usar CSV
                 date_from=date_from,
                 date_to=date_to,
                 status='pending',
@@ -324,7 +324,7 @@ def resident_report(request):
                 title=title,
                 description=f"Reporte de residentes con filtros aplicados. Total: {Resident.objects.count()} residentes.",
                 report_type='residents',
-                format=form.cleaned_data.get('format', 'pdf'),
+                format='csv',  # Siempre usar CSV
                 date_from=form.cleaned_data.get('date_from'),
                 date_to=form.cleaned_data.get('date_to'),
                 filters=filters,
@@ -386,7 +386,7 @@ def staff_report(request):
                 title=title,
                 description=f"Reporte de personal con filtros aplicados. Total: {Staff.objects.count()} empleados.",
                 report_type='staff',
-                format=form.cleaned_data.get('format', 'pdf'),
+                format='csv',  # Siempre usar CSV
                 date_from=form.cleaned_data.get('date_from'),
                 date_to=form.cleaned_data.get('date_to'),
                 filters=filters,

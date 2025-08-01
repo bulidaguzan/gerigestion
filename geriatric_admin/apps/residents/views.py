@@ -71,9 +71,35 @@ def resident_detail(request, resident_id):
     # Obtener informes recientes del residente
     recent_reports = resident.reports.all()[:5]
     
+    # Quick actions para el residente
+    quick_actions = [
+        {
+            'url': f'/residents/{resident.id}/update/',
+            'text': 'Editar Residente',
+            'icon': 'edit',
+            'bg_color': 'bg-indigo-600',
+            'hover_color': 'hover:bg-indigo-700'
+        },
+        {
+            'url': f'/residents/{resident.id}/reports/create/',
+            'text': 'Crear Informe',
+            'icon': 'add',
+            'bg_color': 'bg-emerald-600',
+            'hover_color': 'hover:bg-emerald-700'
+        },
+        {
+            'url': f'/residents/{resident.id}/reports/',
+            'text': 'Ver Informes',
+            'icon': 'visibility',
+            'bg_color': 'bg-slate-600',
+            'hover_color': 'hover:bg-slate-700'
+        }
+    ]
+    
     context = {
         'resident': resident,
         'recent_reports': recent_reports,
+        'quick_actions': quick_actions,
     }
     
     return render(request, 'residents/detail.html', context)

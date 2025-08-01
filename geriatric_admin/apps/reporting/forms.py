@@ -79,8 +79,6 @@ class QuickReportForm(forms.Form):
     ]
     
     FORMAT_CHOICES = [
-        ('pdf', 'PDF'),
-        ('json', 'JSON'),
         ('csv', 'CSV'),
     ]
     
@@ -108,7 +106,7 @@ class QuickReportForm(forms.Form):
     format = forms.ChoiceField(
         choices=FORMAT_CHOICES,
         label=_('Formato'),
-        initial='pdf',
+        initial='csv',
         widget=forms.Select(attrs={'class': 'form-select'})
     )
     
@@ -141,7 +139,7 @@ class QuickReportForm(forms.Form):
                 raise forms.ValidationError(
                     _('Para períodos personalizados, debe especificar las fechas de inicio y fin.')
                 )
-            if date_from > date_to:
+            if date_from and date_to and date_from > date_to:
                 raise forms.ValidationError(
                     _('La fecha de inicio no puede ser posterior a la fecha de fin.')
                 )
@@ -149,38 +147,47 @@ class QuickReportForm(forms.Form):
         return cleaned_data
     
     def get_report_type_display(self):
-        """Retorna el nombre legible del tipo de reporte seleccionado"""
+        """Retorna el nombre del tipo de reporte seleccionado"""
         report_type = self.cleaned_data.get('report_type')
-        if report_type:
-            for choice_value, choice_label in self.REPORT_TYPES:
-                if choice_value == report_type:
-                    return choice_label
-        return report_type or ''
+        for choice in self.REPORT_TYPES:
+            if choice[0] == report_type:
+                return choice[1]
+        return report_type
     
     def get_date_range(self):
-        """Retorna el rango de fechas basado en el período seleccionado"""
+        """Retorna el rango de fechas según el período seleccionado"""
         period = self.cleaned_data.get('period')
         today = timezone.now().date()
         
-        if period == 'custom':
-            return self.cleaned_data.get('date_from'), self.cleaned_data.get('date_to')
-        elif period == 'today':
+        if period == 'today':
             return today, today
         elif period == 'week':
             start = today - timedelta(days=today.weekday())
-            return start, today
+            end = start + timedelta(days=6)
+            return start, end
         elif period == 'month':
             start = today.replace(day=1)
-            return start, today
+            if today.month == 12:
+                end = today.replace(year=today.year + 1, month=1, day=1) - timedelta(days=1)
+            else:
+                end = today.replace(month=today.month + 1, day=1) - timedelta(days=1)
+            return start, end
         elif period == 'quarter':
             quarter = (today.month - 1) // 3
             start = today.replace(month=quarter * 3 + 1, day=1)
-            return start, today
+            if quarter == 3:
+                end = today.replace(year=today.year + 1, month=1, day=1) - timedelta(days=1)
+            else:
+                end = today.replace(month=(quarter + 1) * 3 + 1, day=1) - timedelta(days=1)
+            return start, end
         elif period == 'year':
             start = today.replace(month=1, day=1)
-            return start, today
+            end = today.replace(month=12, day=31)
+            return start, end
+        elif period == 'custom':
+            return self.cleaned_data.get('date_from'), self.cleaned_data.get('date_to')
         
-        return None, None
+        return today, today
 
 
 class ResidentReportForm(forms.Form):
@@ -280,13 +287,9 @@ class ResidentReportForm(forms.Form):
     )
     
     format = forms.ChoiceField(
-        choices=[
-            ('pdf', 'PDF'),
-            ('json', 'JSON'),
-            ('csv', 'CSV'),
-        ],
+        choices=[('csv', 'CSV')],
         label=_('Formato'),
-        initial='pdf',
+        initial='csv',
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
@@ -380,15 +383,8 @@ class StaffReportForm(forms.Form):
     )
     
     format = forms.ChoiceField(
-        choices=[
-            ('pdf', 'PDF'),
-            ('json', 'JSON'),
-            ('csv', 'CSV'),
-        ],
+        choices=[('csv', 'CSV')],
         label=_('Formato'),
-        initial='pdf',
+        initial='csv',
         widget=forms.Select(attrs={'class': 'form-select'})
-    )
-
-
-# Formularios de plantillas y widgets eliminados para simplificar el sistema 
+    ) 

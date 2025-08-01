@@ -27,17 +27,14 @@ class Report(models.Model):
     ]
     
     FORMAT_CHOICES = [
-        ('pdf', 'PDF'),
-        ('excel', 'Excel'),
         ('csv', 'CSV'),
-        ('json', 'JSON'),
     ]
     
     # Información básica
     title = models.CharField(_('Título'), max_length=200)
     description = models.TextField(_('Descripción'), blank=True)
     report_type = models.CharField(_('Tipo de Reporte'), max_length=20, choices=REPORT_TYPES)
-    format = models.CharField(_('Formato'), max_length=10, choices=FORMAT_CHOICES, default='pdf')
+    format = models.CharField(_('Formato'), max_length=10, choices=FORMAT_CHOICES, default='csv')
     status = models.CharField(_('Estado'), max_length=20, choices=STATUS_CHOICES, default='pending')
     
     # Filtros y parámetros
@@ -112,7 +109,7 @@ class ReportTemplate(models.Model):
     
     # Configuración del reporte
     default_filters = models.JSONField(_('Filtros por Defecto'), default=dict, blank=True)
-    default_format = models.CharField(_('Formato por Defecto'), max_length=10, choices=Report.FORMAT_CHOICES, default='pdf')
+    default_format = models.CharField(_('Formato por Defecto'), max_length=10, choices=Report.FORMAT_CHOICES, default='csv')
     
     # Metadatos
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_('Creado por'))
