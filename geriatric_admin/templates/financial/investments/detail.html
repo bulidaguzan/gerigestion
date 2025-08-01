@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Detalle de Inversión' %} - GeriGestion{% endblock %}
+
+{% block page_title %}{% trans 'Detalle de Inversión' %}{% endblock %}
+{% block page_subtitle %}{% trans 'Información completa de la inversión' %}{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'financial_web:investment_update' investment.id %}" class="btn-modern-success">
+    <span class="material-icons">edit</span>
+    {% trans 'Editar' %}
+</a>
+<a href="{% url 'financial_web:investment_delete' investment.id %}" class="btn-modern-danger">
+    <span class="material-icons">delete</span>
+    {% trans 'Eliminar' %}
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Información Principal -->
+    <div class="lg:col-span-2 space-y-6">
+        <!-- Detalles de la Inversión -->
+        <div class="content-card">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-slate-800">{% trans 'Información de la Inversión' %}</h2>
+                <span class="px-3 py-1 rounded-full text-sm font-medium
+                    {% if investment.status == 'planned' %}bg-blue-100 text-blue-800
+                    {% elif investment.status == 'in_progress' %}bg-yellow-100 text-yellow-800
+                    {% elif investment.status == 'completed' %}bg-green-100 text-green-800
+                    {% elif investment.status == 'cancelled' %}bg-red-100 text-red-800
+                    {% endif %}">
+                    {{ investment.get_status_display }}
+                </span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-medium text-slate-700 mb-4">{% trans 'Detalles Básicos' %}</h3>
+                    <dl class="space-y-3">
+                        <div>
+                            <dt class="text-sm font-medium text-slate-500">{% trans 'Nombre' %}</dt>
+                            <dd class="text-sm text-slate-900">{{ investment.name }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-slate-500">{% trans 'Descripción' %}</dt>
+                            <dd class="text-sm text-slate-900">{{ investment.description|default:"Sin descripción" }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-slate-500">{% trans 'Categoría' %}</dt>
+                            <dd class="text-sm text-slate-900">{{ investment.category.name|default:"Sin categoría" }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-slate-500">{% trans 'Tipo de Inversión' %}</dt>
+                            <dd class="text-sm text-slate-900">{{ investment.get_investment_type_display }}</dd>
+                        </div>
+                    </dl>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-medium text-slate-700 mb-4">{% trans 'Información Financiera' %}</h3>
+                    <dl class="space-y-3">
+                        <div>
+                            <dt class="text-sm font-medium text-slate-500">{% trans 'Monto' %}</dt>
+                            <dd class="text-lg font-semibold text-emerald-600">${{ investment.amount|floatformat:2 }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-slate-500">{% trans 'Retorno Esperado' %}</dt>
+                            <dd class="text-sm text-slate-900">{{ investment.expected_return|default:"No especificado" }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-slate-500">{% trans 'Riesgo' %}</dt>
+                            <dd class="text-sm text-slate-900">{{ investment.get_risk_level_display|default:"No especificado" }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fechas y Plazos -->
+        <div class="content-card">
+            <h3 class="text-lg font-medium text-slate-700 mb-4">{% trans 'Fechas y Plazos' %}</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <dl class="space-y-3">
+                    <div>
+                        <dt class="text-sm font-medium text-slate-500">{% trans 'Fecha de Inicio' %}</dt>
+                        <dd class="text-sm text-slate-900">{{ investment.start_date|date:"d/m/Y" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-slate-500">{% trans 'Fecha de Finalización' %}</dt>
+                        <dd class="text-sm text-slate-900">{{ investment.end_date|date:"d/m/Y"|default:"No especificada" }}</dd>
+                    </div>
+                </dl>
+                
+                <dl class="space-y-3">
+                    <div>
+                        <dt class="text-sm font-medium text-slate-500">{% trans 'Fecha de Creación' %}</dt>
+                        <dd class="text-sm text-slate-900">{{ investment.created_at|date:"d/m/Y H:i" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-slate-500">{% trans 'Última Actualización' %}</dt>
+                        <dd class="text-sm text-slate-900">{{ investment.updated_at|date:"d/m/Y H:i" }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Notas y Comentarios -->
+        {% if investment.notes %}
+        <div class="content-card">
+            <h3 class="text-lg font-medium text-slate-700 mb-4">{% trans 'Notas y Comentarios' %}</h3>
+            <div class="bg-slate-50 rounded-lg p-4">
+                <p class="text-sm text-slate-700">{{ investment.notes }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+        <!-- Acciones Rápidas -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">flash_on</span>
+                    {% trans 'Acciones Rápidas' %}
+                </h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <a href="{% url 'financial_web:investment_update' investment.id %}" 
+                   class="flex items-center w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold py-3 px-4 rounded-lg border border-emerald-200 transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons mr-3">edit</span>
+                    <span class="text-sm">{% trans 'Editar Inversión' %}</span>
+                </a>
+                
+                <a href="{% url 'financial_web:investment_list' %}" 
+                   class="flex items-center w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold py-3 px-4 rounded-lg border border-blue-200 transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons mr-3">list</span>
+                    <span class="text-sm">{% trans 'Ver Todas' %}</span>
+                </a>
+                
+                <a href="{% url 'financial_web:investment_create' %}" 
+                   class="flex items-center w-full bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold py-3 px-4 rounded-lg border border-slate-200 transition-all duration-300 transform hover:scale-105">
+                    <span class="material-icons mr-3">add</span>
+                    <span class="text-sm">{% trans 'Nueva Inversión' %}</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Información del Sistema -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-500 to-slate-600 px-6 py-4">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <span class="material-icons mr-2">info</span>
+                    {% trans 'Información del Sistema' %}
+                </h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">{% trans 'Creado por' %}</dt>
+                    <dd class="text-sm text-slate-900">{{ investment.created_by.get_full_name|default:investment.created_by.username }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">{% trans 'ID de la Inversión' %}</dt>
+                    <dd class="text-sm text-slate-900 font-mono">{{ investment.id }}</dd>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

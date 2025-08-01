@@ -15,7 +15,7 @@
         <span class="material-icons mr-2 text-base">dashboard</span>
         <span class="text-sm">Dashboard</span>
     </a>
-    <a href="{% url 'financial_web:investment_create' %}" class="flex items-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+    <a href="{% url 'financial_web:investment_create' %}" class="flex items-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105">
         <span class="material-icons mr-2 text-base">add</span>
         <span class="text-sm">{% trans 'Nueva Inversión' %}</span>
     </a>
@@ -75,7 +75,7 @@
 
 <!-- Filtros y Búsqueda -->
 <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden mb-8">
-    <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+    <div class="bg-slate-700 px-6 py-4">
         <h3 class="text-lg font-semibold text-white flex items-center">
             <span class="material-icons mr-2">filter_list</span>
             {% trans 'Filtros y Búsqueda' %}
@@ -88,7 +88,7 @@
                     🔍 {% trans 'Buscar' %}
                 </label>
                 <input type="text" 
-                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" 
+                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300" 
                        id="search" 
                        name="search" 
                        value="{{ request.GET.search }}" 
@@ -99,7 +99,7 @@
                 <label for="category" class="block text-sm font-medium text-slate-700 mb-3">
                     📁 {% trans 'Categoría' %}
                 </label>
-                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" 
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300" 
                         id="category" 
                         name="category">
                     <option value="">{% trans 'Todas las categorías' %}</option>
@@ -115,7 +115,7 @@
                 <label for="status" class="block text-sm font-medium text-slate-700 mb-3">
                     ✅ {% trans 'Estado' %}
                 </label>
-                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" 
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300" 
                         id="status" 
                         name="status">
                     <option value="">{% trans 'Todos los estados' %}</option>
@@ -130,7 +130,7 @@
                 <label for="investment_type" class="block text-sm font-medium text-slate-700 mb-3">
                     🏗️ {% trans 'Tipo' %}
                 </label>
-                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" 
+                <select class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300" 
                         id="investment_type" 
                         name="investment_type">
                     <option value="">{% trans 'Todos los tipos' %}</option>
@@ -148,14 +148,14 @@
                     📅 {% trans 'Desde' %}
                 </label>
                 <input type="date" 
-                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" 
+                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all duration-300" 
                        id="date_from" 
                        name="date_from" 
                        value="{{ request.GET.date_from }}">
             </div>
             
             <div class="flex items-end space-x-3">
-                <button type="submit" class="flex-1 flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                <button type="submit" class="flex-1 flex items-center justify-center bg-slate-600 hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-lg shadow-sm transition-all duration-300 transform hover:scale-105">
                     <span class="material-icons mr-2 text-sm">search</span>
                     <span class="text-sm">{% trans 'Filtrar' %}</span>
                 </button>
@@ -170,7 +170,7 @@
 
 <!-- Lista de Inversiones -->
 <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-    <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+    <div class="bg-slate-700 px-6 py-4">
         <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold text-white flex items-center">
                 <span class="material-icons mr-2">trending_up</span>
